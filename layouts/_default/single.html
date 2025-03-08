@@ -5,4 +5,16 @@
         {{ .Content }}
     </div>
 </article>
+{{ $jsPath :=.File.Path}}
+{{$jsPath := replace $jsPath ".md" ".js" }}
+{{$jsPath := printf "js\\courses\\%s" $jsPath}}
+{{ $lib := resources.Get "js\\library.js" }}
+{{ $js :=resources.Get  $jsPath }}
+{{( $jsPath)}}
+  {{ if $js }}
+    <script src="{{ $js.RelPermalink }}"></script>
+    {{end}}
+    {{if $lib}}
+    <script src="{{ $lib.RelPermalink }}"></script>
+    {{end}}
 {{ end }}
