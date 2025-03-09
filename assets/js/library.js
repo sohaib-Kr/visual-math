@@ -1,10 +1,17 @@
-const visualMath = {
-    interiorColor: '#9467BD',
-    indicatorColor: '#ff7700',
-    borderColor: '#e6c300',
-    coverColor: '#99c3e0',
-};
 
+var visualMath
+function createVisualMath(frame){
+    let gradient = frame.gradient('radial', function(add) {
+        add.stop(0, '#DAACF6')
+        add.stop(1, '#874CC3')
+    })
+    visualMath = {
+        interiorColor: gradient.from(0.1, 0.2).to(0.5, 0.5).radius(1),
+        indicatorColor: '#ff7700',
+        borderColor: '#e6c300',
+        coverColor: '#99c3e0',
+    };
+}
 class Animation {
     constructor(lib, height, width, parent, id) {
         this.wrapper = document.createElement('div');
@@ -29,59 +36,50 @@ class Animation {
                 setTimeout(() => this.engine[0](), this.delay);
             })() : NaN;
         }];
+        createVisualMath(this.frame)
     }
 
+    junk(...args){
+        let now = this.step;
+        args.forEach(arg => {
+            let I=setInterval(()=>{
+                this.step==now+1 ? (arg.animate(500).attr({opacity: 0}), clearInterval(I)) : NaN;
+            }, 100);
+        });
+    }
     initSteps(steps) {
         this.engine = this.engine.concat(steps);
     }
 }
 
 // SVG.js version of drawArrow
-function drawArrowSvgJs(draw, sx, sy, ex, ey, cx, cy, color, vivusConfirmed) {
+function arrowSvg(sx, sy, ex, ey, cx, cy, color, vivusConfirmed) {
     // Draw the curved path
-    const arrow = draw.group();
-    arrow.attr({id: 'arrow'});
-    
-    const curve = arrow.path(`M ${sx} ${sy} Q ${cx} ${cy}, ${ex} ${ey}`);
-    curve.fill('none')
-         .stroke({ 
-            color, 
-            width: 5, 
-            linejoin: 'round',
-            linecap: 'round'
-        });
-
-    // Calculate the tangent vector at the end point
-    // For a quadratic Bézier curve, the tangent at the end is P2 - P1
-    // where P2 is the end point and P1 is the control point
-    const dx = ex - cx;
-    const dy = ey - cy;
-    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-    
-    // Draw the arrowhead
-    const arrowheadLength = 15;
-    const arrowheadWidth = 8;
-    
-    // Create arrowhead as a triangle
-    const arrowhead = arrow.path(`
-        M ${-arrowheadLength} ${-arrowheadWidth}
-        L 0 0
-        L ${-arrowheadLength} ${arrowheadWidth}
-    `).fill('none')
-      .stroke({ 
-          color, 
-          width: 5, 
-          linejoin: 'round',
-          linecap: 'round'
-      });
-
-    // Move to end point and rotate to match curve tangent
-    arrowhead.transform({
-        translateX: ex,
-        translateY: ey,
-        rotation: angle
-    });
-
+    let width = draw.width();
+    let height = draw.height();
+    let startX = sx;
+    let startY = sy;
+    let endX = ex;
+    let endY = ey;
+    let controlX = cx;
+    let controlY = cy;
+    // Draw the curved path
+    let arrow = draw.group().attr({ id: 'arrow' });
+    let curve = arrow.path(`M ${startX} ${startY} Q ${controlX} ${controlY}, ${endX} ${endY}`)
+        .fill('none')
+        .stroke({ color, width: 5, linejoin: 'round', linecap: 'round' });
+    // Calculate the slope of the curve at the end point
+    let dx = endX - controlX; // Change in x
+    let dy = endY - controlY; // Change in y
+    let angle = Math.atan2(dy, dx) * (180 / Math.PI); // Angle in degrees
+    // Draw the arrowhead (a three-point polyline)
+    let arrowheadSize = 10;
+    let arrowhead = arrow.polyline([
+        [endX - arrowheadSize, endY - arrowheadSize],
+        [endX, endY],
+        [endX - arrowheadSize, endY + arrowheadSize]
+    ]).fill('none').stroke({ color, width: 5, linecap: 'round' })
+        .transform({ rotate: angle, origin: [endX, endY] }); // Rotate the arrowhead
     if (vivusConfirmed) {
         new Vivus('arrow', {
             type: 'oneByOne',
@@ -89,7 +87,6 @@ function drawArrowSvgJs(draw, sx, sy, ex, ey, cx, cy, color, vivusConfirmed) {
             animTimingFunction: Vivus.EASE_OUT,
         });
     }
-
     return arrow;
 } 
 // Snap.svg version of drawArrow
@@ -148,3 +145,44 @@ function drawArrowSnap(paper, sx, sy, ex, ey, cx, cy, color, vivusConfirmed) {
 
     return arrow;
 } 
+
+function updateMousePosition(event) {
+    mousePositionElement = document.getElementById('mouse');
+    // Get the bounding rectangle of the canvas
+    const rect = snap.node.getBoundingClientRect();
+    // Calculate the mouse position relative to the canvas
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+    // Update the text inside the <p> element
+    mousePositionElement.textContent = `Mouse Position: (${mouseX.toFixed(2)}, ${mouseY.toFixed(2)})`;
+}
+function shakeAnimation(element, degree, frequency, callback, delay) {
+    element.animate({ duration: 200, delay }).after(callback)
+        .rotate(degree)
+        .animate(frequency)
+        .rotate(-2 * degree)
+        .animate(frequency)
+        .rotate(2 * degree)
+        .animate(frequency)
+        .rotate(-2 * degree)
+        .animate(frequency)
+        .rotate(2 * degree)
+        .animate(frequency)
+        .rotate(-degree);
+}
+createDynamicText=(text)=>{
+    if(draw){
+        var x = draw.text(function (add) {
+            text.forEach((elem) => {
+                add.tspan(elem.text).attr(elem.attr);
+            });
+        });
+    
+        return x;
+    }
+}
+function regular(inputString) {
+    return inputString.replace(/[\r\n]+/g, ``).replace(/\s+/g, ` `);
+    ;
+}
+
