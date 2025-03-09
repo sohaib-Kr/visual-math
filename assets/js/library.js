@@ -1,112 +1,150 @@
-var i=0
-var delay=1000
-var interiorColor='#9467BD'
-var indicatorColor='#ff7700'
-var borderColor='#e6c300'
-var coverColor='#99c3e0'
-var text
-var arrow
-// var draw=SVG().addTo('#animation').size(1500,1000)
-var snap=Snap(1500,800)
+const visualMath = {
+    interiorColor: '#9467BD',
+    indicatorColor: '#ff7700',
+    borderColor: '#e6c300',
+    coverColor: '#99c3e0',
+};
 
-function createArrow(sx,sy,ex,ey,cx,cy,color,vivusConfirmed) {
-            let  width = draw.width();
-            let  height = draw.height();
-            let  startX = sx
-            let  startY = sy
-            let  endX = ex
-            let  endY = ey
-            let  controlX = cx;
-            let  controlY = cy;
-
-            // Draw the curved path
-            let arrow=draw.group().attr({id:'arrow'})
-            let  curve = arrow.path(`M ${startX} ${startY} Q ${controlX} ${controlY}, ${endX} ${endY}`)
-                .fill('none')
-                .stroke({ color, width: 5,linejoin:'round' ,linecap:'round'})
-// Calculate the slope of the curve at the end point
-            let  dx = endX - controlX; // Change in x
-            let  dy = endY - controlY; // Change in y
-            let  angle = Math.atan2(dy, dx) * (180 / Math.PI); // Angle in degrees
-            // Draw the arrowhead (a three-point polyline)
-            let  arrowheadSize = 10;
-            let  arrowhead = arrow.polyline([
-                [endX - arrowheadSize, endY - arrowheadSize],
-                [endX, endY],
-                [endX - arrowheadSize, endY + arrowheadSize]
-            ]).fill('none').stroke({ color, width: 5 ,linecap:'round'})
-                .transform({ rotate: angle, origin: [endX, endY] }); // Rotate the arrowhead
-            if(vivusConfirmed){
-                new Vivus('arrow',{
-                type:'oneByOne',
-                duration:40,
-                animTimingFunction:Vivus.EASE_OUT,
-            })}
-            return arrow
+class Animation {
+    constructor(lib, height, width, parent, id) {
+        this.wrapper = document.createElement('div');
+        this.wrapper.innerHTML = `
+            <div id="${id}Animation" class="animationWrapper">
+              <svg class="animation" id="${id}Frame"></svg>
+              <div class="animationControl"></div>
+            </div>`;
+        document.getElementById(parent).appendChild(this.wrapper);
+        if (lib === 'svgJs') {
+            this.frame = SVG(`#${id}Frame`).size(height, width);
+        } else if (lib === 'snapSvg') {
+            this.frame = Snap(`#${id}Frame`);
         }
 
-
-
-        function updateMousePosition(event) {
-            mousePositionElement=document.getElementById('mouse')
-            // Get the bounding rectangle of the canvas
-            const rect = snap.node.getBoundingClientRect();
-
-            // Calculate the mouse position relative to the canvas
-            const mouseX = event.clientX - rect.left;
-            const mouseY = event.clientY - rect.top;
-
-            // Update the text inside the <p> element
-            mousePositionElement.textContent = `Mouse Position: (${mouseX.toFixed(2)}, ${mouseY.toFixed(2)})`;
-        }
-function shakeAnimation(element,degree,frequency,callback,delay){
-    element.animate({duration:200,delay}).after(callback)
-                .rotate(degree) 
-                .animate(frequency)
-                .rotate(-2*degree)
-                .animate(frequency)
-                .rotate(2*degree) 
-                .animate(frequency)
-                .rotate(-2*degree) 
-                .animate(frequency)
-                .rotate(2*degree) 
-                .animate(frequency)
-                .rotate(-degree);
-}
-function createDynamicText(text){
-var x=draw.text(function(add){
-    text.forEach((elem)=>{
-      add.tspan(elem.text).attr(elem.attr)
-    })
-})
-return x
-}
-
-
-function regular(inputString) {
-  return inputString.replace(/[\r\n]+/g,``).replace(/\s+/g,` `);;
-}
-
-
-function Pather(initialPath){
-    this.standard={
-        timing:(t)=>{return t}
-    }
-    this.setStandard=function(obj){
-        for(let prop in obj){
-            this.standard[prop]=obj[prop]
-        }
+        this.step = 0;
+        this.delay = 1000;
+        this.engine = [() => {
+            this.step += 1;
+            this.step < this.engine.length ? (() => {
+                this.engine[this.step]();
+                setTimeout(() => this.engine[0](), this.delay);
+            })() : NaN;
+        }];
     }
 
-    const parts = initialPath.split(/[{}]/);
-    let pathPartitions=parts.filter(part => part !== "");
-    this.update=function(data){
-        let newPathPartitions=pathPartitions.slice()
-        for (let i = 1; i < newPathPartitions.length; i += 2) {
-            if (newPathPartitions[i] in data) {
-                newPathPartitions[i] = data[newPathPartitions[i]];
-            }
-        }
-        return regular(newPathPartitions.join(' '))
+    initSteps(steps) {
+        this.engine = this.engine.concat(steps);
     }
 }
+
+// SVG.js version of drawArrow
+function drawArrowSvgJs(draw, sx, sy, ex, ey, cx, cy, color, vivusConfirmed) {
+    // Draw the curved path
+    const arrow = draw.group();
+    arrow.attr({id: 'arrow'});
+    
+    const curve = arrow.path(`M ${sx} ${sy} Q ${cx} ${cy}, ${ex} ${ey}`);
+    curve.fill('none')
+         .stroke({ 
+            color, 
+            width: 5, 
+            linejoin: 'round',
+            linecap: 'round'
+        });
+
+    // Calculate the tangent vector at the end point
+    // For a quadratic Bézier curve, the tangent at the end is P2 - P1
+    // where P2 is the end point and P1 is the control point
+    const dx = ex - cx;
+    const dy = ey - cy;
+    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+    
+    // Draw the arrowhead
+    const arrowheadLength = 15;
+    const arrowheadWidth = 8;
+    
+    // Create arrowhead as a triangle
+    const arrowhead = arrow.path(`
+        M ${-arrowheadLength} ${-arrowheadWidth}
+        L 0 0
+        L ${-arrowheadLength} ${arrowheadWidth}
+    `).fill('none')
+      .stroke({ 
+          color, 
+          width: 5, 
+          linejoin: 'round',
+          linecap: 'round'
+      });
+
+    // Move to end point and rotate to match curve tangent
+    arrowhead.transform({
+        translateX: ex,
+        translateY: ey,
+        rotation: angle
+    });
+
+    if (vivusConfirmed) {
+        new Vivus('arrow', {
+            type: 'oneByOne',
+            duration: 40,
+            animTimingFunction: Vivus.EASE_OUT,
+        });
+    }
+
+    return arrow;
+} 
+// Snap.svg version of drawArrow
+function drawArrowSnap(paper, sx, sy, ex, ey, cx, cy, color, vivusConfirmed) {
+    // Create a group for the arrow
+    const arrow = paper.group();
+    arrow.attr({ id: 'arrow' });
+
+    // Draw the curved path
+    const pathString = `M ${sx} ${sy} Q ${cx} ${cy}, ${ex} ${ey}`;
+    const curve = paper.path(pathString);
+    curve.attr({
+        fill: 'none',
+        stroke: color,
+        strokeWidth: 5,
+        strokeLinejoin: 'round',
+        strokeLinecap: 'round'
+    });
+
+    // Calculate the slope of the curve at the end point
+    const dx = ex - cx;
+    const dy = ey - cy;
+    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+    // Draw the arrowhead
+    const arrowheadSize = 10;
+    const arrowheadPoints = [
+        [ex - arrowheadSize, ey - arrowheadSize],
+        [ex, ey],
+        [ex - arrowheadSize, ey + arrowheadSize]
+    ].map(point => point.join(',')).join(' ');
+    
+    const arrowhead = paper.polyline(arrowheadPoints);
+    arrowhead.attr({
+        fill: 'none',
+        stroke: color,
+        strokeWidth: 5,
+        strokeLinecap: 'round'
+    });
+
+    // Apply rotation transform to arrowhead
+    const transformString = `r${angle},${ex},${ey}`;
+    arrowhead.transform(transformString);
+
+    // Add both elements to the group
+    arrow.add(curve);
+    arrow.add(arrowhead);
+
+    if (vivusConfirmed) {
+        new Vivus('arrow', {
+            type: 'oneByOne',
+            duration: 40,
+            animTimingFunction: Vivus.EASE_OUT,
+        });
+    }
+
+    return arrow;
+} 
