@@ -170,11 +170,11 @@ function shakeAnimation(element, degree, frequency, callback, delay) {
         .animate(frequency)
         .rotate(-degree);
 }
-createDynamicText=(text)=>{
+function createDynamicText(text){
     if(draw){
-        var x = draw.text(function (add) {
+        let x = draw.text(function (add) {
             text.forEach((elem) => {
-                add.tspan(elem.text).attr(elem.attr);
+                add.tspan(elem);
             });
         });
     
@@ -186,3 +186,21 @@ function regular(inputString) {
     ;
 }
 
+function latex(inputString,elem) {
+    let holder=draw.foreignObject(50, 50,'<div></div>')
+    elem.appendChild(holder.node)
+    return katex.render(inputString, holder.node, {
+        throwOnError: false
+    });
+}
+
+function createDynamicLatex(text){
+    if(draw){
+        let  x=draw.group()
+        text.forEach((elem) => {
+            let holder=x.nested()
+            latex(elem, holder.node)
+        });
+        return x;
+    }
+}
