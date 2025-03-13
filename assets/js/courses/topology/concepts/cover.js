@@ -30,29 +30,31 @@ const firstAnimation = new Animation('svgJs', 1000, 500, 'first', 'first');
         .fill(interiorColor);
 
     // Create text instances
-    let textGroup = draw.group();
+    let textGroup = draw.group().attr({opacity:0})
     cover.forEach((elem, index) => {
         let holder = textGroup.nested()
         holder.move(680, 20 + 130 * index)
         latex('\\alpha_{' + (index + 1) + '}', holder.node)
     })
+
+
     let deltas = [];
     for (let i = 0; i < 5; i++) {
         i % 2 == 0 
-            ? deltas.push('a' + (i/2 + 1))
-            : deltas.push('U');
+            ? deltas.push('a_' + (i/2 + 1))
+            : deltas.push('U_');
     }
     
     let deltasEquation = createDynamicText(deltas).move(500, 400).attr({opacity:0})
-    let latexDeltas = createDynamicLatex(deltas.filter((elem,index)=>index%2==1).map((element)=>{return '\\cup'}))
+    let latexDeltas = createDynamicLatex(deltas.filter((elem,index)=>index%2==1).map(()=>{return '\\cup'})).attr({opacity:0})
     latexDeltas.children().forEach((elem,index)=>{
         elem.x(deltasEquation.children()[2*index+1].x())
         elem.y(deltasEquation.children()[2*index+1].y())
     })
-    let coverFamily = createDynamicText(['{U_i}_{i<4}','U S']).move(500,400)
+    let coverFamily = createDynamicText(['{Ui}_____','U S']).move(500,400)
     coverFamily.children().forEach((elem)=>{elem.attr({opacity:0})})
 
-    let latexCoverFamily = createDynamicLatex(['\\{U_i\\}_{i<4}',' \\subset S'])
+    let latexCoverFamily = createDynamicLatex(['\\{U_i\\}_{i<4 }',' \\supset S'])
     latexCoverFamily.children().forEach((elem,index)=>{
         elem.x(coverFamily.children()[index].x())
         elem.y(coverFamily.children()[index].y())
@@ -71,15 +73,17 @@ const firstAnimation = new Animation('svgJs', 1000, 500, 'first', 'first');
                     .attr(textStyles.explanation)
             )
         },
+        ()=> e() ,
         () => {
-            e();
             cover.forEach((elem, index) => {
                 elem.animate(1000).dmove(370, 30 * index);
                 shakeAnimation(elem, 3, 100, () => {
                 }, 100 * index);
             });
         },
-
+        ()=>{
+            textGroup.animate(500).attr({opacity:1})
+        },
         () => {
             cover.forEach((elem, index) => {
                 elem.animate(1000).dmove(-370, -30 * index);
@@ -92,7 +96,9 @@ const firstAnimation = new Animation('svgJs', 1000, 500, 'first', 'first');
                 span.animate(500).move(child.x(), child.y());
             });
         },
+
         ()=>{
+            latexDeltas.animate(500).attr({ opacity: 1 });
             for(let i=1;i<5;i+=2){
                 deltasEquation.children()[i].animate(500).attr({ opacity: 1 });
             }

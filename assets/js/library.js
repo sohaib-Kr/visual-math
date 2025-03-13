@@ -32,6 +32,7 @@ class Animation {
         this.engine = [() => {
             this.step += 1;
             this.step < this.engine.length ? (() => {
+                document.getElementById('indexer').innerText = this.step;
                 this.engine[this.step]();
                 setTimeout(() => this.engine[0](), this.delay);
             })() : NaN;
@@ -177,7 +178,6 @@ function createDynamicText(text){
                 add.tspan(elem);
             });
         });
-    
         return x;
     }
 }
@@ -187,7 +187,7 @@ function regular(inputString) {
 }
 
 function latex(inputString,elem) {
-    let holder=draw.foreignObject(50, 50,'<div></div>')
+    let holder=draw.foreignObject(100,50,'<div></div>')
     elem.appendChild(holder.node)
     return katex.render(inputString, holder.node, {
         throwOnError: false
