@@ -7,8 +7,12 @@
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
     --color-red-500: oklch(0.637 0.237 25.331);
+    --color-pink-100: oklch(0.948 0.028 342.258);
     --color-pink-200: oklch(0.899 0.061 343.231);
+    --color-pink-300: oklch(0.823 0.12 346.018);
+    --color-pink-400: oklch(0.718 0.202 349.761);
     --color-gray-100: oklch(0.967 0.003 264.542);
+    --color-gray-200: oklch(0.928 0.006 264.531);
     --color-gray-300: oklch(0.872 0.01 258.338);
     --color-gray-400: oklch(0.707 0.022 261.325);
     --color-gray-700: oklch(0.373 0.034 259.733);
@@ -358,6 +362,9 @@
       max-width: 96rem !important;
     }
   }
+  .m-4 {
+    margin: calc(var(--spacing) * 4);
+  }
   .m-6 {
     margin: calc(var(--spacing) * 6);
   }
@@ -475,8 +482,14 @@
   .h-\[200px\] {
     height: 200px;
   }
+  .h-\[250px\] {
+    height: 250px;
+  }
   .h-\[300px\] {
     height: 300px;
+  }
+  .h-\[350px\] {
+    height: 350px;
   }
   .h-\[400px\] {
     height: 400px;
@@ -486,6 +499,18 @@
   }
   .h-\[600px\] {
     height: 600px;
+  }
+  .h-\[700px\] {
+    height: 700px;
+  }
+  .h-\[900px\] {
+    height: 900px;
+  }
+  .h-\[1300px\] {
+    height: 1300px;
+  }
+  .h-\[1400px\] {
+    height: 1400px;
   }
   .h-full {
     height: 100%;
@@ -513,6 +538,9 @@
   }
   .w-\[83\%\] {
     width: 83%;
+  }
+  .w-\[87\%\] {
+    width: 87%;
   }
   .w-\[97\%\] {
     width: 97%;
@@ -771,6 +799,15 @@
   .grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
+  .grid-cols-\[15\%_85\%\] {
+    grid-template-columns: 15% 85%;
+  }
+  .grid-cols-\[20\%_80\%\] {
+    grid-template-columns: 20% 80%;
+  }
+  .grid-cols-\[85\%_15\%\] {
+    grid-template-columns: 85% 15%;
+  }
   .grid-cols-none {
     grid-template-columns: none;
   }
@@ -780,14 +817,8 @@
   .grid-rows-1 {
     grid-template-rows: repeat(1, minmax(0, 1fr));
   }
-  .grid-rows-\[60\%_20\%_20\%\] {
-    grid-template-rows: 60% 20% 20%;
-  }
   .grid-rows-\[65\%_10\%_25\%\] {
     grid-template-rows: 65% 10% 25%;
-  }
-  .grid-rows-\[65\%_15\%_20\%\] {
-    grid-template-rows: 65% 15% 20%;
   }
   .grid-rows-\[80\%_20\%\] {
     grid-template-rows: 80% 20%;
@@ -1183,8 +1214,20 @@
   .bg-gray-100 {
     background-color: var(--color-gray-100);
   }
+  .bg-gray-200 {
+    background-color: var(--color-gray-200);
+  }
+  .bg-pink-100 {
+    background-color: var(--color-pink-100);
+  }
   .bg-pink-200 {
     background-color: var(--color-pink-200);
+  }
+  .bg-pink-300 {
+    background-color: var(--color-pink-300);
+  }
+  .bg-pink-400 {
+    background-color: var(--color-pink-400);
   }
   .bg-red-500 {
     background-color: var(--color-red-500);
@@ -1377,6 +1420,9 @@
   }
   .p-2 {
     padding: calc(var(--spacing) * 2);
+  }
+  .p-4 {
+    padding: calc(var(--spacing) * 4);
   }
   .p-5 {
     padding: calc(var(--spacing) * 5);
