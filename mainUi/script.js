@@ -2,6 +2,12 @@
 const { gsap, Flip, ScrollTrigger } = window;
 gsap.registerPlugin(Flip, ScrollTrigger);
 
+// Set default GSAP properties
+gsap.defaults({
+    duration: 2,
+    ease: "power1.inOut"
+});
+
 // Global DOM elements that are shared across all card animations
 const globalElements = {
     boxTarget: document.querySelector('#boxTarget'),  // Target container for expanded card
@@ -16,45 +22,29 @@ const animations = {
         aspectRatio: 1,
         scale: 0.8,
         backgroundColor: 'blue',
-        duration: 0.5
-    },
-    background: {
-        duration: 0.5,
-        ease: "power1.inOut"
     },
     flip: {
-        duration: 0.5,
-        ease: "power1.inOut",
         absolute: true,
         scale: true,
     },
     button: {
         x: -40,
-        duration: 0.5,
-        ease: 'power1.inOut'
     },
     subsection: {
         opacity: 1,
         display: 'flex',
-        duration: 0.5,
-        ease: 'power1.inOut'
     },
     // Text animations
     buttonText: {
         opacity: 0,
-        duration: 0.3,
-        ease: 'power1.inOut'
     },
     title: {
         opacity: 0,
-        duration: 0.3,
-        ease: "power1.inOut"
     },
     // Other cards fade
     otherCards: {
         opacity: 0,
-        duration: 0.3,
-        ease: "power1.inOut"
+        y:50
     }
 }
 
@@ -62,7 +52,7 @@ const animations = {
  * CardAnimator class - Handles all animations and interactions for a single card
  * @param {number} id - Unique identifier for the card
  */
-function CardAnimator(id) {
+function cardAnimator(id) {
     // Get the main card element and its child elements
     let elem = document.getElementById('card' + id);
     let elements = {
@@ -103,7 +93,7 @@ function CardAnimator(id) {
         subsection: gsap.to(elements.subsection, animations.subsection).pause(),
         buttonText: gsap.to(elements.button.children[0], animations.buttonText).pause(),
         title: gsap.to(elements.title, animations.title).pause(),
-        otherCards: gsap.to(document.querySelectorAll('.card'), animations.otherCards).pause()  // Empty array, will be set during animation
+        otherCards:gsap.to([...document.querySelectorAll('.card')].filter(card => card !== elem), animations.otherCards).pause() 
     }
     let handleBoxTransition, handleBoxTransition2;
 
@@ -119,7 +109,7 @@ function CardAnimator(id) {
         // Fade out other cards
         const otherCards = [...document.querySelectorAll('.card')].filter(card => card !== elem);
         tweens.otherCards.play();
-        
+        console.log([...document.querySelectorAll('.card')].filter(card => card !== elem))
         // Show and animate subsection
         tweens.subsection.play();
         
@@ -149,10 +139,7 @@ function CardAnimator(id) {
         
         // Fade in other cards
         const otherCards = [...document.querySelectorAll('.card')];
-        gsap.to(otherCards, {
-            ...animations.otherCards,
-            opacity: 1
-        });
+        tweens.otherCards.reverse();
 
         // Reverse all animations
         tweens.image.reverse();
@@ -183,8 +170,13 @@ function CardAnimator(id) {
 
 
 // Initialize the page with sections and subsections
-// document.getElementById('main-container').children[0].innerHTML = sectionParser(sections)
-// document.getElementById('main-container').children[1].innerHTML = subsectionParser(subSections)
+document.getElementById('main-container').children[0].innerHTML = sectionParser(sections)
+document.getElementById('main-container').children[1].innerHTML = subsectionParser(subSections)
+
+cardAnimator(0)
+cardAnimator(1)
+cardAnimator(2)
+cardAnimator(3)
 
 
 
@@ -289,9 +281,10 @@ function progressBar(){
     })
 }
 
-progressBar()
 
 
+//single page animations
+// progressBar()
 Array.from(document.getElementsByClassName('fadeOnScroll')).forEach((element)=>{
     ScrollTrigger.create({
         trigger:element,
