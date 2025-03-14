@@ -230,16 +230,6 @@ function progressBar(){
             end: "bottom bottom",
             scrub: true,
             pin:draw.node,
-            // onUpdate: (self) => {
-            //     // Calculate new height based on scroll progress
-            //     const newheight = rectData.height*self.progress;
-                
-            //     // Update progress bar path
-            //     barCurrent.plot(`M ${  rectData.x} ${ rectData.y} 
-            //         A 1 1 0 0 1 ${ rectData.x+   rectData.width} ${  rectData.y} 
-            //         V ${newheight + rectData.y} 
-            //         A 1 1 0 0 1 ${ rectData.x} ${newheight + rectData.y} Z`);
-            //     },
         },
     });
     const points=[]
@@ -282,6 +272,9 @@ function progressBar(){
             onLeave:()=>{
                 index<points.length-1 ? lastHeight+=point.height : NaN
             },
+            onEnterBack:()=>{
+                index==0 ? lastHeight=0 : NaN
+            },
             onUpdate: (self) => {
                 // Calculate new height based on scroll progress
                 const newheight = rectData.height*((point.height*self.progress+lastHeight)/totalHeight)-20;
@@ -297,3 +290,18 @@ function progressBar(){
 }
 
 progressBar()
+
+
+Array.from(document.getElementsByClassName('fadeOnScroll')).forEach((element)=>{
+    ScrollTrigger.create({
+        trigger:element,
+        start: "top 75%",
+        onEnter:()=>{
+            gsap.to(element,{opacity:1,y:-20,duration:0.8})
+        },
+        onLeaveBack:()=>{
+            gsap.to(element,{opacity:0,y:20,duration:0.8})
+        },
+        
+    })
+})

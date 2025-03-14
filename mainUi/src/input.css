@@ -9,3 +9,7 @@
     font-weight: normal;
     font-style: normal;
 }
+.fadeOnScroll{
+    opacity: 0;
+    transform: translateY(20px);
+}
