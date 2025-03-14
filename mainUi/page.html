@@ -10,27 +10,128 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="parser.js" defer></script>
     <script src="sections.js" defer></script>
     <script src="script.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/3.2.0/svg.min.js"></script>
 </head>
 <body class="bg-gray-100">
-    <main id="main-container" class="w-[87%]  mx-auto my-8 bg-white rounded-md shadow-gray-300 shadow-md grid grid-cols-1 grid-rows-1">
-        <div class="w-full h-full grid grid-cols-[20%_80%]">
-            <div id="progress-bar" class="w-full h-full">
+    <main id="main-container" class="w-[87%] m-6 grid grid-cols-1 grid-rows-1 mx-auto ">
+        <div id="breadcrumbs" class="w-full h-12 grid grid-cols-[13%_87%]">
+            <div></div>
+            <div class="w-full h-full flex gap-12">
+                <div class="p-4 cursor-pointer w-fit rounded-md shadow-md shadow-gray-300 bg-white hover:bg-gray-100 transition-colors duration-200">
+
+                    <span>Home</span>
+                </div>
+                <div class="p-4 cursor-pointer w-fit rounded-md shadow-md shadow-gray-300 bg-white hover:bg-gray-100 transition-colors duration-200">
+                    <span>Lessons</span>
+                </div>
+                <div class="p-4 cursor-pointer w-fit rounded-md shadow-md shadow-gray-300 bg-[#b15a84] text-white">
+                    <span>Animation</span>
+                </div>
             </div>
-            <div id="parts-container">
-                <div class="part h-[600px] bg-pink-100 m-4 rounded-lg" data-title="First Part" id="part1">
-                    <h2 class="text-2xl font-bold p-4">First Part</h2>
+        </div>
+        <div class="w-full h-full grid grid-cols-[20%_80%] my-8 bg-white rounded-md shadow-gray-300">
+            <div class="h-[700px]">
+                <div id="progress-bar" class="grid grid-cols-1 grid-rows-1 h-full">
                 </div>
-                <div class="part h-[700px] bg-pink-200 m-4 rounded-lg" data-title="Second Part" id="part2">
-                    <h2 class="text-2xl font-bold p-4">Second Part</h2>
+            </div>
+            
+            <div id="parts-container" class="max-w-4xl h-fit">
+                <div class="part h-fit m-4 rounded-lg p-8" data-title="First Part" id="part1">
+                    <span class="text-indigo-600 font-medium text-sm tracking-wider uppercase mb-2 block">Web Animation</span>
+                    <h2 class="text-4xl font-bold mb-6 text-slate-800 leading-tight">Getting Started with Web Animation</h2>
+                    <div class="prose prose-lg max-w-none">
+                        <p class="text-slate-600 text-lg leading-relaxed mb-6">Animation on the web has come a long way from the early days of GIFs and Flash. Modern web animations are smooth, performant, and can create incredibly engaging user experiences.</p>
+                        <h3 class="text-2xl font-bold mt-8 mb-4 text-slate-700">Why Animation Matters</h3>
+                        <p class="text-slate-600 text-lg leading-relaxed mb-6">Good animation can guide users, provide feedback, and make interfaces feel more natural and intuitive. When used properly, animation adds both functional and aesthetic value to your website.</p>
+                        <ul class="space-y-3 mb-8 pl-6">
+                            <li class="text-slate-600 flex items-start">
+                                <span class="text-indigo-500 mr-2">•</span>
+                                <span>Improves user experience through intuitive interactions</span>
+                            </li>
+                            <li class="text-slate-600 flex items-start">
+                                <span class="text-indigo-500 mr-2">•</span>
+                                <span>Provides clear visual feedback for user actions</span>
+                            </li>
+                            <li class="text-slate-600 flex items-start">
+                                <span class="text-indigo-500 mr-2">•</span>
+                                <span>Makes interfaces more engaging and memorable</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="part h-[900px] bg-pink-300 m-4 rounded-lg" data-title="Third Part" id="part3">
-                    <h2 class="text-2xl font-bold p-4">Third Part</h2>
+
+                <div class="part h-fit m-4 rounded-lg p-8" data-title="Second Part" id="part2">
+                    <span class="text-indigo-600 font-medium text-sm tracking-wider uppercase mb-2 block">Advanced Techniques</span>
+                    <h2 class="text-4xl font-bold mb-6 text-slate-800 leading-tight">Advanced Animation Techniques</h2>
+                    <div class="prose prose-lg max-w-none">
+                        <p class="text-slate-600 text-lg leading-relaxed mb-6">Modern animation libraries like GSAP provide powerful tools for creating complex animations. Let's explore some advanced techniques that can take your animations to the next level.</p>
+                        <h3 class="text-2xl font-bold mt-8 mb-4 text-slate-700">Timeline Animations</h3>
+                        <p class="text-slate-600 text-lg leading-relaxed mb-6">Timelines allow you to sequence multiple animations with precise timing and control. They're perfect for creating complex, multi-step animations that tell a story.</p>
+                        <div class="bg-slate-50 p-6 rounded-lg mb-8 border border-slate-200">
+                            <code class="text-sm text-indigo-600 font-mono">gsap.timeline()
+    .to(element, {duration: 1, x: 100})
+    .to(element, {duration: 0.5, y: 50})</code>
+                        </div>
+                    </div>
                 </div>
-                <div class="part h-[1300px] bg-pink-400 m-4 rounded-lg" data-title="Fourth Part" id="part4">
-                    <h2 class="text-2xl font-bold p-4">Fourth Part</h2>
+
+                <div class="part h-fit m-4 rounded-lg p-8" data-title="Third Part" id="part3">
+                    <span class="text-indigo-600 font-medium text-sm tracking-wider uppercase mb-2 block">ScrollTrigger</span>
+                    <h2 class="text-4xl font-bold mb-6 text-slate-800 leading-tight">ScrollTrigger Mastery</h2>
+                    <div class="prose prose-lg max-w-none">
+                        <p class="text-slate-600 text-lg leading-relaxed mb-6">ScrollTrigger is a powerful GSAP plugin that makes it easy to create scroll-based animations. From simple fade-ins to complex parallax effects, the possibilities are endless.</p>
+                        <h3 class="text-2xl font-bold mt-8 mb-4 text-slate-700">Key Concepts</h3>
+                        <div class="grid grid-cols-2 gap-6 mb-8">
+                            <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
+                                <h4 class="font-bold text-xl mb-3 text-slate-800">Triggers</h4>
+                                <p class="text-slate-600">Define when animations should start and end based on scroll position.</p>
+                            </div>
+                            <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
+                                <h4 class="font-bold text-xl mb-3 text-slate-800">Scrub</h4>
+                                <p class="text-slate-600">Tie animation progress directly to scroll position for precise control.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="part h-fit m-4 rounded-lg p-8" data-title="Fourth Part" id="part4">
+                    <span class="text-indigo-600 font-medium text-sm tracking-wider uppercase mb-2 block">Optimization</span>
+                    <h2 class="text-4xl font-bold mb-6 text-slate-800 leading-tight">Performance Optimization</h2>
+                    <div class="prose prose-lg max-w-none">
+                        <p class="text-slate-600 text-lg leading-relaxed mb-6">Creating smooth animations isn't just about writing the right code—it's also about optimizing for performance. Here are some key considerations for maintaining 60fps animations.</p>
+                        <h3 class="text-2xl font-bold mt-8 mb-4 text-slate-700">Best Practices</h3>
+                        <div class="bg-slate-50 p-6 rounded-lg mb-8 border border-slate-200">
+                            <ul class="space-y-4">
+                                <li class="flex items-center">
+                                    <span class="text-emerald-500 mr-3">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                                        </svg>
+                                    </span>
+                                    <span class="text-slate-700 font-medium">Use transform and opacity for animations</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="text-emerald-500 mr-3">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                                        </svg>
+                                    </span>
+                                    <span class="text-slate-700 font-medium">Avoid animating layout properties</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="text-emerald-500 mr-3">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                                        </svg>
+                                    </span>
+                                    <span class="text-slate-700 font-medium">Implement will-change strategically</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -148,7 +148,7 @@ function CardAnimator(id) {
         elem.appendChild(elements.content);
         
         // Fade in other cards
-        const otherCards = [...document.querySelectorAll('.card')].filter(card => card !== elem);
+        const otherCards = [...document.querySelectorAll('.card')];
         gsap.to(otherCards, {
             ...animations.otherCards,
             opacity: 1
@@ -177,71 +177,34 @@ function CardAnimator(id) {
     elements.button.addEventListener('click', handleBoxTransition);
 }
 
-/**
- * Generates HTML for section cards
- * @param {Array} data - Array of section data
- * @returns {string} HTML string for section cards
- */
-function sectionParser(data) {
-    let str = ``
-    data.forEach((element, index) => {
-        str = str + `<article class="card w-[calc(25%-16px)] m-6 h-[400px] min-w-[200px] aspect-[4/5] grid relative " id="card${index}">
-                <div class="card-background w-full h-full overlap bg-radial from-[#ff8a94] to-[#b15a84] rounded-lg shadow-md origin-top-left"></div>
-                <div class="card-content w-full h-full overlap grid grid-rows-[80%_20%] p-2">
-                    <div class="card-image w-[97%] justify-self-center bg-pink-200 rounded-[15px] h-full">
-                    <img alt="${element.title}" class="w-full h-full object-cover rounded-[15px]">
-                    </div>
-                    <div class="flex flex-row items-center justify-between gap-2">
-                        <h2 class="card-title text-white text-2xl font-bold px-2 tracking-wide drop-shadow-sm hover:scale-105 transition-transform">${element.title}</h2>
-                        <button class="card-button relative right-6 bg-white px-6 h-12 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-100 hover:border-gray-400 hover:shadow-sm transition-all duration-200 cursor-pointer">
-                            <span>View</span>
-                        </button>
-                    </div>
-                </div>
-            </article>`
-    });
-    return str;
-}
 
-/**
- * Generates HTML for subsection cards
- * @param {Array} data - Array of subsection data
- * @returns {string} HTML string for subsection cards
- */
-function subsectionParser(data) {
-    let str = ``
-    data.forEach((element, index) => {
-        str = str + `<article class="sub-section-card w-[calc(25%-16px)] m-6 h-[450px] min-w-[200px] aspect-[4/5] grid relative" id="subsection-card${index}">
-                <div class="card-background w-full h-full overlap bg-radial from-[#ff8a94] to-[#b15a84] rounded-lg shadow-md origin-top-left"></div>
-                <div class="card-content w-full h-full overlap grid grid-rows-[65%_10%_25%] p-2">
-                    <div class="card-image w-[97%] justify-self-center bg-pink-200 rounded-[15px] h-full">
-                        <img  alt="${element.title}" class="w-full h-full object-cover rounded-[15px]">
-                    </div>
-                    <h2 class="card-title text-white text-xl font-bold px-2 tracking-wide drop-shadow-sm ">${element.title}</h2>
-                    <div class="flex flex-col justify-between">
-                        <p class="card-description text-white text-sm px-2 line-clamp-2">${element.description}</p>
-                        <button class="card-button justify-self-center bg-white px-6 h-10 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-100 hover:border-gray-400 hover:shadow-sm transition-all duration-200 cursor-pointer self-end">
-                            <span>View</span>
-                        </button>
-                    </div>
-                </div>
-            </article>`
-    });
-    return str;
-}
+
+
 
 
 // Initialize the page with sections and subsections
 // document.getElementById('main-container').children[0].innerHTML = sectionParser(sections)
 // document.getElementById('main-container').children[1].innerHTML = subsectionParser(subSections)
 
-// Initialize animations for all cards
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function progressBar(){
     // Create SVG canvas for progress bar
     const draw = SVG().addTo(document.getElementById('progress-bar')).size('100%', '100%');
-    draw.node.style.position='fixed'
     const rectData={
         x:50,
         y:50,
@@ -262,21 +225,22 @@ function progressBar(){
     // Create ScrollTrigger animation for progress bar
     gsap.to(barCurrent.node, {
         scrollTrigger: {
-            trigger: "#main-container",
+            trigger: "#parts-container",
             start: "top top",
-            end: "bottom top",
+            end: "bottom bottom",
             scrub: true,
-            onUpdate: (self) => {
-                // Calculate new height based on scroll progress
-                const newheight = rectData.height*self.progress;
+            pin:draw.node,
+            // onUpdate: (self) => {
+            //     // Calculate new height based on scroll progress
+            //     const newheight = rectData.height*self.progress;
                 
-                // Update progress bar path
-                barCurrent.plot(`M ${  rectData.x} ${ rectData.y} 
-                    A 1 1 0 0 1 ${ rectData.x+   rectData.width} ${  rectData.y} 
-                    V ${newheight + rectData.y} 
-                    A 1 1 0 0 1 ${ rectData.x} ${newheight + rectData.y} Z`);
-            }
-        }
+            //     // Update progress bar path
+            //     barCurrent.plot(`M ${  rectData.x} ${ rectData.y} 
+            //         A 1 1 0 0 1 ${ rectData.x+   rectData.width} ${  rectData.y} 
+            //         V ${newheight + rectData.y} 
+            //         A 1 1 0 0 1 ${ rectData.x} ${newheight + rectData.y} Z`);
+            //     },
+        },
     });
     const points=[]
     Array.from(document.getElementById('parts-container').children).forEach((child,index)=>{
@@ -285,7 +249,6 @@ function progressBar(){
             title:child.getAttribute('data-title')
         })
     })
-    console.table(points)
     let totalHeight=0
     let currentHeight=0
     points.forEach((point)=>totalHeight+=point.height)
@@ -299,11 +262,13 @@ function progressBar(){
         console.log((point.height/totalHeight))
         currentHeight+=point.height
     })
+    currentHeight=0
+    let lastHeight=0
     points.forEach((point,index)=>{
         ScrollTrigger.create({
             trigger:document.getElementsByClassName('part')[index],
-            start: "top 13%",
-            end: "bottom 13%",
+            start: "top 50%",
+            end: "bottom 50%",
             onEnter:()=>{
                 point.circle.fill('#b15a84')
                 point.text.fill('#595959')
@@ -312,8 +277,23 @@ function progressBar(){
             onLeaveBack:()=>{
                 point.circle.fill('#f6f3f4')
                 point.text.fill('#bfbfbf')
-            }
+                lastHeight-=point.height
+            },
+            onLeave:()=>{
+                index<points.length-1 ? lastHeight+=point.height : NaN
+            },
+            onUpdate: (self) => {
+                // Calculate new height based on scroll progress
+                const newheight = rectData.height*((point.height*self.progress+lastHeight)/totalHeight)-20;
+                
+                // Update progress bar path
+                barCurrent.plot(`M ${  rectData.x} ${ rectData.y} 
+                    A 1 1 0 0 1 ${ rectData.x+   rectData.width} ${  rectData.y} 
+                    V ${newheight + rectData.y} 
+                    A 1 1 0 0 1 ${ rectData.x} ${newheight + rectData.y} Z`);
+                },
         })
     })
 }
-window.onload = progressBar();
+
+progressBar()
