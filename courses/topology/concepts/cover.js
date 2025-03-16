@@ -1,10 +1,10 @@
-import { Animation, textStyles } from './library.js';
+import { Animation, textStyles } from '../../library.js';
 
-const firstAnimation = new Animation(1000, 500, 'first', 'first');
+const anim = new Animation(1000, 500, 'first', 'first');
 {
     // ===== CONFIGURATION =====
-    const { interiorColor, indicatorColor, borderColor, coverColor } = firstAnimation.colorConfig();
-    const draw = firstAnimation.frame;
+    const { interiorColor, indicatorColor,coverColor } = anim.colorConfig();
+    const draw = anim.frame;
 
     // ===== TEXT CONTENT =====
     const texts = {
@@ -19,30 +19,44 @@ const firstAnimation = new Animation(1000, 500, 'first', 'first');
 
 
     // Create covers
+    let group = draw.group();
     const cover = [];
     for (let i = 0; i < 3; i++) {
         cover.push(
-            draw.polygon('0,0 270,0 270,100 0,100')
+            group.polygon('0,0 270,0 270,100 0,100')
                 .move(0, i * 100)
-                .fill(coverColor)
+                .fill(coverColor).attr({ opacity: 0 })
         );
     }
 
     
     // ===== SHAPE CREATION =====
     // Create main shape
-    const shape = draw.path('M 150 50 C 180 0 315 119 218 140 C 163 150 277 269 139 274 C 4 266 94 210 23 162 C -41 100 92 127 150 50 Z')
+    const shape = group.path('M 150 50 C 180 0 315 119 218 140 C 163 150 277 269 139 274 C 4 266 94 210 23 162 C -41 100 92 127 150 50 Z')
+    .attr({ opacity: 0 })
     .fill(interiorColor);
-    
+
+
+    group.translate(50, 0);
+
+
+
+
 
     // ===== TEXT GROUPS =====
     // Create alpha text group
-    const textGroup = draw.group().attr({ opacity: 0 });
+    const coverNames = draw.group().attr({ opacity: 0 });
     cover.forEach((elem, index) => {
-        const holder = textGroup.nested();
-        holder.move(680, 20 + 130 * index);
-        firstAnimation.latex(texts.deltas[index], holder.node);
+        const holder = coverNames.nested();
+        holder.move(740, 20 + 130 * index);
+        anim.latex(texts.deltas[index], holder.node);
     });
+
+
+
+
+
+
 
     // Create equation elements
     const deltas = [];
@@ -52,14 +66,19 @@ const firstAnimation = new Animation(1000, 500, 'first', 'first');
             : deltas.push('U_');
     }
     
-    const deltasEquation = firstAnimation.createDynamicText(deltas)
+    const deltasEquation = anim.createDynamicText(deltas)
         .move(500, 400)
         .attr({ opacity: 0 });
 
-    const latexDeltas = firstAnimation.createDynamicLatex(
+    const latexDeltas = anim.createDynamicLatex(
         deltas.filter((elem, index) => index % 2 == 1)
             .map(() => texts.unions)
     ).attr({ opacity: 0 });
+
+
+
+
+
 
     // Position union symbols
     latexDeltas.children().forEach((elem, index) => {
@@ -67,14 +86,17 @@ const firstAnimation = new Animation(1000, 500, 'first', 'first');
         elem.y(deltasEquation.children()[2 * index + 1].y());
     });
 
+
+
+
     // Create cover family elements
-    const coverFamily = firstAnimation.createDynamicText(['{Ui}_____', 'U S'])
+    const coverFamily = anim.createDynamicText(['{Ui}_____', 'U S'])
         .move(500, 400);
     coverFamily.children().forEach((elem) => {
         elem.attr({ opacity: 0 });
     });
 
-    const latexCoverFamily = firstAnimation.createDynamicLatex([
+    const latexCoverFamily = anim.createDynamicLatex([
         texts.coverFamily.set,
         texts.coverFamily.relation
     ]);
@@ -85,31 +107,33 @@ const firstAnimation = new Animation(1000, 500, 'first', 'first');
     });
 
     // ===== ANIMATION STEPS =====
-    firstAnimation.initSteps([
+    anim.initSteps([
         // Initial state
         () => {},
-
+        ()=>anim.fadeBounce(shape),
         // Show set S
         () => {
-            firstAnimation.fadeNextStep(
-                firstAnimation.arrow(400, 300, 200, 200, 300, 200, indicatorColor, true),
-                draw.text(texts.introduction)
-                    .move(450, 300)
+            anim.fadeNextStep(
+                anim.arrow(500, 300, 240, 270, 410, 360, indicatorColor, true),
+                anim.fadeText(texts.introduction)
+                    .move(550, 300)
                     .attr(textStyles.explanation)
             );
         },
+
+        ()=>cover.forEach((elem)=>elem.animate(500).attr({opacity: 1})),
 
         // Move covers
         () => {
             cover.forEach((elem, index) => {
                 elem.animate(1000).dmove(370, 30 * index);
-                firstAnimation.shakeAnimation(elem, 3, 100, () => {}, 100 * index);
+                anim.shakeAnimation(elem, 3, 100, () => {}, 100 * index);
             });
         },
 
         // Show alpha text
         () => {
-            textGroup.animate(500).attr({ opacity: 1 });
+            coverNames.animate(500).attr({ opacity: 1 });
         },
 
         // Reset covers
@@ -121,7 +145,7 @@ const firstAnimation = new Animation(1000, 500, 'first', 'first');
 
         // Move text to equation
         () => {
-            textGroup.children().forEach((span, index) => {
+            coverNames.children().forEach((span, index) => {
                 const child = deltasEquation.children()[2 * index];
                 span.animate(500).move(child.x(), child.y());
             });
@@ -137,7 +161,7 @@ const firstAnimation = new Animation(1000, 500, 'first', 'first');
 
         // Transition to cover family
         () => {
-            textGroup.children().forEach((elem) => {
+            coverNames.children().forEach((elem) => {
                 elem.animate(400)
                     .move(deltasEquation.x(), deltasEquation.y())
                     .attr({ opacity: 0 });
@@ -160,11 +184,11 @@ const firstAnimation = new Animation(1000, 500, 'first', 'first');
 
 // ===== EVENT HANDLERS =====
 window.onload = function() {
-    firstAnimation.engine[0]();
+    anim.engine[0]();
     
     const handleMouseMove = (event) => {
-        firstAnimation.updateMousePosition(event);
+        anim.updateMousePosition(event);
     };
     
-    draw.node.addEventListener('mousemove', handleMouseMove);
+    anim.frame.node.addEventListener('mousemove', handleMouseMove);
 };

@@ -1,4 +1,4 @@
-import { Animation, textStyles } from './library.js';
+import { Animation, textStyles } from './../../library.js';
 
 const anim = new Animation(1200, 500, 'first', 'first');
 {

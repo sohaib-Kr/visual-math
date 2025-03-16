@@ -60,5 +60,8 @@ export class Animation {
     fadeText(text, element){
         return utiles.fadeText.bind(this)(text,)
     }
+    fadeBounce(shape){
+        return utiles.fadeBounce(shape)
+    }
 } 
 export const textStyles=utiles.textStyles
