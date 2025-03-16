@@ -10,6 +10,7 @@ export class Animation {
             </div>`;
         document.getElementById(parent).appendChild(this.wrapper);
         this.frame = SVG(`#${id}Frame`).size(height, width);
+        this.frame.attr({style: 'background-color: #170734;padding: 50px;border-radius: 50px;'})
         this.step = 0;
         this.delay = 1000;
         this.engine = [() => {
@@ -32,13 +33,16 @@ export class Animation {
         return utiles.arrow(this.frame,sx, sy, ex, ey, cx, cy, color, vivusConfirmed)
     }
     createDynamicText(text){
-        return utiles.createDynamicText(this.frame,text)
+        return utiles.createDynamicText.bind(this)(text)
     }
     createDynamicLatex(text){
-        return utiles.createDynamicLatex(this.frame,text)
+        return utiles.createDynamicLatex.bind(this)(text)
     }
     colorConfig(){
         return utiles.colorConfig(this.frame)
+    }
+    latex(text, element){
+        return utiles.latex.bind(this)(text, element)
     }
     updateMousePosition(event) {
         let mousePositionElement = document.getElementById('mouse');
@@ -49,6 +53,12 @@ export class Animation {
         const mouseY = event.clientY - rect.top;
         // Update the text inside the <p> element
         mousePositionElement.textContent = `Mouse Position: (${mouseX.toFixed(2)}, ${mouseY.toFixed(2)})`;
+    }
+    shakeAnimation(element, times, amplitude, callback, delay){
+        return utiles.shakeAnimation.bind(this)(element, times, amplitude, callback, delay)
+    }
+    fadeText(text, element){
+        return utiles.fadeText.bind(this)(text,)
     }
 } 
 export const textStyles=utiles.textStyles

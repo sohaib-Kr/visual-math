@@ -1,13 +1,11 @@
 export function colorConfig(draw){
-    let gradient = draw.gradient('radial', function(add) {
-        add.stop(0, '#DAACF6')
-        add.stop(1, '#874CC3')
-    })
     let visualMath = {
-        interiorColor: gradient.from(0.1, 0.2).to(0.5, 0.5).radius(1),
-        indicatorColor: '#ff7700',
+        interiorColor:'#704ddf',
+        indicatorColor: '#e69443',
         borderColor: '#e6c300',
         coverColor: '#99c3e0',
+        mainSegmentColor: '#45159d',
+        segmentColor:'#e382c4',
         textStyles: {
             explanation: {
                 style: 'font:300 24px Palatino, serif',

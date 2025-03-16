@@ -1,10 +1,10 @@
 import { Animation, textStyles } from './library.js';
 
-const firstAnimation = new Animation(1200, 500, 'first', 'first');
+const anim = new Animation(1200, 500, 'first', 'first');
 {
     // ===== CONFIGURATION =====
-    const { interiorColor, indicatorColor, borderColor, coverColor } = firstAnimation.colorConfig();
-    var draw = firstAnimation.frame;
+    const {coverColor, mainSegmentColor, segmentColor } = anim.colorConfig();
+    var draw = anim.frame;
 
     // ===== TEXT CONTENT =====
     const texts = {
@@ -36,7 +36,7 @@ const firstAnimation = new Animation(1200, 500, 'first', 'first');
     // Create main segment and interval
     const mainSegment = group.line(0, 0, 1000, 0)
         .stroke({
-            color: '#d9d9d9',
+            color: mainSegmentColor,
             width: 8,
             linecap: 'round'
         })
@@ -44,7 +44,7 @@ const firstAnimation = new Animation(1200, 500, 'first', 'first');
 
     const interval = group.line(200, 0, 200, 0)
         .stroke({
-            color: '#874CC3',
+            color: segmentColor,
             width: 8,
             linecap: 'round'
         })
@@ -54,7 +54,7 @@ const firstAnimation = new Animation(1200, 500, 'first', 'first');
     group.translate(100, 300);
 
     // ===== ANIMATION STEPS =====
-    firstAnimation.initSteps([
+    anim.initSteps([
         // Show main segment
         () => {
             mainSegment.animate(500).attr({ opacity: 1 });
@@ -70,9 +70,9 @@ const firstAnimation = new Animation(1200, 500, 'first', 'first');
 
         // Show introduction
         () => {
-            firstAnimation.fadeNextStep(
-                firstAnimation.arrow(600, 150, 500, 270, 450, 150, indicatorColor, true),
-                draw.text(texts.introduction)
+            anim.fadeNextStep(
+                anim.arrow(600, 150, 500, 270, 450, 150, segmentColor, true),
+                anim.fadeText(texts.introduction)
                     .move(630, 150)
                     .attr(textStyles.explanation)
             );
@@ -86,8 +86,8 @@ const firstAnimation = new Animation(1200, 500, 'first', 'first');
 
         // Show explanation
         () => {
-            firstAnimation.fadeNextStep(
-                draw.text(texts.explanation)
+            anim.fadeNextStep(
+                anim.fadeText(texts.explanation)
                     .move(350, 140)
                     .attr(textStyles.explanation)
             );
@@ -112,9 +112,9 @@ const firstAnimation = new Animation(1200, 500, 'first', 'first');
 
         // Show infinite text
         () => {
-            firstAnimation.fadeNextStep(
-                firstAnimation.arrow(300, 200, 700, 200, 500, 200, coverColor, true),
-                draw.text(texts.infinite)
+            anim.fadeNextStep(
+                anim.arrow(300, 200, 700, 200, 500, 200, coverColor, true),
+                anim.fadeText(texts.infinite)
                     .move(300, 140)
                     .attr(textStyles.explanation)
             );
@@ -133,8 +133,8 @@ const firstAnimation = new Animation(1200, 500, 'first', 'first');
 
         // Show conclusion
         () => {
-            firstAnimation.fadeNextStep(
-                draw.text(texts.conclusion)
+            anim.fadeNextStep(
+                anim.fadeText(texts.conclusion)
                     .move(300, 140)
                     .attr(textStyles.explanation)
             );
@@ -144,11 +144,11 @@ const firstAnimation = new Animation(1200, 500, 'first', 'first');
 
 // ===== EVENT HANDLERS =====
 window.onload = function() {
-    firstAnimation.engine[0]();
+    anim.engine[0]();
     
     const handleMouseMove = (event) => {
-        firstAnimation.updateMousePosition(event);
+        anim.updateMousePosition(event);
     };
     
-    draw.node.addEventListener('mousemove', handleMouseMove);
+    anim.frame.node.addEventListener('mousemove', handleMouseMove);
 };
