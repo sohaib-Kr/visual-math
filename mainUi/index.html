@@ -15,6 +15,15 @@
     <script src="script.js" defer></script>
 </head>
 <body class="bg-gray-100">
+    <div class="w-full h-full bg-white fixed top-0 left-0 z-10 grid place-items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" id="logo">
+            <g>
+                <path d="M 10 -12 L 21 15 L 41 -12 L 37 -15 L 22 6 L 14 -14 Z " fill="black" />
+                <path d="M 37 -11 V -15 H 70 V -11 Z " fill="black" id="root"/>
+                <path d="M 36 16 L 42 -8 L 42 -8 L 47 -8 L 52 -1 L 58 -8 L 64 -8 L 62 17 L 58 17 L 60 -5 L 51 5 L 45 -4 L 40 16 Z" fill="black" id="root2"/>
+            </g>
+        </svg>
+    </div>
     <main id="main-container" class="w-[83%] h-[600px] mx-auto my-8 bg-white rounded-md shadow-gray-300 shadow-md grid grid-cols-1 grid-rows-1">
         <!-- Card container -->
         <div class="flex flex-wrap justify-between gap-12 overlap overflow-hidden rounded-md">
@@ -40,5 +49,19 @@
         </div>
     </main>
 </body>
+<script>
+    const logo = document.getElementById('logo').children[0];
+    document.getElementById('logo').setAttribute('viewBox',`0 0 ${window.innerWidth} ${window.innerHeight}`);
+    logo.style.transform = `translate(${window.innerWidth/2-200}px, ${window.innerHeight/2}px) scale(2)`;
+    // Create clip path animation
+    const clipPath = gsap.fromTo('#root', {
+            clipPath: "polygon(0% 0%, 0% 100%, 100% 100%, 100% 0%)",
+        }, {
+            clipPath: "polygon(100% 0%, 100% 100%, 100% 100%, 100% 0%)",
+            duration: 1.5,
+            ease: "power2.inOut"
+        });
+    clipPath.play();
+</script>
 </html>
 
