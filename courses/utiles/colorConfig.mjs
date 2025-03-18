@@ -6,6 +6,9 @@ export function colorConfig(draw){
         coverColor: '#99c3e0',
         mainSegmentColor: '#45159d',
         segmentColor:'#e382c4',
+        segmentBorderColor:'#f1c1e2',
+        coverSegmentColor:'#76afd5',
+        coverSegmentBorderColor:'#c4deed',
         textStyles: {
             explanation: {
                 style: 'font:300 24px Palatino, serif',
