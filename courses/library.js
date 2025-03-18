@@ -17,8 +17,8 @@ export class Animation {
             this.step += 1;
             this.step < this.engine.length ? (() => {
                 document.getElementById('indexer').innerText = this.step;
-                this.engine[this.step]();
-                setTimeout(() => this.engine[0](), this.delay);
+                try{this.engine[this.step]();
+                setTimeout(() => this.engine[0](), this.delay);}catch(e){console.error('error at step '+this.step+' '+e)}
             })() : NaN;
         }];
     }
@@ -29,20 +29,20 @@ export class Animation {
     initSteps(steps) {
         this.engine = this.engine.concat(steps);
     }
-    arrow(sx, sy, ex, ey, cx, cy, color, vivusConfirmed){
-        return utiles.arrow(this.frame,sx, sy, ex, ey, cx, cy, color, vivusConfirmed)
+    arrow(...params){
+        return utiles.arrow.bind(this)(...params)
     }
-    createDynamicText(text){
-        return utiles.createDynamicText.bind(this)(text)
+    createDynamicText(...params){
+        return utiles.createDynamicText.bind(this)(...params)
     }
-    createDynamicLatex(text){
-        return utiles.createDynamicLatex.bind(this)(text)
+    createDynamicLatex(...params){
+        return utiles.createDynamicLatex.bind(this)(...params)
     }
     colorConfig(){
         return utiles.colorConfig(this.frame)
     }
-    latex(text, element){
-        return utiles.latex.bind(this)(text, element)
+    latex(...params){
+        return utiles.latex.bind(this)(...params)
     }
     updateMousePosition(event) {
         let mousePositionElement = document.getElementById('mouse');
@@ -54,14 +54,14 @@ export class Animation {
         // Update the text inside the <p> element
         mousePositionElement.textContent = `Mouse Position: (${mouseX.toFixed(2)}, ${mouseY.toFixed(2)})`;
     }
-    shakeAnimation(element, times, amplitude, callback, delay){
-        return utiles.shakeAnimation.bind(this)(element, times, amplitude, callback, delay)
+    shakeAnimation(...params){
+        return utiles.shakeAnimation.bind(this)(...params)
     }
-    fadeText(text, element){
-        return utiles.fadeText.bind(this)(text,)
+    fadeText(...params){
+        return utiles.fadeText.bind(this)(...params)
     }
-    fadeBounce(shape){
-        return utiles.fadeBounce(shape)
+    fadeBounce(...params){
+        return utiles.fadeBounce.bind(this)(...params)
     }
 } 
 export const textStyles=utiles.textStyles

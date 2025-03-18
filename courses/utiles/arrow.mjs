@@ -1,7 +1,6 @@
-export function arrow(draw,sx, sy, ex, ey, cx, cy, color, vivusConfirmed) {
+export function arrow(sx, sy, ex, ey, cx, cy, color, vivusConfirmed) {
     // Draw the curved path
-    let width = draw.width();
-    let height = draw.height();
+    let draw=this.frame;
     let startX = sx;
     let startY = sy;
     let endX = ex;

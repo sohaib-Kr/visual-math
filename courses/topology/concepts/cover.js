@@ -62,8 +62,8 @@ const anim = new Animation(1000, 500, 'first', 'first');
     const deltas = [];
     for (let i = 0; i < 5; i++) {
         i % 2 == 0 
-            ? deltas.push('a_' + (i/2 + 1))
-            : deltas.push('U_');
+            ? deltas.push('a___' + (i/2 + 1))
+            : deltas.push('U__');
     }
     
     const deltasEquation = anim.createDynamicText(deltas)
@@ -90,7 +90,7 @@ const anim = new Animation(1000, 500, 'first', 'first');
 
 
     // Create cover family elements
-    const coverFamily = anim.createDynamicText(['{Ui}_____', 'U S'])
+    const coverFamily = anim.createDynamicText(['{Ui}_______', 'U S'])
         .move(500, 400);
     coverFamily.children().forEach((elem) => {
         elem.attr({ opacity: 0 });

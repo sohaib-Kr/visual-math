@@ -4,7 +4,10 @@ export const textStyles = {
         style: 'font:300 24px Palatino, serif',
         fill: '#5ed4c6',
         class: 'explanation-text',
-        opacity: 0
+    },
+    latex: {
+        font: '300 24px Palatino, serif',
+        color: '#5ed4c6',
     },
     equation: {
         style: 'font:500 24px Palatino, serif',

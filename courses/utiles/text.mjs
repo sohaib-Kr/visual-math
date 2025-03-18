@@ -7,12 +7,25 @@ function createDynamicText(text){
     return x;
 }
 
-function latex(inputString,elem) {
-    let holder=this.frame.foreignObject(100,50,'<div></div>')
-    elem.appendChild(holder.node)
-    return katex.render(inputString, holder.node, {
-        throwOnError: false
-    });
+function latex(inputString,parent,textStyle) {
+    const regularText=inputString.split('/').filter((elem,index)=>index%2==0)
+    const latexText=inputString.split('/').filter((elem,index)=>index%2==1)
+    let result=document.createElement('p')
+    regularText.forEach((elem,index)=>{
+        result.innerHTML+=elem+'<span class="latex"></span>'
+    })
+    const latexSpanList=result.querySelectorAll('.latex')
+    latexText.forEach((elem,index)=>{
+        katex.render(elem, latexSpanList[index], {
+            throwOnError: true,
+            displayMode: false
+        });
+    })
+    let holder=this.frame.foreignObject(1000,1000,'<div></div>')
+    console.log(result)
+    Object.assign(result.style,textStyle)
+    holder.node.appendChild(result)
+    parent.appendChild(holder.node)
 }
 
 function createDynamicLatex(text){

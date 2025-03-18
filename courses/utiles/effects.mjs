@@ -30,7 +30,7 @@ export function fadeText(text){
     return textElement
 }
 
-export function fadeBounce(shape){
+export function fadeBounce(shape, callback=()=>{}){
     shape.transform({scale: [0.7, 0.7]});
     shape.animate({duration:300,easing:'<>'}).transform({scale: [1.3, 1.3]}).attr({opacity: 1})
     .animate({duration: 200}).transform({scale: [1, 1]})
@@ -38,5 +38,6 @@ export function fadeBounce(shape){
     .animate({duration: 100}).transform({scale: [1, 1]})
     .animate({duration:100,easing:'<>'}).transform({scale: [1.05, 1.05]})
     .animate({duration: 50}).transform({scale: [1, 1]})
+    .after(callback)
     return shape
 }
