@@ -102,7 +102,7 @@ const anim = new Animation(1200, 600, 'first', 'first');
 
 	]);
 }
-
+ 
 // ===== EVENT HANDLERS =====
 window.onload = function() {
 	anim.engine[0]();
