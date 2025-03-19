@@ -1,0 +1,17 @@
+---
+const {index,title, description} = Astro.props;
+---
+<div class="w-[calc(25%-16px)] m-6 h-[400px] min-w-[200px] aspect-[4/5] grid relative ">
+    <div class="card-background w-full h-full overlap bg-radial from-[#ff8a94] to-[#b15a84] rounded-lg shadow-md origin-top-left"></div>
+    <div class="card-content w-full h-full overlap grid grid-rows-[80%_20%] p-2">
+        <div class="card-image w-[97%] justify-self-center bg-pink-200 rounded-[15px] h-full">
+        <img alt={description} class="w-full h-full object-cover rounded-[15px]">
+        </div>
+        <div class="flex flex-row items-center justify-between gap-2">
+            <h2 class="card-title text-white text-2xl font-bold px-2 tracking-wide drop-shadow-sm hover:scale-105 transition-transform">{title}</h2>
+            <button class="card-button relative right-6 bg-white px-6 h-12 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-100 hover:border-gray-400 hover:shadow-sm transition-all duration-200 cursor-pointer">
+                <span>View</span>
+            </button>
+        </div>
+    </div>
+</div>

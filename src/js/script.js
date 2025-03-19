@@ -1,5 +1,3 @@
-import { sectionParser, subsectionParser } from './parser.js';
-import { sections, subSections } from './sections.js';
 import { gsap } from "gsap";
 import { Flip } from "gsap/Flip";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -174,8 +172,6 @@ function cardAnimator(id) {
 
 
 // Initialize the page with sections and subsections
-document.getElementById('main-container').children[0].innerHTML = sectionParser(sections)
-document.getElementById('main-container').children[1].innerHTML = subsectionParser(subSections)
 
 cardAnimator(0)
 cardAnimator(1)

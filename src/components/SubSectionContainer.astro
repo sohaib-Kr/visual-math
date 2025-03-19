@@ -1,0 +1,10 @@
+---
+const {index} = Astro.props;
+import {sections} from '../js/sections.js';
+import SubSectionCard from './SubSectionCard.astro';
+---
+
+<div class="subsection-container  hidden flex-wrap justify-between gap-6 overlap overflow-hidden rounded-md opacity-0 " 
+           id={`subsection-container${index}`}>
+{sections[index].subsections.map((element,index)=>(<SubSectionCard index={index} title={element.title} description={element.description} />))}
+           </div>

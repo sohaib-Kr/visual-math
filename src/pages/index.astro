@@ -1,46 +1,22 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import {sections} from '../js/sections.js';
+import SectionCard from '../components/SectionCard.astro';
+import SubSectionContainer from '../components/SubSectionContainer.astro';
 ---
 <Layout>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-    <script src="../js/script.js"></script>
-</head>
-<body class="bg-gray-100">
-    <div class="w-full h-full bg-white fixed top-0 left-0 z-10 grid place-items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="150px" height="300px" id="logo">
-            <g>
-                <path d="M 10 -12 L 21 15 L 41 -12 L 37 -15 L 22 6 L 14 -14 Z " id="part1" fill="#f4d10b" />
-                <path d="M 37 -11 V -15 H 70 V -11 Z " style="opacity: 0;" fill="#f4d10b" id="part2"/>
-                <path d="M 36 16 L 42 -8 L 42 -8 L 47 -8 L 52 -1 L 58 -8 L 64 -8 L 62 17 L 58 17 L 60 -5 L 51 5 L 45 -4 L 40 16 Z" style="opacity: 0;" fill="#b300a7" id="part3"/>
-            </g>
-        </svg>
-    </div>
-    <div class="w-full h-[100px] grid grid-cols-[10%_90%] grid-rows-1" >
-        <div class="bg-red-500" id="logo-container"></div>
-    </div>
     <main id="main-container" class="w-[83%] h-[600px] mx-auto my-8 bg-white rounded-md shadow-gray-300 shadow-md grid grid-cols-1 grid-rows-1">
         <!-- Card container -->
         <div class="flex flex-wrap justify-between gap-12 overlap overflow-hidden rounded-md">
+            {sections.map((element,index)=> (<SectionCard index={index} title={element.title} description={element.description} /> ))}
         </div>
 
         <!-- Subsection container -->
-        <div class="subsection-container hidden flex-wrap justify-between gap-6 overlap overflow-hidden rounded-md opacity-0 " id="subsection-container0">
-            
-            
-        </div><div class="subsection-container  hidden flex-wrap justify-between gap-6 overlap overflow-hidden rounded-md opacity-0 " id="subsection-container1">
-            
-            
-        </div><div class="subsection-container  hidden flex-wrap justify-between gap-12 overlap overflow-hidden rounded-md opacity-0 " id="subsection-container2">
-            
-        </div><div class="subsection-container hidden flex-wrap justify-between gap-12 overlap overflow-hidden rounded-md opacity-0 " id="subsection-container3">
-            
-        </div>
         
-        <!-- Target container -->
+        {sections.map((elem,index)=> (<SubSectionContainer index={index} />))}
+        
+            
+        
         <div class="h-[200px] w-[100%] overlap grid">
             <div id="boxTarget" class="justify-self-end w-[200px] h-[300px] relative right-6">
             </div>
