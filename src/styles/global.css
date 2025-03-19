@@ -1,0 +1,15 @@
+@import "tailwindcss";
+.overlap{
+    @apply row-start-1 row-end-2 col-start-1 col-end-2;
+}
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins.woff2') format('woff2'),
+         url('../fonts/Poppins.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+.fadeOnScroll{
+    opacity: 0;
+    transform: translateY(20px);
+}
