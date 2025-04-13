@@ -1,8 +1,7 @@
 ---
-
 import Lesson from '../../layouts/Lesson.astro';
 import * as short from '../../components/blog'
-const {Title,SubHead,Paragraph,Part}=short
+const {Title,SubHead,Paragraph,Part,AnimationFrame}=short
 title: "Understanding Topological Interior Concepts"
 description: "A brief introduction to the fundamental concept of interior in topology"
 pubDate: 2023-11-20
@@ -30,4 +29,9 @@ draft: false
 3. **Idempotent**: $(A^\circ)^\circ = A^\circ$
 4. **Intersection Preservation**: $(A \cap B)^\circ = A^\circ \cap B^\circ$
 </Part>
+<AnimationFrame id="first" />
 </Lesson>
+<script>
+import { anim } from "../../lib/lessons/topology/concepts/noncompact2d";
+
+anim.engine[0]()</script>

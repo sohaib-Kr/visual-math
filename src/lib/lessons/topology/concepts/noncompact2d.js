@@ -1,6 +1,6 @@
 import { vMathAnimation, textStyles } from '../../../library.js';
 
-export const anim = new vMathAnimation(1200, 600, 'first', 'first');
+export const anim = new vMathAnimation(1200, 800, 'first', 'first');
 {
 	// ===== CONFIGURATION =====
 	const { interiorColor, indicatorColor, coverColor, backgroundColor} = anim.colorConfig();

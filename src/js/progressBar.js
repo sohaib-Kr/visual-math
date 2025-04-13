@@ -53,7 +53,6 @@ function progressBar(){
         .fill('#bfbfbf')
         .cy(rectData.y+rectData.height*(currentHeight/totalHeight))
         .x(rectData.x+40)
-        console.log((point.height/totalHeight))
         currentHeight+=point.height
     })
     currentHeight=0
