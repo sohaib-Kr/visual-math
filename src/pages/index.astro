@@ -5,7 +5,7 @@ import SectionCard from '../components/SectionCard.astro';
 import SubSectionContainer from '../components/SubSectionContainer.astro';
 ---
 <Layout>
-    <main id="main-container" class="w-[83%] h-[600px] mx-auto my-8 bg-white rounded-md shadow-gray-300 shadow-md grid grid-cols-1 grid-rows-1">
+    <main id="main-container" class="w-[83%] h-fit mx-auto my-8 bg-white rounded-md shadow-gray-300 shadow-md grid grid-cols-1 grid-rows-1">
         <!-- Card container -->
         <div class="flex flex-wrap justify-between gap-12 overlap overflow-hidden rounded-md">
             {sections.map((element,index)=> (<SectionCard index={index} title={element.title} description={element.description} /> ))}

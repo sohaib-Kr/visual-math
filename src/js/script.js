@@ -6,7 +6,7 @@ gsap.registerPlugin(Flip, ScrollTrigger);
 
 // Set default GSAP properties
 gsap.defaults({
-    duration: 2,
+    duration: 0.5,
     ease: "power1.inOut"
 });
 
@@ -16,6 +16,7 @@ const globalElements = {
     container: document.querySelector('#main-container'),  // Main container for layout calculations
 }
 
+var initialScrollPosition
 // Store all animations
 const animations = {
     // Card animations
@@ -110,14 +111,14 @@ function cardAnimator(id) {
 
         // Fade out other cards
         const otherCards = [...document.querySelectorAll('.card')].filter(card => card !== elem);
+
         tweens.otherCards.play();
-        console.log([...document.querySelectorAll('.card')].filter(card => card !== elem))
-        // Show and animate subsection
-        tweens.subsection.play();
+        tweens.background.play()
+        tweens.subsection.play()
+
         
         // Run all animations
         tweens.image.play();
-        tweens.background.play();
         tweens.button.play();
         
         // Update button text and event listeners
@@ -130,6 +131,14 @@ function cardAnimator(id) {
 
         // Fade out title
         tweens.title.play();
+        initialScrollPosition={top:window.scrollY,left:0,behavior:'smooth'}
+        
+    console.log(initialScrollPosition)
+        window.scrollTo({
+            top:0,
+            left:0,
+            behavior:'smooth'
+        })
     }
 
     /**
@@ -160,6 +169,7 @@ function cardAnimator(id) {
 
         // Fade in title
         tweens.title.reverse();
+        window.scrollTo(initialScrollPosition)
     }
 
     // Initialize click event listener
@@ -312,65 +322,65 @@ Array.from(document.getElementsByClassName('fadeOnScroll')).forEach((element)=>{
 
 
 
-const logo = document.getElementById('logo').children[0];
-// document.getElementById('logo').setAttribute('viewBox',`0 0 ${window.innerWidth} ${window.innerHeight}`);
-logo.style.transform = `translate(20px, 200px) scale(2)`;
+// const logo = document.getElementById('logo').children[0];
+// // document.getElementById('logo').setAttribute('viewBox',`0 0 ${window.innerWidth} ${window.innerHeight}`);
+// logo.style.transform = `translate(20px, 200px) scale(2)`;
 
 
-let state=Flip.getState('#logo');
-gsap.timeline({
-    repeat: 0,
-    repeatDelay: 0.5,
-    onComplete: () => {
-        gsap.fromTo('#part2', {
-            opacity: 1,
-            clipPath: "polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%)",
-        }, {
-            clipPath: "polygon(0% 0%, 0% 100%, 100% 100%, 100% 0%)",
-            duration: 1.5,
-            ease: "power2.inOut",
-            onComplete: () => {
-                gsap.to('#part3', {
-                    opacity: 1,
-                    duration: 0.5,
-                    ease: "power2.out",
-                    onComplete: () => {
-                        console.log(document.getElementById('logo').parentNode)
-                        document.getElementById('logo').parentNode.style.display='none'
-                        document.getElementById('logo-container').appendChild(document.getElementById('logo'))
-                        logo.style.transform='translate(0px, 50px) scale(1.5)'
+// let state=Flip.getState('#logo');
+// gsap.timeline({
+//     repeat: 0,
+//     repeatDelay: 0.5,
+//     onComplete: () => {
+//         gsap.fromTo('#part2', {
+//             opacity: 1,
+//             clipPath: "polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%)",
+//         }, {
+//             clipPath: "polygon(0% 0%, 0% 100%, 100% 100%, 100% 0%)",
+//             duration: 1.5,
+//             ease: "power2.inOut",
+//             onComplete: () => {
+//                 gsap.to('#part3', {
+//                     opacity: 1,
+//                     duration: 0.5,
+//                     ease: "power2.out",
+//                     onComplete: () => {
+//                         console.log(document.getElementById('logo').parentNode)
+//                         document.getElementById('logo').parentNode.style.display='none'
+//                         document.getElementById('logo-container').appendChild(document.getElementById('logo'))
+//                         logo.style.transform='translate(0px, 50px) scale(1.5)'
 
-                        Flip.from(state, {
-                            duration: 0.5,
-                            ease: "power2.out",
-                        })
-                    }
-                })
-            }
-        })
-    }
-}).to('#part1', {
-    y:-50,
-    duration: 0.7,
-    ease: "power2.out",
-}).to('#part1', {
-    y:0,
-    duration: 0.7,
-    ease: "power2.in",
-}).to('#part1', {
-    y:-20,
-    duration: 0.3,
-    ease: "power2.out",
-}).to('#part1', {
-    y:0,
-    duration: 0.3,
-    ease: "power2.in",
-}).to('#part1', {
-    y:-7,
-    duration: 0.2,
-    ease: "power2.out",
-}).to('#part1', {
-    y:0,
-    duration: 0.1,
-    ease: "power2.in",
-})
+//                         Flip.from(state, {
+//                             duration: 0.5,
+//                             ease: "power2.out",
+//                         })
+//                     }
+//                 })
+//             }
+//         })
+//     }
+// }).to('#part1', {
+//     y:-50,
+//     duration: 0.7,
+//     ease: "power2.out",
+// }).to('#part1', {
+//     y:0,
+//     duration: 0.7,
+//     ease: "power2.in",
+// }).to('#part1', {
+//     y:-20,
+//     duration: 0.3,
+//     ease: "power2.out",
+// }).to('#part1', {
+//     y:0,
+//     duration: 0.3,
+//     ease: "power2.in",
+// }).to('#part1', {
+//     y:-7,
+//     duration: 0.2,
+//     ease: "power2.out",
+// }).to('#part1', {
+//     y:0,
+//     duration: 0.1,
+//     ease: "power2.in",
+// })
