@@ -1,3 +1,4 @@
+import katex from 'katex';
 function createDynamicText(text){
     let x = this.frame.text(function (add) {
         text.forEach((elem) => {

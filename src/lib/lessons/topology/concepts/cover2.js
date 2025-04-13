@@ -1,6 +1,6 @@
-import { Animation, textStyles } from './../../library.js';
+import { vMathAnimation, textStyles } from '../../../library.js';
 
-const anim = new Animation(1200, 500, 'first', 'first');
+export const anim = new vMathAnimation(1200, 800, 'first', 'first');
 {
     // ===== CONFIGURATION =====
     const {coverColor, mainSegmentColor, segmentColor } = anim.colorConfig();

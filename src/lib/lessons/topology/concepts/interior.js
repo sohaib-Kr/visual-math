@@ -1,6 +1,6 @@
-import { Animation, textStyles } from '../../../library.js';
+import { vMathAnimation, textStyles } from '../../../library.js';
 
-const anim = new Animation(1200, 600, 'first', 'first');
+export const anim = new vMathAnimation(1200, 800, 'first', 'first');
 {
 	// ===== CONFIGURATION =====
 	const { interiorColor, indicatorColor, borderColor } = anim.colorConfig();
@@ -103,13 +103,3 @@ const anim = new Animation(1200, 600, 'first', 'first');
 	]);
 }
  
-// ===== EVENT HANDLERS =====
-window.onload = function() {
-	anim.engine[0]();
-	
-	const handleMouseMove = (event) => {
-		anim.updateMousePosition(event);
-	};
-	
-	anim.frame.node.addEventListener('mousemove', handleMouseMove);
-};

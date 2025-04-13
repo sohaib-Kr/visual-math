@@ -1,7 +1,7 @@
 ---
 import Lesson from '../../layouts/Lesson.astro';
 import * as short from '../../components/blog'
-const {Title,SubHead,Paragraph,Part,AnimationFrame}=short
+const {Title,SubHead,Paragraph,Part,AnimationFrame,Latex}=short
 title: "Understanding Topological Interior Concepts"
 description: "A brief introduction to the fundamental concept of interior in topology"
 pubDate: 2023-11-20
@@ -18,9 +18,9 @@ draft: false
 
 <SubHead>Definition</SubHead>
 
-<Paragraph>Given a subset $A$ of a topological space $X$, the **interior** of $A$ (denoted $A^\circ$ or $\textInt(A)$) is:
-- The union of all open sets contained in $A$
-- The largest open subset of $X$ contained in $A$
+<Paragraph>Given a subset <Latex>A</Latex> of a topological space <Latex>X</Latex>, the **interior** of <Latex>A</Latex> (denoted <Latex>A^\circ</Latex> or <Latex>\textInt(A)$)</Latex> is:
+- The union of all open sets contained in <Latex>A</Latex>
+- The largest open subset of $X$ contained in <Latex>A</Latex>
 </Paragraph>
 <SubHead> Key Properties</SubHead>
 
@@ -32,6 +32,6 @@ draft: false
 <AnimationFrame id="first" />
 </Lesson>
 <script>
-import { anim } from "../../lib/lessons/topology/concepts/noncompact2d";
+import { anim } from "../../lib/lessons/topology/concepts/interior.js";
 
 anim.engine[0]()</script>

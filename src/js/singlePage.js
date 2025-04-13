@@ -1,6 +1,7 @@
 import { gsap } from "gsap";
 import { Flip } from "gsap/Flip";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import katex from "katex"
 
 // GSAP setup and initialization
 gsap.registerPlugin(Flip, ScrollTrigger);
@@ -17,4 +18,9 @@ Array.from(document.getElementsByClassName('fadeOnScroll')).forEach((element)=>{
         },
         
     })
+})
+Array.from(document.getElementsByClassName('katex-input')).forEach((elem)=>{
+    let src=elem.innerText
+    elem.innerText=''
+    katex.render(src,elem)
 })

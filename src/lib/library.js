@@ -4,7 +4,6 @@ import { SVG } from '@svgdotjs/svg.js'
 export class vMathAnimation {
     constructor(width, height, parent, id) {
         let parentElement=document.getElementById(parent)
-        let ofsetHeight=parseInt(window.getComputedStyle(parentElement).height)
         let ofsetWidth=parseInt(window.getComputedStyle(parentElement).width)
         this.wrapper = document.createElement('div');
         this.wrapper.innerHTML = `
@@ -12,8 +11,8 @@ export class vMathAnimation {
               <svg class="animation" id="${id}Frame"></svg>
               <div class="animationControl"></div>
             </div>`;
+            this.wrapper.style.transformOrigin='top left'
             this.wrapper.style.transform='scale('+(ofsetWidth/width)+')'
-            console.log(width/ofsetWidth)
         parentElement.appendChild(this.wrapper);
         this.frame = SVG(`#${id}Frame`).size(width,height);
         this.frame.attr({style: 'background-color:'+this.colorConfig().backgroundColor+';padding: 50px;border-radius: 50px;'})
