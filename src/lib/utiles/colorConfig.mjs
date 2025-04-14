@@ -1,9 +1,9 @@
 export function colorConfig(draw){
     let visualMath = {
         backgroundColor:'#170734',
-        interiorColor:'#704ddf',
+        interiorColor:'#b9a8f0',
         indicatorColor: '#e69443',
-        borderColor: '#e6c300',
+        borderColor: '#009999',
         coverColor: '#99c3e0',
         mainSegmentColor: '#45159d',
         segmentColor:'#e382c4',
