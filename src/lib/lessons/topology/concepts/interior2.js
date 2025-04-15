@@ -58,14 +58,15 @@ export const anim = new vMathAnimation(1200, 800, 'first', 'first');
 			point.animate(400).attr({opacity:0})
 		},
 		()=>{
-			pos.cx=450
+			pos.cx=470
 			point.attr(pos).animate(400).attr({opacity:1})
 		},
 		()=>{
 			mainCircle.animate(400).transform({relative:true,translate:[-150,0]}).attr({r:400})
+			point.animate(400).dmove(30,0)
 		},
 		()=>{
-			openBall.attr({r:40}).attr(pos).animate(400).attr({opacity:1})
+			openBall.attr({r:40,...pos}).dmove(30,0).animate(400).attr({opacity:1})
 		},
 
 
@@ -77,34 +78,17 @@ export const anim = new vMathAnimation(1200, 800, 'first', 'first');
 			point.animate(400).attr({opacity:0})
 		},
 		()=>{
-			pos.cx=490
+			pos.cx=540
 			point.attr(pos).animate(400).attr({opacity:1})
 		},
 		()=>{
-			mainCircle.animate(400).transform({relative:true,translate:[-50,0]}).attr({r:500})
+			mainCircle.animate(400).transform({relative:true,translate:[-100,0]}).attr({r:600})
+			point.animate(400).dmove(60,0)
 		},
 		()=>{
-			openBall.attr({r:40}).attr(pos).animate(400).attr({opacity:1})
+			openBall.attr(pos).dmove(60,0).animate(400).attr({opacity:1})
 		},
 
-
-
-
-		//third transition
-		()=>{
-			openBall.animate(400).attr({opacity:0})
-			point.animate(400).attr({opacity:0})
-		},
-		()=>{
-			pos.cx=520
-			point.attr(pos).animate(400).attr({opacity:1})
-		},
-		()=>{
-			mainCircle.animate(400).transform({relative:true,translate:[-50,0]}).attr({r:600})
-		},
-		()=>{
-			openBall.attr({r:40}).attr(pos).animate(400).attr({opacity:1})
-		},
 
 
 
