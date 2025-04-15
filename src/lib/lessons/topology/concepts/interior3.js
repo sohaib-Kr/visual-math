@@ -1,6 +1,5 @@
 import { vMathAnimation} from '../../../library.js';
-import 'eve'
-import Snap from 'snapsvg';
+
 import { createDynamicText } from '../../../utiles/text.mjs';
 
 export const anim = new vMathAnimation(1200, 800, 'first', 'first');
