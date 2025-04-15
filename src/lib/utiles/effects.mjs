@@ -1,5 +1,5 @@
 import {textStyles} from './textConfig.mjs'
-export function shakeAnimation(element, degree, frequency, callback, delay) {
+export function shakeAnimation({element, degree=3, frequency=100, callback=()=>{}, delay=0}) {
     element.animate({ duration: 200, delay }).after(callback)
         .rotate(degree)
         .animate(frequency)

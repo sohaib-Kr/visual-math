@@ -127,7 +127,7 @@ export const anim = new vMathAnimation(1200, 800, 'first', 'first');
         () => {
             cover.forEach((elem, index) => {
                 elem.animate(1000).dmove(370, 30 * index);
-                anim.shakeAnimation(elem, 3, 100, () => {}, 100 * index);
+                anim.shakeAnimation({element:elem,delay:100 * index});
             });
         },
 
