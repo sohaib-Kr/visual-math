@@ -15,7 +15,7 @@ export class vMathAnimation {
             this.wrapper.style.transform='scale('+(ofsetWidth/width)+')'
         parentElement.appendChild(this.wrapper);
         this.frame = SVG(`#${id}Frame`).size(width,height);
-        this.frame.attr({style: 'background-color:'+this.colorConfig().backgroundColor+';padding: 50px;border-radius: 50px;'})
+        this.frame.attr({style: 'background-color:'+this.colorConfig().backgroundColor+';border-radius: 50px;'})
         this.step = 0;
         this.delay = 1000;
         this.engine = [() => {
