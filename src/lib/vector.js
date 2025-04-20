@@ -18,29 +18,31 @@ export class VectorField {
         //the noField attribute holds all the vectors ordered in a 1d array
         this.field = []
         this.noField = []
-        const group = parentSVG.group()
+        this.group = parentSVG.group()
         
         // Calculate grid dimensions
         const lineLength = parseInt(window.getComputedStyle(parentSVG.node).width) / this.plane.unit.u   
         const columnLength = parseInt(window.getComputedStyle(parentSVG.node).height) / this.plane.unit.v
 
         // Create vector grid
-        for (let i = 0; i < lineWidth*2-2; i++) {
-            const line = []
-            for (let j = 0; j < columnHeight*2-2; j++) {
+        for (let i = 0; i < lineWidth*2+1; i++) {
+            const column = []
+            for (let j = 0; j < columnHeight*2+1; j++) {
                 const vector = {
                     x: i-lineWidth,
                     y: j-columnHeight,
-                    holder: group.group().attr({opacity:0}),
+                    holder: this.group.group().attr({opacity:0}),
                 }
                 vector.elem = vector.holder.use(symbol)
-                    .move(i * this.plane.unit.u, (columnHeight*2-4-j) * this.plane.unit.v)
-                    .transform({scale:[0.1,1]})
-                line.push(vector)
+                    .move((i-lineWidth) * this.plane.unit.u, (columnHeight-j) * this.plane.unit.v)
+                    .transform({scale:[1,1]})
+                column.push(vector)
                 this.noField.push(vector)
+                vector.holder.node.setAttribute('coords',"x:"+vector.x+"y:"+vector.y)
             }
-            this.field.push(line)
+            this.field.push(column)
         } 
+        this.group.transform({translate:[this.plane.center.x,this.plane.center.y]})
     }
 
     /**
@@ -49,6 +51,12 @@ export class VectorField {
      fadeIn() {       
         this.noField.forEach((vect)=>{
            vect.holder.animate(500).attr({opacity:1})
+         })
+    }
+
+    fadeOut() {       
+        this.noField.forEach((vect)=>{
+           vect.holder.animate(500).attr({opacity:0})
          })
     }
 
@@ -64,7 +72,8 @@ export class VectorField {
                 vector.elem.animate(700).transform({
                     scale:[output.scale,1],
                     rotate:output.rotate,
-                    translate:[output.dx,output.dy]
+                    translate:[output.dx,output.dy],
+                    origin:'top left'
                 })
             })
         }
@@ -73,11 +82,28 @@ export class VectorField {
             vector.elem.transform({
                 scale:[output.scale,1],
                 rotate:output.rotate,
-                translate:[output.dx,output.dy]
+                translate:[output.dx,output.dy],
+                origin:'top left'
             })
         })}
     }
+
+
+    animateMotion({path,duration=1000,callback=()=>{}}){
+        this.noField.forEach((vector)=>{
+            vector.elem.add(`<animateMotion dur="${duration}ms"
+      repeatCount="indefinite"
+      path="${path}" />`)
+      setTimeout(()=>{
+        vector.elem.node.innerHTML=''
+        callback()
+    },duration)
+        })
+    }
 }
+
+
+
 
 export class CartPlane{
     constructor (draw,unit){
@@ -95,6 +121,7 @@ export class CartPlane{
             linecap: 'round'
         })
         this.unit=unit
+        this.center={x:width/2,y:height/2}
     }
     getCartData(field){
         let width=  parseInt(window.getComputedStyle(this.plane.node).width)
