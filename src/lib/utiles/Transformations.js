@@ -62,5 +62,30 @@ export const VectorTransforms={
     
     pointSkewY:function(data){
         return transform(0,data.x*60,1,0)
+    },
+    randomTrans:function(data){
+        return transform(data.x*30,data.y*30,1,0)
+    },
+    inverseSkewX:function(data){
+        return transform(-data.y*60,0,1,0)
+    },
+    pointTearX:function(data){
+        if(data.y>0){
+            return transform(100,0,1,0)
+        }
+        else{
+            return transform(-100,0,1,0)
+        }
+    },
+    vectorTearX:function(data){
+        if(data.y>0){
+            return transform(0,0,1,0)
+        }
+        else if(data.y<0){
+            return transform(0,0,-1,0)
+        }
+        else{
+            return transform(0,0,0,0)
+        }
     }
 }

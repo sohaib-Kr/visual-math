@@ -52,22 +52,22 @@ export class VectorField {
         this.group.transform({translate:[this.plane.center.x,this.plane.center.y]})
     }
     fadeIn(...params){
-        fadeIn.bind(this)(...params)
+        return fadeIn.bind(this)(...params)
     }
     fadeOut(...params){
-        fadeOut.bind(this)(...params)
+        return fadeOut.bind(this)(...params)
     }
     deformation(...params){
-        deformation.bind(this)(...params)
+        return deformation.bind(this)(...params)
     }
     animateMotion(...params){
-        animateMotion.bind(this)(...params)
+        return animateMotion.bind(this)(...params)
     }
     appendShape(...params){
-        appendShape.bind(this)(...params)
+        return appendShape.bind(this)(...params)
     }
     label(...params){
-        label.bind(this)(...params)
+        return label.bind(this)(...params)
     }
 }
 

@@ -24,8 +24,6 @@ points.label('array')
 points.appendShape({
     points:[{x:4,y:9},{x:6,y:9},{x:8,y:7},{x:6,y:5},{x:9,y:4},{x:3,y:4},{x:3,y:6}],
     closed:true})
-
-
 {
     anim.initSteps([
     // // ()=>{
@@ -96,7 +94,7 @@ points.appendShape({
     ()=>{
         vectors.fadeOut()
         points.noField.forEach((point)=>{
-            point.elem.animate(300).attr({opacity:1})
+            point.elem.animate(700).attr({opacity:1})
         })
     },
     ()=>{

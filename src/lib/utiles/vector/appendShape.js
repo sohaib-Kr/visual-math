@@ -29,7 +29,9 @@ export function appendShape({points,closed}){
             .fill('none')
             .stroke({color:'white',width:3})
         }
-        return(setInterval(()=>{
-            shape.animate(20).plot(getPath(points.map((coords)=>this.field[coords.x][coords.y])))
-        },50))
+        return({
+            interval:
+            setInterval(()=>{
+            shape.animate(20).plot(getPath(points.map((coords)=>this.field[coords.x][coords.y])))},50),
+        shape})
     }
