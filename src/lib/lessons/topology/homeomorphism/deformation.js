@@ -1,4 +1,4 @@
-import { VectorField, CartPlane } from '../../../vector.js';
+import { VectorField, CartPlane } from '../../../utiles/vector';
 import { vMathAnimation } from '../../../library.js';
 import { VectorTransforms } from '../../../utiles/Transformations.js';
 export const anim = new vMathAnimation(1200, 800, 'first', 'first');
