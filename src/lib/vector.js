@@ -36,6 +36,8 @@ export class VectorField {
                 vector.elem = vector.holder.use(symbol)
                     .move((i-lineWidth) * this.plane.unit.u, (columnHeight-j) * this.plane.unit.v)
                     .transform({scale:[1,1]})
+                
+                
                 column.push(vector)
                 this.noField.push(vector)
                 vector.holder.node.setAttribute('coords',"x:"+vector.x+"y:"+vector.y)
@@ -43,6 +45,22 @@ export class VectorField {
             this.field.push(column)
         } 
         this.group.transform({translate:[this.plane.center.x,this.plane.center.y]})
+    }
+    label(mode){
+        if(mode=='array'){
+            this.field.forEach((column,i)=>{
+                column.forEach((vector,j)=>{
+                    vector.holder.text("x:"+i+"y:"+j).fill('white')
+                    .move((i-(parseInt(this.field.length/2))) * this.plane.unit.u, (parseInt(this.field.length/2)-j) * this.plane.unit.v)
+                })
+            })
+        }
+        else if(mode=='cartesian'){
+            this.noField.forEach((vector)=>{
+                vector.holder.text("x:"+vector.x+"y:"+vector.y).fill('white')
+                .dmove(vector.x* this.plane.unit.u, (-vector.y) * this.plane.unit.v)
+            })
+        }
     }
 
     /**
@@ -100,6 +118,42 @@ export class VectorField {
     },duration)
         })
     }
+
+    appendShape({points,closed}){
+        function getCurrentPos(point){
+            point=point.elem
+            let x=point.bbox().x+point.transform().translateX
+            let y=point.bbox().y+point.transform().translateY
+            return {x,y}
+        }
+        function getPath(points){
+            let {x,y}=getCurrentPos(points[0])
+            let path=`M ${x} ${y}`
+            for (let  i= 0;  i< points.length-2; i+=2) {
+                let c=getCurrentPos(points[i+1])
+                let e=getCurrentPos(points[i+2])
+                path+=`S ${c.x} ${c.y} ${e.x} ${e.y}`
+            }
+            if(closed){
+                path+=`S ${getCurrentPos(points[0]).x} ${getCurrentPos(points[0]).y} ${getCurrentPos(points[0]).x} ${getCurrentPos(points[0]).y}`
+            }
+            return path
+        }
+        let shape
+        if(closed){
+            shape=this.group.path(getPath(points.map((coords)=>this.field[coords.x][coords.y])))
+            .fill('white')
+        }
+        else{
+            console.log(points)
+            shape=this.group.path(getPath(points.map((coords)=>this.field[coords.x][coords.y])))
+            .fill('none')
+            .stroke({color:'white',width:3})
+        }
+        return(setInterval(()=>{
+            shape.animate(20).plot(getPath(points.map((coords)=>this.field[coords.x][coords.y])))
+        },50))
+    }
 }
 
 
@@ -132,4 +186,7 @@ export class CartPlane{
         })
         return data
     }
+
+
+
 }
