@@ -1,3 +1,9 @@
+export function getCurrentPos(point){
+    point=point.elem
+    let x=point.bbox().x+point.transform().translateX
+    let y=point.bbox().y+point.transform().translateY
+    return {x,y}
+}
 export function appendShape({ points, closed }){
 
     if (process.env.NODE_ENV === 'development') {
@@ -5,12 +11,7 @@ export function appendShape({ points, closed }){
         if(points.length<3) throw new Error('number of points must be greater than 3')
       }
 
-        function getCurrentPos(point){
-            point=point.elem
-            let x=point.bbox().x+point.transform().translateX
-            let y=point.bbox().y+point.transform().translateY
-            return {x,y}
-        }
+        
         function getPath({ points }){
             let {x,y}=getCurrentPos(points[0])
             let path=`M ${x} ${y}`

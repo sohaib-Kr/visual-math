@@ -5,6 +5,7 @@ import { deformation } from './deformation.js'
 import { animateMotion } from './animateMotion.js'
 import { appendShape } from './appendShape.js'
 import { label } from './label.js'
+import { getCurrentPos } from './appendShape.js'
 
 /**
  * VectorField class for creating and managing a grid of vectors
@@ -78,6 +79,9 @@ export class VectorField {
     }
     label(...params){
         return label.bind(this)(...params)
+    }
+    getCurrentPos(...params){
+        return getCurrentPos.bind(this)(...params)
     }
 }
 

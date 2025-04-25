@@ -13,60 +13,102 @@ const vectors=new VectorField({symbol:arrow, parentSVG:draw, plane, lineWidth:7,
 
 
 const point=draw.symbol().circle(10).fill('#00ffff')
+const slidingArrowParent=vectors.group.group()
+const slidingArrow=slidingArrowParent.use(arrow).fill('#orange')
+
 const points=new VectorField({symbol:point, parentSVG:draw, plane, lineWidth:12, columnHeight:12})
-points.deformation({mathFunc:VectorTransforms.identity, smoothness:false})
-points.label('array')
-let i=points.appendShape({
-    points:[{x:14,y:14},
-        {x:15,y:12},{x:14,y:10},
-        {x:12,y:9},{x:10,y:10},
-        {x:9,y:12},{x:10,y:14},
-        {x:12,y:15},{x:14,y:14},
-        {x:12,y:9},{x:10,y:10},
-        {x:9,y:12},{x:10,y:14},
-        {x:12,y:9},{x:10,y:10},
-        {x:9,y:12},{x:10,y:14},
-    ],
-    closed:true,
+
+
+
+function slideArrow({target, duration=2000,callback=()=>{}}){
+    let elem=vectors.field[target.x][target.y]
+    let pos=vectors.getCurrentPos(elem)
+    let theta
+    if(target.x>7){
+        theta=-Math.atan(elem.y/elem.x)*180/Math.PI
+    }
+    else{
+        theta=180-Math.atan(elem.y/elem.x)*180/Math.PI
+    }
+    return slidingArrow.animate(duration).transform({translate:[pos.x,pos.y],rotate:theta}).after(()=>{
+        callback()
+    })
+}
+
+function openCircle({circle,duration}){
+    let max=20
+    let step=0
+    let ax=200
+    let bx=-200
+    let cx=0
+    let dx=0
+    let i=setInterval(()=>{
+        if(step>=max) clearInterval(i)
+        ax+=5
+        bx-=5
+        cx+=5
+        dx-=5
+        step+=1
+        circle.plot(`
+            M ${ax} 0 
+            A 1 1 0 0 0 ${bx} 0 
+            A 1 1 0 0 0 ${ax} 0 
+            H ${cx}
+            A 1 1 0 0 1 ${dx} 0 
+            A 1 1 0 0 1 ${cx} 0 Z`)
+    },duration/max)
+}
+const circle=points.group.path('M 200 0 A 1 1 0 0 0 -200 0 A 1 1 0 0 0 200 0 H 0 A 1 1 0 0 1 0 0 A 1 1 0 0 1 0 0 Z')
+.fill('white','evenodd')
+.attr({
+    opacity:0,
 })
 
-let j=points.appendShape({
-    points:[{x:5,y:17},{x:4,y:14},{x:6,y:12}],
-    closed:false,
-})
-clearInterval(i.interval)   
-clearInterval(j.interval)
+
+
+slideArrow({target:{x:2,y:8}})
+anim.delay=2000
 anim.initSteps([
     ()=>{
-        points.fadeIn()
+        slideArrow({target:{x:14,y:12}})
+
+    },
+    ()=>{
+        slideArrow({target:{x:9,y:5}})
+    },
+    ()=>{
+        slideArrow({target:{x:7,y:7},
+            callback:()=>{
+                slidingArrow.animate(1).transform({rotate:180,origin:[0,0]}).after(()=>{
+                    slideArrow({target:{x:5,y:9}})
+                })
+            }})
     },
     // ()=>{
-    //     vectors.deformation(VectorTransforms.pointOpeningHole,false)
+    //     points.fadeIn()
     // },
     // ()=>{
-    //     points.noField.forEach((point)=>{
-    //         point.elem.animate(300).attr({opacity:0.5})
-    //     })
-    //     i.shape.animate(300).attr({opacity:0.5})
-    //     j.shape.animate(300).attr({opacity:0.5})
-    //     setTimeout(()=>vectors.fadeIn(),700)
+    //     vectors.deformation({mathFunc:VectorTransforms.vectorOpeningHole, smoothness:true})
+    //     points.noField.forEach((point)=>{point.elem.animate(300).attr({opacity:0.5})})
     // },
-    // ()=>{},
+    // ()=>{
+    //     vectors.fadeIn()
+    // },
     // ()=>{
     //     vectors.fadeOut()
-    //     setTimeout(()=>{
-    //         i.shape.animate(300).attr({opacity:1})
-    //         j.shape.animate(300).attr({opacity:1})
-    //         points.noField.forEach((point)=>{
-    //             point.elem.animate(300).attr({opacity:1})
-    //         })  
-    //     },700)
-        
+    //     setTimeout(()=>points.noField.forEach((point)=>{point.elem.animate(300).attr({opacity:1})}),300)
     // },
     // ()=>{
-    //     points.deformation(VectorTransforms.pointTearX,true)
-    //     i.shape.animate(700).dmove(-100,0)
-    //     j.shape.animate(700).dmove(100,0)
-        
+    //     points.deformation({mathFunc:VectorTransforms.pointOpeningHole, smoothness:true})
     // },
+    // ()=>{
+    //     points.fadeOut()
+    // },
+    // ()=>{
+    //     circle.animate(500).attr({opacity:1})
+    // },
+    // ()=>{
+    //     openCircle({circle,duration:700})
+    // }
+    
 ])

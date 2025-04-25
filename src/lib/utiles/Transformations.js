@@ -89,7 +89,43 @@ export const VectorTransforms={
         }
     },
     pointOpeningHole:function(data){
-        let theta=180-Math.atan(data.y/data.x)*180/Math.PI
-        return transform(60*data.x*Math.sin(theta*Math.PI/180),60*data.y*Math.cos(theta*Math.PI/180),1,theta)
+        let dist=100
+        if (data.x>0){
+            let theta=Math.atan(data.y/data.x)
+            return transform(dist*Math.cos(theta),-dist*Math.sin(theta),1,0)
+        }
+        else if(data.x==0){
+            if(data.y>0){
+                return transform(0,-dist,1,0)
+            }
+            else{
+                return transform(0,dist,1,0)
+            }
+        }
+        else{
+            let theta=Math.atan(data.y/data.x)
+            return transform(-dist*Math.cos(theta),dist*Math.sin(theta),1,0)
+        }
+    },
+    vectorOpeningHole:function(data){
+        if (data.x>0){
+            let theta=Math.atan(data.y/data.x)*180/Math.PI
+            return transform(0,0,1,-theta)
+        }
+        else if(data.x==0){
+            if(data.y>0){
+                return transform(0,0,1,-90)
+            }
+            else if(data.y==0){
+                return transform(0,0,0,0)
+            }
+            else{
+                return transform(0,0,1,90)
+            }
+        }
+        else{
+            let theta=180+Math.atan(data.y/data.x)*180/Math.PI
+            return transform(0,0,1,-theta)
+        }
     }
 }
