@@ -1,7 +1,7 @@
 export function appendShape({ points, closed }){
 
     if (process.env.NODE_ENV === 'development') {
-        if (points.length%2!==0) throw new Error('number of points must be odd')
+        if (points.length%2==0) throw new Error('number of points must be odd')
         if(points.length<3) throw new Error('number of points must be greater than 3')
       }
 

@@ -18,17 +18,16 @@ export class VectorField {
      
     constructor({symbol, parentSVG, plane, lineWidth, columnHeight}) {
         if (process.env.NODE_ENV === 'development') {
-            if (!symbol || !(symbol instanceof SVGElement)) {
-                throw new Error('symbol must be a valid SVGElement')
+            if (!symbol) {
+                throw new Error('symbol does not exist')
             }
-            if (!parentSVG || !parentSVG.node || !(parentSVG instanceof SVG)) {
-                throw new Error('parentSVG must be a valid SVG instance')
+            if (!parentSVG) {
+                throw new Error('parentSVG does not exist')
             }
             if (!plane) {
-                throw new Error('plane must be a valid CartPlane instance')
+                throw new Error('plane does not exist')
             }
           }
-        
         this.plane=plane
         //the field attribute holds all the vectors ordered in a 2d array line by line
         //the noField attribute holds all the vectors ordered in a 1d array

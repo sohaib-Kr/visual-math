@@ -1,20 +1,20 @@
 import { VectorField, CartPlane } from '../../../utiles/vector';
 import { vMathAnimation } from '../../../library.js';
 import { VectorTransforms } from '../../../utiles/Transformations.js';
-export const anim = new vMathAnimation(1200, 800, 'first', 'first');
+export const anim = new vMathAnimation({width:1200, height:800, parent:'first', id:'first'});
 let draw=anim.frame
 let arrow=draw.symbol().path('M 0 0 H 40 L 34 -8 L 37 -9 L 46 2 L 46 2 L 36 13 L 33 11 L 40 4 L 0 4 Z')
 .attr({fill:'#9999ff'})
 //create the cartesian plane
-const plane=new CartPlane(anim.frame,{u:60,v:60})
+const plane=new CartPlane({draw, unit:{u:60,v:60}})
 
 //create the field of vectors and points
-const vectors=new VectorField(arrow,anim.frame,plane,7,7)
+const vectors=new VectorField({symbol:arrow, parentSVG:draw, plane, lineWidth:7, columnHeight:7})
 
 
 const point=draw.symbol().circle(10).fill('#00ffff')
-const points=new VectorField(point,anim.frame,plane,12,12)
-points.deformation(VectorTransforms.identity,false)
+const points=new VectorField({symbol:point, parentSVG:draw, plane, lineWidth:12, columnHeight:12})
+points.deformation({mathFunc:VectorTransforms.identity, smoothness:false})
 points.label('array')
 let i=points.appendShape({
     points:[{x:14,y:14},
