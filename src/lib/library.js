@@ -3,6 +3,11 @@ import * as utiles from './utiles'
 import { SVG } from '@svgdotjs/svg.js'
 export class vMathAnimation {
     constructor(width, height, parent, id) {
+        if (process.env.NODE_ENV === 'development') {
+            if (!(document.getElementById(parent) instanceof HTMLElement)) {
+                throw new Error('cannot create animation frame: parent does not exist')
+            }
+        }
         let parentElement=document.getElementById(parent)
         let ofsetWidth=parseInt(window.getComputedStyle(parentElement).width)
         this.wrapper = document.createElement('div');

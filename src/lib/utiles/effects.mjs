@@ -1,5 +1,10 @@
 import {textStyles} from './textConfig.mjs'
 export function shakeAnimation({element, degree=3, frequency=100, callback=()=>{}, delay=0}) {
+    if (process.env.NODE_ENV === 'development') {
+        if (!(element instanceof SVG)) {
+            throw new Error('cannot shake: element is not an SVG')
+        }
+    }
     element.animate({ duration: 200, delay }).after(callback)
         .rotate(degree)
         .animate(frequency)
@@ -30,7 +35,7 @@ export function fadeText(text){
     return textElement
 }
 
-export function fadeBounce(shape, callback=()=>{}){
+export function fadeBounce({shape, callback=()=>{}}){
     shape.transform({scale: [0.7, 0.7]});
     shape.animate({duration:300,easing:'<>'}).transform({scale: [1.3, 1.3]}).attr({opacity: 1})
     .animate({duration: 200}).transform({scale: [1, 1]})

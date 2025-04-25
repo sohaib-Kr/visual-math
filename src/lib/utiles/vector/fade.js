@@ -1,11 +1,11 @@
-export function fadeIn() {       
+export function fadeIn (duration = 500) {       
         this.noField.forEach((vect)=>{
-           vect.holder.animate(500).attr({opacity:1})
+           vect.holder.animate(duration).attr({opacity:1})
          })
     }
 
-export function fadeOut() {       
+export function fadeOut( duration = 500 ) {       
         this.noField.forEach((vect)=>{
-           vect.holder.animate(500).attr({opacity:0})
+           vect.holder.animate(duration).attr({opacity:0})
          })
     }

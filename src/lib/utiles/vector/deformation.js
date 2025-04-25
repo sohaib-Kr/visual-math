@@ -1,4 +1,9 @@
-export function deformation(mathFunc, smoothness) {
+import { VectorTransforms } from "../Transformations"
+
+export function deformation({mathFunc=()=>{VectorTransforms.identity()}, smoothness}) {
+    if (process.env.NODE_ENV === 'development') {
+        if (!(mathFunc in VectorTransforms)) throw new Error('mathFunc must be a valid VectorTransforms function')
+      }
         if (smoothness){
             this.noField.forEach((vector) => {
                 const output = mathFunc(vector)

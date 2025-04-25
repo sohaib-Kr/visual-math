@@ -16,7 +16,18 @@ export class VectorField {
      * @param {SVG} parentSVG - The parent SVG container
      */
      
-    constructor(symbol, parentSVG,plane,lineWidth,columnHeight) {
+    constructor({symbol, parentSVG, plane, lineWidth, columnHeight}) {
+        if (process.env.NODE_ENV === 'development') {
+            if (!symbol || !(symbol instanceof SVGElement)) {
+                throw new Error('symbol must be a valid SVGElement')
+            }
+            if (!parentSVG || !parentSVG.node || !(parentSVG instanceof SVG)) {
+                throw new Error('parentSVG must be a valid SVG instance')
+            }
+            if (!plane) {
+                throw new Error('plane must be a valid CartPlane instance')
+            }
+          }
         
         this.plane=plane
         //the field attribute holds all the vectors ordered in a 2d array line by line
@@ -75,7 +86,7 @@ export class VectorField {
 
 
 export class CartPlane{
-    constructor (draw,unit){
+    constructor({ draw, unit }){
         let width=parseInt(window.getComputedStyle(draw.node).width)
         let height=parseInt(window.getComputedStyle(draw.node).height)
         this.plane=draw.group()
@@ -92,7 +103,7 @@ export class CartPlane{
         this.unit=unit
         this.center={x:width/2,y:height/2}
     }
-    getCartData(field){
+    getCartData( field ){
         let width=  parseInt(window.getComputedStyle(this.plane.node).width)
         let height= parseInt(window.getComputedStyle(this.plane.node).height)
         let data=[]

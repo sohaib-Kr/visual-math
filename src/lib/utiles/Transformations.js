@@ -87,5 +87,9 @@ export const VectorTransforms={
         else{
             return transform(0,0,0,0)
         }
+    },
+    pointOpeningHole:function(data){
+        let theta=180-Math.atan(data.y/data.x)*180/Math.PI
+        return transform(60*data.x*Math.sin(theta*Math.PI/180),60*data.y*Math.cos(theta*Math.PI/180),1,theta)
     }
 }

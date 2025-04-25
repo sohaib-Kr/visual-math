@@ -9,6 +9,11 @@ function createDynamicText(text){
 }
 
 function latex(inputString,parent,textStyle) {
+    if (process.env.NODE_ENV === 'development') {
+        if (!(document.getElementById(parent) instanceof HTMLElement)) {
+            throw new Error('cannot create latex: parent does not exist')
+        }
+    }
     const regularText=inputString.split('/').filter((elem,index)=>index%2==0)
     const latexText=inputString.split('/').filter((elem,index)=>index%2==1)
     let result=document.createElement('p')

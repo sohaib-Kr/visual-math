@@ -1,4 +1,4 @@
-export function label(mode){
+export function label( mode ){
     
     if(mode=='array'){
         this.field.forEach((column,i)=>{
