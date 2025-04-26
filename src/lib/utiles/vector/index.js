@@ -93,16 +93,18 @@ export class CartPlane{
         let width=parseInt(window.getComputedStyle(draw.node).width)
         let height=parseInt(window.getComputedStyle(draw.node).height)
         this.plane=draw.group()
-        this.plane.line(width/2,0,width/2,height).stroke({
+        this.plane.line(0,-height/2,0,height/2).stroke({
             color: '#f6f3f4',
             width: 2,
             linecap: 'round'
         })
-        this.plane.line(0,height/2,width,height/2).stroke({
+        this.plane.line(-width/2,0,width/2,0).stroke({
             color: '#f6f3f4',
             width: 2,
             linecap: 'round'
         })
+        this.plane.transform({translate:[width/2,height/2]})
+
         this.unit=unit
         this.center={x:width/2,y:height/2}
     }
