@@ -1,5 +1,5 @@
 export function getCurrentPos(point){
-    point=point.elem
+    point=point.holder
     let x=point.bbox().x+point.transform().translateX
     let y=point.bbox().y+point.transform().translateY
     return {x,y}

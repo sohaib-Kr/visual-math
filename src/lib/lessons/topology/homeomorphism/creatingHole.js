@@ -20,7 +20,7 @@ const points=new VectorField({symbol:point, parentSVG:draw, plane, lineWidth:12,
 
 
 
-function slideArrow({target, duration=2000,callback=()=>{}}){
+function slideArrow({target, duration=2000,callback=()=>{},smoothness=true}){
     let elem=vectors.field[target.x][target.y]
     let pos=vectors.getCurrentPos(elem)
     let theta
@@ -30,9 +30,16 @@ function slideArrow({target, duration=2000,callback=()=>{}}){
     else{
         theta=180-Math.atan(elem.y/elem.x)*180/Math.PI
     }
-    return slidingArrow.animate(duration).transform({translate:[pos.x,pos.y],rotate:theta}).after(()=>{
+    if(smoothness==true){
+        return slidingArrow.animate(duration).ease('-').transform({translate:[pos.x,pos.y],rotate:theta}).after(()=>{
         callback()
-    })
+        })
+    }
+    else{
+        return slidingArrow.transform({translate:[pos.x,pos.y],rotate:theta}).after(()=>{
+            callback()
+            })
+    }
 }
 
 function openCircle({circle,duration}){
@@ -65,16 +72,19 @@ const circle=points.group.path('M 200 0 A 1 1 0 0 0 -200 0 A 1 1 0 0 0 200 0 H 0
 })
 
 
-
-slideArrow({target:{x:2,y:8}})
+slideArrow({target:{x:2,y:8},smoothness:false})
 anim.delay=2000
 anim.initSteps([
+    ()=>{
+        vectors.deformation({mathFunc:VectorTransforms.vectorOpeningHole, smoothness:false})
+        vectors.noField.forEach((vector)=>vector.holder.animate(300).attr({opacity:0.3}))
+    },
     ()=>{
         slideArrow({target:{x:14,y:12}})
 
     },
     ()=>{
-        slideArrow({target:{x:9,y:5}})
+        slideArrow({target:{x:14,y:2}})
     },
     ()=>{
         slideArrow({target:{x:7,y:7},
