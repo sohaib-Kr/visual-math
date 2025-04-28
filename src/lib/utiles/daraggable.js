@@ -52,7 +52,6 @@ export class Draggable{
                 return elem
             }).join('')
             this.shape.plot(newPath)
-            console.log(newPath)
         })
     }
 }
