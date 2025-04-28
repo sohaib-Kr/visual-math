@@ -1,8 +1,8 @@
 function pathDecoder(path){
-    if(path.split('/').length%2 ==0){
+    if(path.split('|').length%2 ==0){
         throw new Error(`can't parse path: ${path} \n uncorrect number of slashes`)
     }
-    let output=path.split('/')
+    let output=path.split('|')
     let commands=[]
     let params=[]
     for (let  i = 0;  i < (output.length-1)/2; i++) {
@@ -13,17 +13,18 @@ function pathDecoder(path){
     return {commands,params}
 }
 export class SmoothPloter{
-    constructor(path,frame){
+    constructor({path,frame,attr}){
         this.path=path
         this.decoded=pathDecoder(this.path)
-        this.shape=frame.path('').fill('red')
+        console.log(attr)
+        this.shape=frame.path('').attr({...attr})
     }
     shapeUpdater(t){
         let newPath=this.decoded.commands.map((elem,key)=>{
             return this.decoded.params[key] ?  elem+eval(this.decoded.params[key]) :elem 
         })
         newPath=newPath.join('')
+        console.log(newPath)
         this.shape.plot(newPath)
-        console.log(this.shape)
     }
 } 

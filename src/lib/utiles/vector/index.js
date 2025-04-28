@@ -117,4 +117,8 @@ export class CartPlane{
         })
         return data
     }
+    append(svgElem){
+        this.plane.add(svgElem)
+
+    }
 }
