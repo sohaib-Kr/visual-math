@@ -1,5 +1,5 @@
 export function getCurrentPos(point){
-    point=point.holder
+    point=point.elem
     let x=point.bbox().x+point.transform().translateX
     let y=point.bbox().y+point.transform().translateY
     return {x,y}
@@ -44,7 +44,8 @@ export function appendShape({ points, closed }){
         return({
             interval:setInterval(()=>{
                 shape.animate(20)
-                .plot(getPath({ points: fieldProjection }))},50),
-            shape
+                .plot(getPath({ points: fieldProjection }))
+            },50),
+            elem:shape
         })
     }
