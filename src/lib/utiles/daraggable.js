@@ -5,6 +5,7 @@ export class Draggable{
         this.path=path
         this.decoded=pathDecoder(this.path)
         this.heads=[]
+        this.data=initialData
         let newPath=this.decoded.commands.map((elem,key)=>{
             if(this.decoded.params[key]){
                 let data= initialData[this.decoded.params[key]]
@@ -52,6 +53,17 @@ export class Draggable{
                 return elem
             }).join('')
             this.shape.plot(newPath)
+
         })
+    }
+    updateShape(data){
+        let newPath=this.decoded.commands.map((elem,key)=>{
+            if(data[this.decoded.params[key]]){
+                let newdata=data[this.decoded.params[key]]
+                return elem+newdata[0]+' '+newdata[1]
+            }
+            return elem
+        }).join('')
+        this.shape.plot(newPath)
     }
 }
