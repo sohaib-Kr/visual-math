@@ -43,7 +43,7 @@ export class TopoPath{
         let newPath=this.decoded.commands.map((command,key)=>{
             let param=this.decoded.params[key]
             if(param){
-                return command+' '+initialData[param][0]+' '+initialData[param][0]
+                return command+' '+initialData[param][0]+' '+initialData[param][1]
             }
             else{
                 return command
@@ -84,7 +84,7 @@ export class TopoPath{
                 }
                 else{
                     //if the param is not in the matching set then it is static
-                    smoothTransPathArray.push(command+currentData[param][0]+' '+currentData[param][1])
+                    smoothTransPathArray.push(command+this.currentData[param][0]+' '+this.currentData[param][1])
                 }
             }
             else{
@@ -97,6 +97,7 @@ export class TopoPath{
         //this function is either used inside setInterval for animation or in an event listener
         //the returned function must be as minimal as possible
         return((t)=>{
+            console.log(smoothCommands)
             let newPath=smoothParams.map((param,index)=>{
                 let data=param.trajectory.pointAt(t*param.length)
                 return smoothCommands[index]+data.x+' '+data.y

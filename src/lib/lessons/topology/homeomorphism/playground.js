@@ -46,20 +46,11 @@ plane.append(path.group)
 //it takes 2 parameters:
 //the first is an array of point names that we want to make draggable
 //and then we add the center of the plane where the path is puted
-path.draggable(['a','b'],plane.center)
+// path.draggable(['a','b'],plane.center)
 
-//to disable the draggable feature we can use the disableDraggable method
+// //to disable the draggable feature we can use the disableDraggable method
+// path.disableDraggable()
 
-
-setTimeout(()=>{
-    path.disableDraggable()
-},2000)
-setTimeout(()=>{
-    path.draggable(['a','b'],plane.center)
-},4000)
-setTimeout(()=>{
-    path.disableDraggable()
-},6000)
 
 
 anim.initSteps([
