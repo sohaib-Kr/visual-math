@@ -17,7 +17,7 @@ let path=new TopoPath({
     initialData:{a:[100,-100],b:[-100,100]},
     attr:{stroke:'red','stroke-width':5}})
 
-plane.append(path.shape)
+plane.append(path.group)
 let firstPath=plane.plane.path('M 0 0 L 300 300').attr({
     fill:'non',
     stroke:'green',
@@ -40,5 +40,12 @@ let x=path.createShapeUpdater({a:firstPath,b:secondPath})
 //     },50)
 // }
 path.draggable(['a','b'],plane.center)
+
+setTimeout(()=>{
+    path.noneDraggable()
+},5000)
+
+
+
 anim.initSteps([
 ])

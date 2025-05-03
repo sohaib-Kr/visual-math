@@ -14,8 +14,12 @@ export function pathDecoder(path){
 }
 export class TopoPath{
     #frame
+    #draggablePoints
+    #allowDragFunction
     constructor({frame,codedPath,initialData,attr}){
         this.#frame=frame
+        this.#draggablePoints=[]
+        this.#allowDragFunction
         //first we check that the coded path is valid (an even number of sign |)
         if(codedPath.split('|').length%2 ==0){
             throw new Error(`can't parse path: ${codedPath} \n uncorrect number of slashes`)
@@ -46,7 +50,8 @@ export class TopoPath{
             }
         }).join('')
         //drawing the initial shape
-        this.shape=this.#frame.path(newPath).attr(attr)
+        this.group=this.#frame.group()
+        this.shape=this.group.path(newPath).attr(attr)
         //storing the current data as the initial data
         this.currentData=initialData
     }
@@ -105,6 +110,12 @@ export class TopoPath{
         }).join('')
         this.shape.plot(newPath)
     }
+
+
+
+
+
+
     draggable(points,center){
         //this function let us interact with the shape by draggins some of its points
         //first we assure that the draggable points are valid
@@ -113,48 +124,52 @@ export class TopoPath{
                 throw new Error(`draggable point is not valid: ${point}`)
             }
         })
-        //for every point we create a custom pathArray 
-        // to generate a function and append it to the event listener
+
+        //we create points data array of pointData object
         let pointsData=points.map((point)=>{
-            return {
+            
+            let obj={
                 name:point,
-                draggable:false
-            }
-        })
-        pointsData[1].draggable=true
-        this.#frame.node.addEventListener('mousemove',(event)=>{
-            pointsData.forEach((point)=>{
-                if(point.draggable){
+                draggable:false,
+                handler:function(event,currentData){
                     let currentPos=center
                     let x=event.offsetX-currentPos.x
                     let y=event.offsetY-currentPos.y
-                    this.currentData[point.name][0]=x
-                    this.currentData[point.name][1]=y
+                    currentData[this.name][0]=x
+                    currentData[this.name][1]=y
+                },
+                circle:this.group.circle(10).fill('orange').center(this.currentData[point][0],this.currentData[point][1])
+            }
+
+            //and here we create the circles used to drag the points
+            obj.circle.node.addEventListener('mousedown',()=>obj.draggable=true)
+            obj.circle.node.addEventListener('mouseup',()=>obj.draggable=false)
+
+            //here we create the pointData object to store it in pointsData array
+            this.#draggablePoints.push(obj)
+            return obj
+        })
+        this.#allowDragFunction=(event,parent)=>{
+            pointsData.forEach((pointData)=>{
+                if(pointData.draggable){
+                    pointData.handler(event,this.currentData)
+                    pointData.circle.center(this.currentData[pointData.name][0],this.currentData[pointData.name][1])
                 }
             })
-            this.refresh()
+            parent.refresh()
+        }
+        let parent=this
+        this.#frame.node.addEventListener('mousemove',(event)=>{
+            this.#allowDragFunction(event,parent)
         })
+    }
 
 
-    //     points.forEach((point)=>{
-    //         let pathArray=[]
-    //         this.decoded.params.forEach((param,key)=>{
-    //             pathArray.push(this.decoded.commands[key])
-    //             if(param==point){
-    //                 pathArray.push({
-    //                     coords: this.currentData[point],
-    //                     draggable:true
-    //                 })
-    //             }
-    //             else{
-    //                 pathArray.push({
-    //                     coords: this.currentData[point],
-    //                     draggable:false
-    //                 })
-    //             }
-    //         })
-    //         console.log(pathArray)
-    //     })
-    // }
-}
+    noneDraggable(){
+        this.#draggablePoints.forEach((pointData)=>{
+            pointData.circle.remove()
+            this.#frame.node.removeEventListener('',()=>pointData.draggable=true)
+        })
+        
+    }
 }
