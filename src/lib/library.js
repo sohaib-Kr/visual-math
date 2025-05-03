@@ -72,5 +72,8 @@ export class vMathAnimation {
     fadeBounce(...params){
         return utiles.fadeBounce.bind(this)(...params)
     }
+    createTopoPath(params){
+        return new utiles.TopoPath({frame:this.frame,...params})
+    }
 } 
 export const textStyles=utiles.textStyles

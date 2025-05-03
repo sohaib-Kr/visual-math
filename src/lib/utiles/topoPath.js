@@ -149,27 +149,26 @@ export class TopoPath{
             this.#draggablePoints.push(obj)
             return obj
         })
-        this.#allowDragFunction=(event,parent)=>{
+        this.#allowDragFunction=(event)=>{
             pointsData.forEach((pointData)=>{
                 if(pointData.draggable){
                     pointData.handler(event,this.currentData)
                     pointData.circle.center(this.currentData[pointData.name][0],this.currentData[pointData.name][1])
                 }
             })
-            parent.refresh()
+            this.refresh()
         }
-        let parent=this
-        this.#frame.node.addEventListener('mousemove',(event)=>{
-            this.#allowDragFunction(event,parent)
-        })
+        this.#frame.node.addEventListener('mousemove',this.#allowDragFunction)
     }
 
 
-    noneDraggable(){
+    disableDraggable(){
+        //first we check if the points are valid
         this.#draggablePoints.forEach((pointData)=>{
             pointData.circle.remove()
-            this.#frame.node.removeEventListener('',()=>pointData.draggable=true)
+            this.#frame.node.removeEventListener('mousemove',this.#allowDragFunction)
         })
+        this.#draggablePoints=[]
         
     }
 }
