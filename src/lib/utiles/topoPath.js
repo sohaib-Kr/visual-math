@@ -97,7 +97,6 @@ export class TopoPath{
         //this function is either used inside setInterval for animation or in an event listener
         //the returned function must be as minimal as possible
         return((t)=>{
-            console.log(smoothCommands)
             let newPath=smoothParams.map((param,index)=>{
                 let data=param.trajectory.pointAt(t*param.length)
                 return smoothCommands[index]+data.x+' '+data.y

@@ -27,7 +27,7 @@ export class vMathAnimation {
             this.step += 1;
             this.step < this.engine.length ? (() => {
                 try{this.engine[this.step]();
-                setTimeout(() => this.engine[0](), this.delay);}catch(e){console.error('error at step '+this.step+' '+e)}
+                setTimeout(() => this.engine[0](), this.delay);}catch(e){console.error('error at step '+this.step+' '+e.message)}
             })() : NaN;
         }];
     }
