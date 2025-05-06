@@ -1,7 +1,7 @@
 ---
 import Lesson from '../../layouts/Lesson.astro';
 import * as short from '../../components/blog'
-const {Title,SubHead,Paragraph,Part,AnimationFrame,Latex}=short
+const {Title,SubHead,Paragraph,Part,AnimationFrame,Latex,H}=short
 title: "Understanding Topological Interior Concepts"
 description: "A brief introduction to the fundamental concept of interior in topology"
 pubDate: 2023-11-20
@@ -14,29 +14,17 @@ draft: false
 <Part>
 <Title>Exploring the Interior in Topology</Title>
 
-<Paragraph>The concept of **interior** is fundamental in topology, providing insight into the "inside" of sets within topological spaces.</Paragraph>
-
-<SubHead>Definition</SubHead>
-
-<Paragraph>Given a subset <Latex>A</Latex> of a topological space <Latex>X</Latex>, the **interior** of <Latex>A</Latex> (denoted <Latex>A^\circ</Latex> or <Latex>\textInt(A)$)</Latex> is:
-- The union of all open sets contained in <Latex>A</Latex>
-- The largest open subset of $X$ contained in <Latex>A</Latex>
+<SubHead>Paths and Loops</SubHead>
+<Paragraph>
+A <H>path</H> in a topological space <Latex>X</Latex> is a continuous function <Latex>\gamma \colon [0,1] \to X</Latex>, where <Latex>\gamma(0)</Latex> is the starting point and <Latex>\gamma(1)</Latex> is the endpoint.
+A <H>loop</H> is a special kind of path where the start and end points coincide, i.e., <Latex>\gamma(0) = \gamma(1)</Latex>.
 </Paragraph>
-<SubHead> Key Properties</SubHead>
-
-1. **Always Open**: $A^\circ$ is always an open set
-2. **Nested Relation**: If $A \subseteq B$ then $A^\circ \subseteq B^\circ$
-3. **Idempotent**: $(A^\circ)^\circ = A^\circ$
-4. **Intersection Preservation**: $(A \cap B)^\circ = A^\circ \cap B^\circ$
+<AnimationFrame id="pathDefinition" style="width:50%;aspect-ratio:1;position:relative;left:50%;top:50%"/>
 </Part>
-<AnimationFrame id="first" />
-<input type=range id=xInput min=0 max=100 value=0>
-<input type=range id=tInput min=0 max=100 value=0>
-<input type=range id=rangeInput min=0 max=100 value=0>
-<button id='button'>Generate Homotopy</button>
-<p>value: <span id="value"></span></p>
+
+
 </Lesson>
 <script>
-import { anim } from "../../lib/lessons/topology/homeomorphism/homotopyWithHole.js";
+import { anim as pathDefinition} from "../../lib/lessons/topology/homeomorphism/pathDefinition.js";
 
-anim.engine[0]()</script>
+pathDefinition.engine[0]()</script>

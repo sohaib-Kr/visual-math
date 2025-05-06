@@ -24,6 +24,7 @@ function restrictFromCenter(draggable){
     })
 }
 
+let center=plane.plane.circle(20).center(0,0).attr({fill:'white',opacity:0.8})
 
 
 function runShapeUpdater(shapeUpdater){
@@ -101,9 +102,8 @@ function nonLinearDrag({a,b,aPrime,bPrime}){
     let delta
     if(scalar(delta1)>scalar(delta2)){
         delta=delta1
-        let m=[0.5*delta[0],0.5*delta[1]]
         let pathA=plane.plane.path(`M ${a[0]} ${a[1]} 
-            L ${m[0]} ${m[1]} 
+            L ${0.5*delta[0]} ${0.5*delta[1]} 
             L${aPrime[0]} ${aPrime[1]}`).attr({fill:'none'})
         let pathB=plane.plane.path(`M ${b[0]} ${b[1]} 
             L ${delta[0]} ${delta[1]} 
@@ -113,15 +113,12 @@ function nonLinearDrag({a,b,aPrime,bPrime}){
     }
     else{
         delta=delta2
-        plane.plane.circle(20).center(delta[0],delta[1]).attr({fill:'gray'})
-        let m=[0.5*delta[0],0.5*delta[1]]
-        plane.plane.circle(20).center(m[0],m[1]).attr({fill:'gray'})
         let pathA=plane.plane.path(`M ${a[0]} ${a[1]} 
             L ${delta[0]} ${delta[1]} 
-            L${aPrime[0]} ${aPrime[1]}`).attr({stroke:'green',fill:'none','stroke-width':5})
+            L${aPrime[0]} ${aPrime[1]}`).attr({fill:'none'})
         let pathB=plane.plane.path(`M ${b[0]} ${b[1]} 
-            L ${m[0]} ${m[1]} 
-            L${bPrime[0]} ${bPrime[1]}`).attr({stroke:'green',fill:'none','stroke-width':5})
+            L ${0.5*delta[0]} ${0.5*delta[1]} 
+            L${bPrime[0]} ${bPrime[1]}`).attr({fill:'none'})
         let x=firstPath.createShapeUpdater({a:pathA,b:pathB})
         runShapeUpdater(x)
     }

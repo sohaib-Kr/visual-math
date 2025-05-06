@@ -2,7 +2,11 @@
 import * as utiles from './utiles'
 import { SVG } from '@svgdotjs/svg.js'
 export class vMathAnimation {
-    constructor({width, height, parent, id}) {
+    #pause=false
+    #control
+    #id
+    constructor({width, height, parent, id}){
+        this.#id=id
         if (process.env.NODE_ENV === 'development') {
             if (!(document.getElementById(parent) instanceof HTMLElement)) {
                 throw new Error('cannot create animation frame: parent does not exist')
@@ -23,15 +27,86 @@ export class vMathAnimation {
         this.frame.attr({style: 'background-color:'+this.colorConfig().backgroundColor+';border-radius: 50px;'})
         this.step = 0;
         this.delay = 1000;
+        this.next=null
         this.engine = [() => {
             this.step += 1;
             this.step < this.engine.length ? (() => {
                 try{this.engine[this.step]();
-                setTimeout(() => this.engine[0](), this.delay);}catch(e){console.error('error at step '+this.step+' '+e.message)}
+                if(this.#pause==false){
+                    this.next=setTimeout(() => this.engine[0](), this.delay)
+                }}catch(e){console.error('error at step '+this.step+' '+e.stack)}
             })() : NaN;
         }];
     }
-
+    pause(){
+        this.#pause=true
+        clearInterval(this.next)
+    }
+    play(){
+        this.#pause=false
+        this.engine[0]()
+    }
+    addControl({name,type,listener}){
+        let control={node:null,listener,kill:null}
+        let input
+        if(type=='range'){
+            input=document.createElement('input')
+            input.type='range'
+            input.min=0
+            input.max=100
+            input.value=0
+            input.addEventListener('input',control.listener)
+            control.kill=()=>{
+                input.removeEventListener('click',control.listener)
+                {
+                    let t=1
+                    let I=setInterval(()=>{
+                        input.style.opacity=t
+                        console.log(input.style.opacity)
+                        t-=0.04
+                        if(t<0){
+                            clearInterval(I)
+                            control.node.remove()
+                        }
+                    },20)
+                }
+            }
+        }
+        else if(type=='button'){
+            input=document.createElement('button')
+            input.textContent=name
+            input.addEventListener('click',control.listener)
+            control.kill=()=>{
+                input.removeEventListener('click',control.listener)
+                {
+                    let t=1
+                    let I=setInterval(()=>{
+                        input.style.opacity=t
+                        console.log(input.style.opacity)
+                        t-=0.04
+                        if(t<0){
+                            clearInterval(I)
+                            control.node.remove()
+                        }
+                    },20)
+                }
+            }
+        }
+        control.node=input
+        document.getElementById(this.#id).querySelector('.control').appendChild(input)
+        input.style.opacity=0
+        {
+            let t=0
+            let I=setInterval(()=>{
+                input.style.opacity=t
+                t+=0.1
+                if(t>1){
+                    clearInterval(I)
+                }
+            },20)
+        }
+        return control
+    }
     fadeNextStep(...args){
         utiles.fadeNextStep.bind(this)(...args)
     }
@@ -75,5 +150,6 @@ export class vMathAnimation {
     createTopoPath(params){
         return new utiles.TopoPath({frame:this.frame,...params})
     }
+
 } 
 export const textStyles=utiles.textStyles

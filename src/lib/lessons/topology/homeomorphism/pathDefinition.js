@@ -1,6 +1,6 @@
 import { CartPlane } from '../../../utiles/vector/index.js';
 import { vMathAnimation } from '../../../library.js';
-export const anim = new vMathAnimation({width:1200, height:800, parent:'first', id:'first'});
+export const anim = new vMathAnimation({width:1200, height:800, parent:'pathDefinition', id:'pathDefinition'});
 
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
@@ -36,7 +36,6 @@ let shadowPathIndicator=plane.plane.circle(12)
 
 plane.append(mainPathIndicator)
 plane.append(shadowPathIndicator)
-let rangeInput=document.getElementById('rangeInput')
 
 let arrowHolder=anim.createTopoPath({
     codedPath:`M |a| L |b|`,
@@ -78,7 +77,7 @@ anim.initSteps([
     //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
     //     runShapeUpdater(x)
     // },
-    ()=>{},
+    // ()=>{},
     
     ()=>{
         let aPath=plane.plane.path('M 200 200 L 100 -100')
@@ -90,19 +89,26 @@ anim.initSteps([
     },
     ()=>{},
     ()=>{
+        anim.pause()
         let arrowHolderUpdate=arrowHolder.createShapeUpdater({a:mainPath.shape,b:mainPathShadow})
         let length=mainPath.shape.length()
         let shadowLength=mainPathShadow.length()
         mainPathIndicator.animate(500).attr({opacity:1})
         shadowPathIndicator.animate(500).attr({opacity:1})
         arrowHolder.shape.animate(500).attr({opacity:0.5})
-        rangeInput.addEventListener('input',()=>{
-            arrowHolderUpdate(rangeInput.value/100)
-            let data=mainPath.shape.pointAt(rangeInput.value*length/100)
+        let range=anim.addControl({name:'rangeInput',type:'range',listener:(event)=>{
+            arrowHolderUpdate(event.target.value/100)
+            let data=mainPath.shape.pointAt(event.target.value*length/100)
             mainPathIndicator.center(data.x,data.y)
-            let shadowData=mainPathShadow.pointAt(rangeInput.value*shadowLength/100)
+            let shadowData=mainPathShadow.pointAt(event.target.value*shadowLength/100)
             shadowPathIndicator.center(shadowData.x,shadowData.y)
-        })
+        }})
+        let next=anim.addControl({name:'next',type:'button',listener:()=>{
+            anim.play()
+            range.kill()
+            next.kill()
+        }})
+
     },
     ()=>{
         let aPath=plane.plane.path('M 100 -100 L 0 0')
@@ -133,19 +139,25 @@ anim.initSteps([
     },
     ()=>{},
     ()=>{
-    let arrowHolderUpdate=arrowHolder.createShapeUpdater({a:secondPath.shape,b:mainPathShadow})
-    let length=secondPath.shape.length()
-    let shadowLength=mainPathShadow.length()
-    mainPathIndicator.animate(500).attr({opacity:1})
-    shadowPathIndicator.animate(500).attr({opacity:1})
-    arrowHolder.shape.animate(500).attr({opacity:0.5})
-    rangeInput.addEventListener('input',()=>{
-        arrowHolderUpdate(rangeInput.value/100)
-        let data=secondPath.shape.pointAt(rangeInput.value*length/100)
-        mainPathIndicator.center(data.x,data.y)
-        let shadowData=mainPathShadow.pointAt(rangeInput.value*shadowLength/100)
-        shadowPathIndicator.center(shadowData.x,shadowData.y)
-    })
-
+        anim.pause()
+        let arrowHolderUpdate=arrowHolder.createShapeUpdater({a:secondPath.shape,b:mainPathShadow})
+        let length=secondPath.shape.length()
+        let shadowLength=mainPathShadow.length()
+        mainPathIndicator.animate(500).attr({opacity:1})
+        shadowPathIndicator.animate(500).attr({opacity:1})
+        arrowHolder.shape.animate(500).attr({opacity:0.5})
+        let range=anim.addControl({name:'rangeInput',type:'range',listener:(event)=>{
+            arrowHolderUpdate(event.target.value/100)
+            let data=secondPath.shape.pointAt(event.target.value*length/100)
+            mainPathIndicator.center(data.x,data.y)
+            let shadowData=mainPathShadow.pointAt(event.target.value*shadowLength/100)
+            shadowPathIndicator.center(shadowData.x,shadowData.y)
+        }})
+        let next=anim.addControl({name:'next',type:'button',listener:()=>{
+            anim.play()
+            range.kill()
+            next.kill()
+        }})
+    
     }
 ])
