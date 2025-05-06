@@ -1,5 +1,8 @@
 
 import Vivus from 'vivus'
+//this function creates an arrow with a curved path and an arrowhead by specifying the starting, ending and control points
+//it returns the arrow svg element
+//the arrow is animated using vivus if vivusConfirmed is true
 export function arrow(sx, sy, ex, ey, cx, cy, color, vivusConfirmed) {
     // Draw the curved path
     let draw=this.frame;

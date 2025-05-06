@@ -1,5 +1,15 @@
 import { VectorTransforms } from "../Transformations"
+//this function deforms a vector space by transforming every point in the space according to a math function
+//it takes a math function and a smoothness parameter
+//if smoothness is true then the deformation is animated
+//if smoothness is false then the deformation is instant
 
+
+//
+//
+//              you are obliged to retrieve the math functions from VectorTransforms object
+//                              and not a foreign function
+//
 export function deformation({mathFunc=VectorTransforms.identity, smoothness}) {
     if (process.env.NODE_ENV === 'development') {
         if (!Object.values(VectorTransforms).includes(mathFunc)) throw new Error('mathFunc must be a valid VectorTransforms function')

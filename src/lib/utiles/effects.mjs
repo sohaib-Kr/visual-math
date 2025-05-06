@@ -19,7 +19,7 @@ export function shakeAnimation({element, degree=3, frequency=100, callback=()=>{
         .rotate(-degree);
 }
 
-
+//this function schedules element to delete after the next step in vMathAnimation engine array
 export function fadeNextStep(...args){
     let now = this.step;
     args.forEach(arg => {

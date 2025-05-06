@@ -12,6 +12,20 @@ export function pathDecoder(path){
     commands.push(output[output.length-1])
     return {commands,params}
 }
+
+
+//The TopoPath element is a path element that can be animated 
+//by matching its points with a set of transformation paths
+//it is created by decoding a path string that contains the commands and parameters
+//the path string is of the form 'M |a| C |b| |c| |d| Q 100 0 |e|'
+//by setting the initialData object it create a path linking every point to its initial position
+//you can set the path to be draggable by the user by calling the draggable function and passing the points you want to be draggable
+//you can also create a smooth transformation for the path by moving each of the points a, b ,c in a certain path
+// you do this by creating a path for every point (the path represents the trajectory of the point) and passing it to the createShapeUpdater function
+//the createShapeUpdater function returns a function that updates the shape according to a time variable t that goes from 0 to 1
+//the returned function can be used for example inside setInterval or as an event listener
+
+
 export class TopoPath{
     #frame
     #draggablePoints
@@ -163,7 +177,6 @@ export class TopoPath{
 
 
     disableDraggable(){
-        //first we check if the points are valid
         this.#draggablePoints.forEach((pointData)=>{
             pointData.circle.remove()
             this.#frame.node.removeEventListener('mousemove',this.#allowDragFunction)

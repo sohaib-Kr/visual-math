@@ -1,5 +1,6 @@
 import katex from 'katex';
 function createDynamicText(text){
+    //separate the text into span tags to be able to manipulate them independently
     let x = this.frame.text(function (add) {
         text.forEach((elem) => {
             add.tspan(elem);
@@ -9,6 +10,11 @@ function createDynamicText(text){
 }
 
 function latex(inputString,parent,textStyle) {
+    //here we separate the input string into regular text and latex text
+    //regular text is the text that will be displayed as is
+    //latex text is the text that will be rendered using katex
+    //the input string should be a string of the form 'text\\_text\\_text'
+    //where \\ is the separator between regular text and latex text
     if (process.env.NODE_ENV === 'development') {
         if (!(document.getElementById(parent) instanceof HTMLElement)) {
             throw new Error('cannot create latex: parent does not exist')

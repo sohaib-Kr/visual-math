@@ -6,6 +6,7 @@ function transform(dx,dy,scale,rotate){
         rotate:rotate
     }
 }
+//this objects contains math functions that can be used to transform a vector space in a certain way
 export const VectorTransforms={
     identity:function(){
         return transform(0,0,1,0)

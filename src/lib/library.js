@@ -1,19 +1,29 @@
 
 import * as utiles from './utiles'
 import { SVG } from '@svgdotjs/svg.js'
+
+// vMathAnimation class provides an interface for the svg animation frame
+//every instance of vMathAnimation is an animation frame. it provides all the methods to control the animation (play, pause, restart....)
+//it also provides all the utiles functions to create and animate svg elements (create text, plane, vector field, arrow, latex .....)
+//it also provides a control panel to let the user interact with the animation 
+
 export class vMathAnimation {
     #pause=false
-    #control
     #id
-    constructor({width, height, parent, id}){
+    constructor(id){
         this.#id=id
+        //check if the animation holder exists (it should be a div element with the specified id)
         if (process.env.NODE_ENV === 'development') {
-            if (!(document.getElementById(parent) instanceof HTMLElement)) {
+            if (!(document.getElementById(id) instanceof HTMLElement)) {
                 throw new Error('cannot create animation frame: parent does not exist')
             }
         }
-        let parentElement=document.getElementById(parent)
+
+        //get the parent element and calculate the scale factor so that the svg frame fits inside the element
+        let parentElement=document.getElementById(id)
         let ofsetWidth=parseInt(window.getComputedStyle(parentElement).width)
+
+        //create the animation frame element
         this.wrapper = document.createElement('div');
         this.wrapper.innerHTML = `
             <div id="${id}Animation" class="animationWrapper">
@@ -21,10 +31,14 @@ export class vMathAnimation {
               <div class="animationControl"></div>
             </div>`;
             this.wrapper.style.transformOrigin='top left'
-            this.wrapper.style.transform='scale('+(ofsetWidth/width)+')'
+            this.wrapper.style.transform='scale('+(ofsetWidth/1200)+')'
         parentElement.appendChild(this.wrapper);
-        this.frame = SVG(`#${id}Frame`).size(width,height);
+
+        //using SVG.js we load the svg frame element and configure it
+        this.frame = SVG(`#${id}Frame`).size(1200,800);
         this.frame.attr({style: 'background-color:'+this.colorConfig().backgroundColor+';border-radius: 50px;'})
+
+        //iniitalizing animation variables and the engine[0] function (the main animation loop)
         this.step = 0;
         this.delay = 1000;
         this.next=null
@@ -47,6 +61,8 @@ export class vMathAnimation {
         this.engine[0]()
     }
     addControl({name,type,listener}){
+        //this function create a control object that holds the node element of the input,
+        // the listener function that runs when the user interact with it and the kill function that remove the input and its event listeners
         let control={node:null,listener,kill:null}
         let input
         if(type=='range'){
@@ -57,7 +73,7 @@ export class vMathAnimation {
             input.value=0
             input.addEventListener('input',control.listener)
             control.kill=()=>{
-                input.removeEventListener('click',control.listener)
+                input.removeEventListener('input',control.listener)
                 {
                     let t=1
                     let I=setInterval(()=>{
@@ -127,16 +143,6 @@ export class vMathAnimation {
     }
     latex(...params){
         return utiles.latex.bind(this)(...params)
-    }
-    updateMousePosition(event) {
-        let mousePositionElement = document.getElementById('mouse');
-        // Get the bounding rectangle of the canvas
-        const rect =this.frame.node.getBoundingClientRect()
-        // Calculate the mouse position relative to the canvas
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
-        // Update the text inside the <p> element
-        mousePositionElement.textContent = `Mouse Position: (${mouseX.toFixed(2)}, ${mouseY.toFixed(2)})`;
     }
     shakeAnimation(...params){
         return utiles.shakeAnimation.bind(this)(...params)

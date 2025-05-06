@@ -4,6 +4,15 @@ export function getCurrentPos(point){
     let y=point.bbox().y+point.transform().translateY
     return {x,y}
 }
+
+//this function creates a shape and append it to a vector space 
+//so that whenever you deform the vector space the shape deforms accordingly
+//it returns an object containing the shape and an interval that updates the shape
+
+//to do:
+//refactor and reorganize append shape class for better usability
+//add more options for the shape
+
 export function appendShape({ points, closed }){
 
     if (process.env.NODE_ENV === 'development') {

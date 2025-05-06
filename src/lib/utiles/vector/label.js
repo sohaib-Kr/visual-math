@@ -1,3 +1,6 @@
+
+//this function shows the coordinates of every point in the vector space
+//either by indicating the array position or the cartesian position
 export function label( mode ){
     
     if(mode=='array'){
