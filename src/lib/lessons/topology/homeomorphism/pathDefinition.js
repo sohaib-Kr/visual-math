@@ -50,34 +50,34 @@ let secondPath=anim.createTopoPath({
 plane.append(secondPath.group)
 
 anim.initSteps([
-    // ()=>{},
-    // ()=>{
-    //     let aPath=plane.plane.path('M 0 0 L -100 -50')
-    //     let bPath=plane.plane.path('M 0 0 L -100 -50')
-    //     let cPath=plane.plane.path('M 100 0 L 200 -250')
-    //     let dPath=plane.plane.path('M 100 0 L 200 -250')
-    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     runShapeUpdater(x)
-    // },
-    // ()=>{},
-    // ()=>{
-    //     let aPath=plane.plane.path('M -100 -50 L -100 200')
-    //     let bPath=plane.plane.path('M -100 -50 L -300 200')
-    //     let cPath=plane.plane.path('M 200 -250 L -300 -100')
-    //     let dPath=plane.plane.path('M 200 -250 L -100 -100')
-    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     runShapeUpdater(x)
-    // },
-    // ()=>{},
-    // ()=>{
-    //     let aPath=plane.plane.path('M -100 200 L 200 200')
-    //     let bPath=plane.plane.path('M -300 200 L 0 200')
-    //     let cPath=plane.plane.path('M -300 -100 L 0 -100')
-    //     let dPath=plane.plane.path('M -100 -100 L -200 -100')
-    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     runShapeUpdater(x)
-    // },
-    // ()=>{},
+    ()=>{},
+    ()=>{
+        let aPath=plane.plane.path('M 0 0 L -100 -50')
+        let bPath=plane.plane.path('M 0 0 L -100 -50')
+        let cPath=plane.plane.path('M 100 0 L 200 -250')
+        let dPath=plane.plane.path('M 100 0 L 200 -250')
+        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        runShapeUpdater(x)
+    },
+    ()=>{},
+    ()=>{
+        let aPath=plane.plane.path('M -100 -50 L -100 200')
+        let bPath=plane.plane.path('M -100 -50 L -300 200')
+        let cPath=plane.plane.path('M 200 -250 L -300 -100')
+        let dPath=plane.plane.path('M 200 -250 L -100 -100')
+        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        runShapeUpdater(x)
+    },
+    ()=>{},
+    ()=>{
+        let aPath=plane.plane.path('M -100 200 L 200 200')
+        let bPath=plane.plane.path('M -300 200 L 0 200')
+        let cPath=plane.plane.path('M -300 -100 L 0 -100')
+        let dPath=plane.plane.path('M -100 -100 L -200 -100')
+        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        runShapeUpdater(x)
+    },
+    ()=>{},
     
     ()=>{
         let aPath=plane.plane.path('M 200 200 L 100 -100')

@@ -1,6 +1,6 @@
 import { CartPlane } from '../../../utiles/vector/index.js';
 import { vMathAnimation } from '../../../library.js';
-export const anim = new vMathAnimation({width:1200, height:800, parent:'first', id:'first'});
+export const anim = new vMathAnimation({width:1200, height:800, parent:'homotopyWithHole', id:'homotopyWithHole'});
 
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
@@ -27,7 +27,7 @@ function restrictFromCenter(draggable){
 let center=plane.plane.circle(20).center(0,0).attr({fill:'white',opacity:0.8})
 
 
-function runShapeUpdater(shapeUpdater){
+function runShapeUpdater(shapeUpdater,callback=()=>{}){
     let t=0
     let s=0
     let I=setInterval(()=>{
@@ -36,6 +36,7 @@ function runShapeUpdater(shapeUpdater){
         t+=0.04
         if(t>1.04){
             clearInterval(I)
+            callback()
         }
     },50)
 }
@@ -127,13 +128,13 @@ function nonLinearDrag({a,b,aPrime,bPrime}){
 
 
 function generateHomotopy(){
+    firstPath.disableDraggable()
+    secondPath.disableDraggable()
     let rect=checkIfInside()
     if(rect.inside){
-        document.getElementById('value').textContent='inside'
         nonLinearDrag(rect.points)
     }
     else{
-        document.getElementById('value').textContent='outside'
         linearDrag()
     }
 }
@@ -152,8 +153,6 @@ plane.append(secondPath.group)
 
 let toDelete=[]
 
-
-document.getElementById('button').addEventListener('click',()=>generateHomotopy())
 anim.initSteps([
     ()=>{
         firstPath.shape.attr({opacity:1})
@@ -177,11 +176,20 @@ anim.initSteps([
     ()=>{},
     ()=>{
         toDelete.forEach((path)=>path.remove())
+        let aPath=plane.plane.path('M 50 250 L -250 -50')
+        let bPath=plane.plane.path('M 250 50 L -50 -250')
+        let x=firstPath.createShapeUpdater({a:aPath,b:bPath})
+        runShapeUpdater(x,()=>{
+            firstPath.draggable(['a','b'],plane.center)
+            secondPath.draggable(['a','b'],plane.center)
+            restrictFromCenter(firstPath)
+            restrictFromCenter(secondPath)
+        })
     },
     ()=>{
-        firstPath.draggable(['a','b'],plane.center)
-        secondPath.draggable(['a','b'],plane.center)
-        restrictFromCenter(firstPath)
-        restrictFromCenter(secondPath)
+        let playHomotopy=anim.addControl({name:'playHomotopy',type:'button',listener:()=>{
+            generateHomotopy()
+            playHomotopy.kill()
+        }})
     }
 ])

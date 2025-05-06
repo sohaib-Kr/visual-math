@@ -1,6 +1,6 @@
 import { CartPlane } from '../../../utiles/vector/index.js';
 import { vMathAnimation } from '../../../library.js';
-export const anim = new vMathAnimation({width:1200, height:800, parent:'first', id:'first'});
+export const anim = new vMathAnimation({width:1200, height:800, parent:'homotopicalEqu', id:'homotopicalEqu'});
 
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
@@ -86,30 +86,35 @@ anim.initSteps([
     },
     ()=>{},
     ()=>{
+        anim.pause()
         let data
         homotopyPathShadow.forEach((path)=>{
             path.animate(500).attr({opacity:0.5,stroke:'orange','stroke-width':3})
         })
-        xInput.addEventListener('input',()=>{ 
-            shapeUpdaterHolder(xInput.value/100)
-            indicator.animate(500).attr({opacity:1})
-            data=homotopyPath.shape.pointAt(homotopyPath.shape.length()*tInput.value/100)
+        shapeUpdaterHolder(0)
+        indicator.animate(500).attr({opacity:1})
+        tInput=anim.addControl({name:'tInput',type:'range',listener:(event)=>{
+            shapeUpdaterHolder(event.target.value/100)
+            data=homotopyPath.shape.pointAt(homotopyPath.shape.length()*xInput.node.value/100)
             indicator.center(data.x,data.y)
-        })
-        tInput.addEventListener('input',()=>{
-            indicator.animate(500).attr({opacity:1})
-            data=homotopyPath.shape.pointAt(homotopyPath.shape.length()*tInput.value/100)
+        }})
+        xInput=anim.addControl({name:'xInput',type:'range',listener:(event)=>{
+            data=homotopyPath.shape.pointAt(homotopyPath.shape.length()*event.target.value/100)
             indicator.center(data.x,data.y)
-        })
-    }
-    // ()=>{},
-    // ()=>{
-    //     let aPath=plane.plane.path('M -150 -300 L 200 50')
-    //     let bPath=plane.plane.path('M -150 -100 L 50 50')
-    //     let cPath=plane.plane.path('M 150 -100 L 50 250')
-    //     let dPath=plane.plane.path('M 150 -300 L -200 250')
-    //     let x=homotopyPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     runShapeUpdater(x)
-    // },
+        }})
+        let play=anim.addControl({name:'play',type:'button',listener:()=>{
+            anim.play()
+            play.kill()
+        }})
+    },
+    ()=>{},
+    ()=>{
+        let aPath=plane.plane.path('M -150 -300 L 200 50')
+        let bPath=plane.plane.path('M -150 -100 L 50 50')
+        let cPath=plane.plane.path('M 150 -100 L 50 250')
+        let dPath=plane.plane.path('M 150 -300 L -200 250')
+        let x=homotopyPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        runShapeUpdater(x)
+    },
 
 ])

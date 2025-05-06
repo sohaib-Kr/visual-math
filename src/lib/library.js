@@ -34,7 +34,7 @@ export class vMathAnimation {
                 try{this.engine[this.step]();
                 if(this.#pause==false){
                     this.next=setTimeout(() => this.engine[0](), this.delay)
-                }}catch(e){console.error('error at step '+this.step+' '+e.stack)}
+                }}catch(e){console.error('error in animation: '+this.#id+' at step '+this.step+' '+e.stack)}
             })() : NaN;
         }];
     }
