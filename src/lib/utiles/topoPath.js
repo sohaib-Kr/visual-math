@@ -91,14 +91,25 @@ export class TopoPath{
                 if(matchingSet[param]){
                     //if the param is in the matching set then it is dynamic
                     //so we add the path and its length to the array
-                    smoothTransPathArray.push(command)
+                    if(typeof smoothTransPathArray[smoothTransPathArray.length-1] === 'string'){
+                        smoothTransPathArray[smoothTransPathArray.length-1]+=' '+command
+                    }
+                    else{
+                        smoothTransPathArray.push(command)
+                    }
                     smoothTransPathArray.push({
                         trajectory:matchingSet[param],
                         length:matchingSet[param].length()})
                 }
                 else{
                     //if the param is not in the matching set then it is static
-                    smoothTransPathArray.push(command+this.currentData[param][0]+' '+this.currentData[param][1])
+                    if(smoothTransPathArray.length>0 && typeof smoothTransPathArray[smoothTransPathArray.length-1] === 'string'){
+                        smoothTransPathArray[smoothTransPathArray.length-1]+=' '+command+this.currentData[param][0]+' '+this.currentData[param][1]+' '
+                        
+                    }
+                    else{
+                        smoothTransPathArray.push(command+' '+this.currentData[param][0]+' '+this.currentData[param][1])
+                    }
                 }
             }
             else{
@@ -114,7 +125,11 @@ export class TopoPath{
             let newPath=smoothParams.map((param,index)=>{
                 let data=param.trajectory.pointAt(t*param.length)
                 return smoothCommands[index]+data.x+' '+data.y
-            }).join('')
+            })
+            if(typeof smoothCommands[smoothParams.length] === 'string'){
+                newPath.push(smoothCommands[smoothParams.length])
+            }
+            newPath=newPath.join('')
             this.shape.plot(newPath)
         })
     }
@@ -183,5 +198,45 @@ export class TopoPath{
         })
         this.#draggablePoints=[]
         
+    }
+    runShapeUpdater(shapeUpdater,callback=()=>{}){
+        let t=0
+        let s=0
+        let I=setInterval(()=>{
+            s=t*t
+            shapeUpdater(s)
+            t+=0.04
+            if(t>1.04){
+                clearInterval(I)
+                callback()
+            }
+        },50)
+    }
+    label(plane){
+        this.decoded.params.forEach((param)=>{
+            plane.plane.text(param).move(this.currentData[param][0],this.currentData[param][1]).fill('white')
+        })
+    }
+    createIndicator(plane){
+        let indicator=plane.plane.path('M -10 -10 L 0 0 L -10 10').attr({stroke:'yellow','stroke-width':3,fill:'none'})
+        return indicator
+    }
+    updateIndicator(t,indicator){
+        let length=this.shape.length()
+        let startPoint=this.shape.pointAt(t*length)
+        let nextPoint=this.shape.pointAt((t+0.01)*length)
+        let delta=(nextPoint.y-startPoint.y)/(nextPoint.x-startPoint.x)
+        let angle
+        if(Math.sign(nextPoint.y*startPoint.y)<0){
+            console.log(Math.sign(startPoint.y-nextPoint.y))
+            angle=Math.sign(nextPoint.y-startPoint.y)*90
+        }
+        else if(nextPoint.y<0){
+            angle=180+Math.atan(delta)*180/Math.PI
+        }
+        else{
+            angle=Math.atan(delta)*180/Math.PI
+        }
+        indicator.transform({translate:[startPoint.x,startPoint.y],rotate:angle,origin:[0,0]})
     }
 }

@@ -1,0 +1,18 @@
+---
+import Lesson from '../../layouts/Lesson.astro';
+import * as short from '../../components/blog'
+const {Title,SubHead,Paragraph,Part,AnimationFrame,Latex,H,Ex}=short
+title: "Understanding Topological Interior Concepts"
+description: "A brief introduction to the fundamental concept of interior in topology"
+pubDate: 2023-11-20
+author: "Math Insights"
+tags: ["mathematics", "topology", "interior"]
+image: "/images/topology-interior.jpg"
+draft: false
+---
+<Lesson>
+<AnimationFrame id="fundamentalGroup1" style="width:1000px;height:700px;"/>
+</Lesson>
+<script>
+import { anim as fundamentalGroup1} from "../../lib/lessons/topology/homeomorphism/fundamentalGroup1.js";
+fundamentalGroup1.engine[0]()</script>

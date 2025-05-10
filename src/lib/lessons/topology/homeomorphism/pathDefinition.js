@@ -1,6 +1,6 @@
 import { CartPlane } from '../../../utiles/vector/index.js';
 import { vMathAnimation } from '../../../library.js';
-export const anim = new vMathAnimation({width:1200, height:800, parent:'pathDefinition', id:'pathDefinition'});
+export const anim = new vMathAnimation('pathDefinition');
 
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
