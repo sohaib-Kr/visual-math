@@ -1,7 +1,10 @@
 
 import * as utiles from './utiles'
 import { SVG } from '@svgdotjs/svg.js'
+import { gsap } from 'gsap'
 
+
+gsap.config({easeDefault:'power2.inOut'})
 // vMathAnimation class provides an interface for the svg animation frame
 //every instance of vMathAnimation is an animation frame. it provides all the methods to control the animation (play, pause, restart....)
 //it also provides all the utiles functions to create and animate svg elements (create text, plane, vector field, arrow, latex .....)
@@ -22,6 +25,7 @@ export class vMathAnimation {
         //get the parent element and calculate the scale factor so that the svg frame fits inside the element
         let parentElement=document.getElementById(id)
         let ofsetWidth=parseInt(window.getComputedStyle(parentElement).width)
+        let ofsetHeight=parseInt(window.getComputedStyle(parentElement).height)
 
         //create the animation frame element
         this.wrapper = document.createElement('div');
@@ -30,8 +34,9 @@ export class vMathAnimation {
               <svg class="animation" id="${id}Frame"></svg>
               <div class="animationControl"></div>
             </div>`;
-            this.wrapper.style.transformOrigin='top left'
-            this.wrapper.style.transform='scale('+(ofsetWidth/1200)+')'
+            this.wrapper.style.height='100%'
+            this.wrapper.children[0].style.transformOrigin='top left'
+            this.wrapper.children[0].style.transform='scale('+(ofsetWidth/1200)+','+(ofsetHeight/800)+')'
         parentElement.appendChild(this.wrapper);
 
         //using SVG.js we load the svg frame element and configure it
@@ -109,7 +114,7 @@ export class vMathAnimation {
             }
         }
         control.node=input
-        document.getElementById(this.#id).querySelector('.control').appendChild(input)
+        document.getElementById(this.#id).parentElement.querySelector('.control').children[1].appendChild(input)
         input.style.opacity=0
         {
             let t=0
@@ -122,6 +127,34 @@ export class vMathAnimation {
             },20)
         }
         return control
+    }
+    createTextSpace(){
+        let textSpace=document.getElementById(this.#id)
+        .parentElement.querySelector('.control').children[0]
+        .appendChild(document.createElement('div'))
+        textSpace.classList.add('textSpace')
+        textSpace.style.position='relative'
+        textSpace.style.width='80%'
+        let obj={
+            update:function(newText,fade=false,latex=false){
+ 
+                if(fade){
+                    let tween=gsap.to(textSpace,{duration:0.5,y:-10,opacity:0,onComplete:()=>{
+                        textSpace.innerHTML=newText
+                        gsap.to(textSpace,{duration:0.5,y:10,opacity:1})
+                    }})
+                }
+                else{
+                    textSpace.innerHTML=newText
+                }
+                if(latex){
+                    katex.render(newText,textSpace,{throwOnError:true,displayMode:false})
+                }
+                return this
+            }
+
+        }
+        return obj
     }
     fadeNextStep(...args){
         utiles.fadeNextStep.bind(this)(...args)

@@ -48,9 +48,12 @@ let secondPath=anim.createTopoPath({
     initialData:{a:[0,0],b:[0,0],c:[100,0],d:[0,0],e:[100,0],f:[100,0],g:[100,0]},
     attr:{stroke:'red','stroke-width':5,fill:'none',opacity:0}})
 plane.append(secondPath.group)
-
+let textHolder
+let lambdaHolder
 anim.initSteps([
-    ()=>{},
+    ()=>{
+        textHolder=anim.createTextSpace().update('Here are examples of different paths in the plane R^2',true)
+    },
     ()=>{
         let aPath=plane.plane.path('M 0 0 L -100 -50')
         let bPath=plane.plane.path('M 0 0 L -100 -50')
@@ -89,6 +92,8 @@ anim.initSteps([
     },
     ()=>{},
     ()=>{
+        textHolder.update('Use the range slider to change the value of x.',true)
+        lambdaHolder=anim.createTextSpace().update('\\gamma \\left( x \\right)=\\left( 1,1 \\right)',true,true)
         anim.pause()
         let arrowHolderUpdate=arrowHolder.createShapeUpdater({a:mainPath.shape,b:mainPathShadow})
         let length=mainPath.shape.length()
@@ -102,6 +107,7 @@ anim.initSteps([
             mainPathIndicator.center(data.x,data.y)
             let shadowData=mainPathShadow.pointAt(event.target.value*shadowLength/100)
             shadowPathIndicator.center(shadowData.x,shadowData.y)
+            lambdaHolder.update('/gamma/left( '+event.target.value/100+' /right)=/left( '+parseInt(data.x)/100+','+(-parseInt(data.y)/100)+' /right)')
         }})
         let next=anim.addControl({name:'next',type:'button',listener:()=>{
             anim.play()
