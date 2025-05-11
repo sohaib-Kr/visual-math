@@ -6,15 +6,24 @@ const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
 
 plane.plane.circle(20).fill('white').center(0,0)
-let mainPath=plane.plane.path(`M 0 0 L 400 0 L 0 0`)
+
+let mainPath=plane.plane.path(`M 200 0 A 1 1 0 0 0 -200 0 A 1 1 0 0 0 200 0 A 200 200 0 0 0 167 -110`)
 mainPath.attr({stroke:'red','stroke-width':5,fill:'none'})
+
+let firstPath=plane.plane.path(`M -100 0 C -100 100 -200 -100 -200 0 `)
+firstPath.attr({stroke:'yellow','stroke-width':5,fill:'none'})
+
+let secondPath=plane.plane.path(`M 0 200 C -50 100 100 0 100 100 `)
+secondPath.attr({stroke:'yellow','stroke-width':5,fill:'none'})
+
+
 
 let indicatorLine=anim.createTopoPath({
     codedPath:`M |a|
 L |b|`,
     initialData:{
         a : [300,-300],
-b : [0,0],
+b : [-100,0],
     },
     attr:{stroke:'white','stroke-width':5,fill:'none',opacity:0.5}
 })
@@ -22,8 +31,11 @@ plane.append(indicatorLine.group)
 anim.initSteps([
     ()=>{},
     ()=>{
-        let x=indicatorLine.createShapeUpdater({b:mainPath})
-        indicatorLine.runShapeUpdater(x)
+        let x=indicatorLine.createShapeUpdater({b:firstPath})
+        indicatorLine.runShapeUpdater(x,()=>{
+            let y=indicatorLine.createShapeUpdater({b:secondPath})
+            indicatorLine.runShapeUpdater(y)
+        })
     },
     ()=>{
     }
