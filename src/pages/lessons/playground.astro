@@ -2,6 +2,7 @@
 import Lesson from '../../layouts/Lesson.astro';
 import * as short from '../../components/blog'
 const {Title,SubHead,Paragraph,Part,AnimationFrame,Latex,H,Ex}=short
+import ExoSection from '../../components/blog/ExoSection'
 title: "Understanding Topological Interior Concepts"
 description: "A brief introduction to the fundamental concept of interior in topology"
 pubDate: 2023-11-20
@@ -9,10 +10,39 @@ author: "Math Insights"
 tags: ["mathematics", "topology", "interior"]
 image: "/images/topology-interior.jpg"
 draft: false
+let exos=[
+        {
+            title:"Exo 1",
+            description:"Description of Exo 1",
+            options:[
+                {title:"option1",description:"Description of option1"},
+                {title:"option2",description:"Description of option2"},
+                {title:"option3",description:"Description of option3"},
+            ]
+        },
+        {title:"Exo 2",
+        description:"Description of Exo 2",
+        options:[
+            {title:"option1",description:"Description of option1"},
+            {title:"option2",description:"Description of option2"},
+            {title:"option3",description:"Description of option3"},
+        ]
+        },
+        {title:"Exo 3",
+        description:"Description of Exo 3",
+        options:[
+            {title:"option1",description:"Description of option1"},
+            {title:"option2",description:"Description of option2"},
+            {title:"option3",description:"Description of option3"},
+        ]
+        },
+    ]
 ---
+
 <Lesson>
-<AnimationFrame id="exo1" style="width:1000px;height:700px;"/>
+    <Part>
+        <ExoSection exercices={exos} client:load>
+    
+</ExoSection>
+    </Part>
 </Lesson>
-<script>
-import { anim as exo1} from "../../lib/lessons/topology/homeomorphism/homotopy/exo1/third.js";
-exo1.engine[0]()</script>
