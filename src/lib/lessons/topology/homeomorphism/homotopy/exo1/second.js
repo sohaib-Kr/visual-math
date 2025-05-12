@@ -23,7 +23,7 @@ anim.initSteps([
     ()=>{},
     ()=>{
         let x=indicatorLine.createShapeUpdater({b:mainPath})
-        indicatorLine.runShapeUpdater(x)
+        x.runUpdater()
     },
     ()=>{
     }

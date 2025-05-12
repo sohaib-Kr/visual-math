@@ -5,19 +5,6 @@ export const anim = new vMathAnimation('homotopicalEqu');
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
 
-function runShapeUpdater(shapeUpdater){
-    let t=0
-    let s=0
-    let I=setInterval(()=>{
-        s=t*t
-        shapeUpdater(s)
-        t+=0.04
-        if(t>1.04){
-            clearInterval(I)
-        }
-    },50)
-}
-
 let homotopyPathShadow
 
 
@@ -82,7 +69,7 @@ anim.initSteps([
     ()=>{},
     ()=>{
         changeHomotopyType(3)
-        runShapeUpdater(shapeUpdaterHolder)
+        shapeUpdaterHolder.runUpdater()
     },
     ()=>{},
     ()=>{
@@ -91,10 +78,10 @@ anim.initSteps([
         homotopyPathShadow.forEach((path)=>{
             path.animate(500).attr({opacity:0.5,stroke:'orange','stroke-width':3})
         })
-        shapeUpdaterHolder(0)
+        shapeUpdaterHolder.update(0)
         indicator.animate(500).attr({opacity:1})
         tInput=anim.addControl({name:'tInput',type:'range',listener:(event)=>{
-            shapeUpdaterHolder(event.target.value/100)
+            shapeUpdaterHolder.update(event.target.value/100)
             data=homotopyPath.shape.pointAt(homotopyPath.shape.length()*xInput.node.value/100)
             indicator.center(data.x,data.y)
         }})
@@ -114,7 +101,7 @@ anim.initSteps([
         let cPath=plane.plane.path('M 150 -100 L 50 250')
         let dPath=plane.plane.path('M 150 -300 L -200 250')
         let x=homotopyPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        runShapeUpdater(x)
+        x.runUpdater()
     },
 
 ])

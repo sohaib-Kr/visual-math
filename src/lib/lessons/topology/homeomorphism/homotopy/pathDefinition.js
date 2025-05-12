@@ -4,21 +4,6 @@ export const anim = new vMathAnimation('pathDefinition');
 
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
-
-function runShapeUpdater(shapeUpdater){
-    let t=0
-    let s=0
-    let I=setInterval(()=>{
-        s=t*t
-        shapeUpdater(s)
-        t+=0.04
-        if(t>1.04){
-            clearInterval(I)
-        }
-    },50)
-}
-
-
 let mainPath=anim.createTopoPath({
     codedPath:`M |a| C |b| |c| |d|`,
     initialData:{a:[0,0],b:[0,0],c:[100,0],d:[100,0]},
@@ -60,7 +45,7 @@ anim.initSteps([
         let cPath=plane.plane.path('M 100 0 L 200 -250')
         let dPath=plane.plane.path('M 100 0 L 200 -250')
         let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        runShapeUpdater(x)
+        x.runUpdater()
     },
     ()=>{},
     ()=>{
@@ -69,7 +54,7 @@ anim.initSteps([
         let cPath=plane.plane.path('M 200 -250 L -300 -100')
         let dPath=plane.plane.path('M 200 -250 L -100 -100')
         let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        runShapeUpdater(x)
+        x.runUpdater()
     },
     ()=>{},
     ()=>{
@@ -78,7 +63,7 @@ anim.initSteps([
         let cPath=plane.plane.path('M -300 -100 L 0 -100')
         let dPath=plane.plane.path('M -100 -100 L -200 -100')
         let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        runShapeUpdater(x)
+        x.runUpdater()
     },
     ()=>{},
     
@@ -88,7 +73,7 @@ anim.initSteps([
         let cPath=plane.plane.path('M 0 -100 L 200 -250')
         let dPath=plane.plane.path('M -200 -100 L 400 -250')
         let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        runShapeUpdater(x)
+        x.runUpdater()
     },
     ()=>{},
     ()=>{
@@ -122,7 +107,7 @@ anim.initSteps([
         let cPath=plane.plane.path('M 200 -250 L  100 0')
         let dPath=plane.plane.path('M 400 -250 L 100 0')
         let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        runShapeUpdater(x)
+        x.runUpdater()
         arrowHolder.shape.animate(300).attr({opacity:0})
         mainPathIndicator.animate(300).attr({opacity:0})
         shadowPathIndicator.animate(300).attr({opacity:0})
@@ -138,7 +123,7 @@ anim.initSteps([
         let fPath=plane.plane.path('M 100 0 L -450 -50')
         let gPath=plane.plane.path('M 100 0 L  -450 200')
         let x=secondPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath,e:ePath,f:fPath,g:gPath})
-        runShapeUpdater(x)
+        x.runUpdater()
         arrowHolder.shape.animate(300).attr({opacity:0})
         mainPathIndicator.animate(300).attr({opacity:0})
         shadowPathIndicator.animate(300).attr({opacity:0})

@@ -25,21 +25,6 @@ function restrictFromCenter(draggable){
 }
 
 let center=plane.plane.circle(20).center(0,0).attr({fill:'white',opacity:0.8})
-
-
-function runShapeUpdater(shapeUpdater,callback=()=>{}){
-    let t=0
-    let s=0
-    let I=setInterval(()=>{
-        s=t*t
-        shapeUpdater(s)
-        t+=0.04
-        if(t>1.04){
-            clearInterval(I)
-            callback()
-        }
-    },50)
-}
 function matchHeads(headA,headB){
     function dist(x1,y1,x2,y2){
         return Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2))
@@ -92,7 +77,7 @@ function linearDrag(){
     let pathA=plane.plane.path(`M ${Adata.a[0]} ${Adata.a[1]} L ${Bdata.a[0]} ${Bdata.a[1]}`)
     let pathB=plane.plane.path(`M ${Adata.b[0]} ${Adata.b[1]} L ${Bdata.b[0]} ${Bdata.b[1]}`)
     let x=firstPath.createShapeUpdater({a:pathA,b:pathB})
-    runShapeUpdater(x)
+    x.runUpdater()
 }
 function nonLinearDrag({a,b,aPrime,bPrime}){
     function scalar(point){
@@ -110,7 +95,7 @@ function nonLinearDrag({a,b,aPrime,bPrime}){
             L ${delta[0]} ${delta[1]} 
             L${bPrime[0]} ${bPrime[1]}`).attr({fill:'none'})
         let x=firstPath.createShapeUpdater({a:pathA,b:pathB})
-        runShapeUpdater(x)
+        x.runUpdater()
     }
     else{
         delta=delta2
@@ -121,7 +106,7 @@ function nonLinearDrag({a,b,aPrime,bPrime}){
             L ${0.5*delta[0]} ${0.5*delta[1]} 
             L${bPrime[0]} ${bPrime[1]}`).attr({fill:'none'})
         let x=firstPath.createShapeUpdater({a:pathA,b:pathB})
-        runShapeUpdater(x)
+        x.runUpdater()
     }
     
 }
@@ -164,14 +149,14 @@ anim.initSteps([
         let aPath=plane.plane.path('M -250 -50 L -100 100')
         let bPath=plane.plane.path('M -50 -250 L 100 -100')
         let x=firstPath.createShapeUpdater({a:aPath,b:bPath})
-        runShapeUpdater(x)
+        x.runUpdater()
     },
     ()=>{},
     ()=>{
         let aPath=plane.plane.path('M -100 100 L 50 250')
         let bPath=plane.plane.path('M 100 -100 L 250 50')
         let x=firstPath.createShapeUpdater({a:aPath,b:bPath})
-        runShapeUpdater(x)
+        x.runUpdater()
     },
     ()=>{},
     ()=>{
@@ -179,7 +164,7 @@ anim.initSteps([
         let aPath=plane.plane.path('M 50 250 L -250 -50')
         let bPath=plane.plane.path('M 250 50 L -50 -250')
         let x=firstPath.createShapeUpdater({a:aPath,b:bPath})
-        runShapeUpdater(x,()=>{
+        x.runUpdater(()=>{
             firstPath.draggable(['a','b'],plane.center)
             secondPath.draggable(['a','b'],plane.center)
             restrictFromCenter(firstPath)

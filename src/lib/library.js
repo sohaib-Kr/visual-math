@@ -103,7 +103,6 @@ export class vMathAnimation {
                     let t=1
                     let I=setInterval(()=>{
                         input.style.opacity=t
-                        console.log(input.style.opacity)
                         t-=0.04
                         if(t<0){
                             clearInterval(I)

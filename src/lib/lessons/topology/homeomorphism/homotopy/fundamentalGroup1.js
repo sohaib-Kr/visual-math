@@ -76,119 +76,119 @@ plane.append(thirdPath.group)
 
 
 anim.initSteps([
-    // ()=>{
-    //     mainPath.shape.attr({opacity:1})
-    // },
-    // ()=>{
-    //     let pathA=plane.plane.path(`M 100 0 L 10 0`)
-    //     let pathB=plane.plane.path(`M 100 100 L 10 20`)
-    //     let pathI=plane.plane.path(`M 100 -100 L 10 -20`)
+    ()=>{
+        mainPath.shape.attr({opacity:1})
+    },
+    ()=>{
+        let pathA=plane.plane.path(`M 100 0 L 10 0`)
+        let pathB=plane.plane.path(`M 100 100 L 10 20`)
+        let pathI=plane.plane.path(`M 100 -100 L 10 -20`)
         
-    //     let x=mainPath.createShapeUpdater({a:pathA,b:pathB,i:pathI})
-    //     mainPath.runShapeUpdater(x)
-    // },
-    // ()=>{},
-    // ()=>{
-    //     let pathA=plane.plane.path(`M 10 0 L 100 0`)
-    //     let pathB=plane.plane.path(`M 10 20 L 100 100`)
-    //     let pathI=plane.plane.path(`M 10 -20 L 100 -100`)
+        let x=mainPath.createShapeUpdater({a:pathA,b:pathB,i:pathI})
+        x.runUpdater()
+    },
+    ()=>{},
+    ()=>{
+        let pathA=plane.plane.path(`M 10 0 L 100 0`)
+        let pathB=plane.plane.path(`M 10 20 L 100 100`)
+        let pathI=plane.plane.path(`M 10 -20 L 100 -100`)
         
-    //     let x=mainPath.createShapeUpdater({a:pathA,b:pathB,i:pathI})
-    //     mainPath.runShapeUpdater(x)
-    // },
-    // ()=>{},
-    // ()=>{
-    //     let pathC=plane.plane.path(`M 0 100 L 0 250`)
-    //     let pathD=plane.plane.path(`M -100 0 L -150 250`)
-    //     let pathE=plane.plane.path(`M -400 -100 L -400 150`)
-    //     let pathG=plane.plane.path(`M -200 100 L -300 -250`)
-    //     let pathH=plane.plane.path(`M -100 0 L -150 -250`)
+        let x=mainPath.createShapeUpdater({a:pathA,b:pathB,i:pathI})
+        x.runUpdater()
+    },
+    ()=>{},
+    ()=>{
+        let pathC=plane.plane.path(`M 0 100 L 0 250`)
+        let pathD=plane.plane.path(`M -100 0 L -150 250`)
+        let pathE=plane.plane.path(`M -400 -100 L -400 150`)
+        let pathG=plane.plane.path(`M -200 100 L -300 -250`)
+        let pathH=plane.plane.path(`M -100 0 L -150 -250`)
         
-    //     let x=mainPath.createShapeUpdater({c:pathC,d:pathD,e:pathE,g:pathG,h:pathH})
-    //     mainPath.runShapeUpdater(x)
-    // },
-    // ()=>{},
-    // ()=>{
-    //     mainPath.shape.animate(500).attr({opacity:0})
-    // },
-    // ()=>{
-    //     secondPath.shape.animate(500).attr({opacity:1})
-    // },
-    // ()=>{
-    //     let pathA=plane.plane.path(`M 100 0 L 10 0`)
-    //     let pathB=plane.plane.path(`M 100 -100 L 10 -10`)
-    //     let pathC=plane.plane.path(`M -100 -100 L -10 -10`)
-    //     let pathD=plane.plane.path(`M -100 0 L -10 0`)
-    //     let pathE=plane.plane.path(`M 100 100 L 10 10`)
-    //     let pathF=plane.plane.path(`M 100 -300 L 10 -300`)
-    //     let pathI=plane.plane.path(`M 100 300 L 10 300`)
+        let x=mainPath.createShapeUpdater({c:pathC,d:pathD,e:pathE,g:pathG,h:pathH})
+        x.runUpdater()
+    },
+    ()=>{},
+    ()=>{
+        mainPath.shape.animate(500).attr({opacity:0})
+    },
+    ()=>{
+        secondPath.shape.animate(500).attr({opacity:1})
+    },
+    ()=>{
+        let pathA=plane.plane.path(`M 100 0 L 10 0`)
+        let pathB=plane.plane.path(`M 100 -100 L 10 -10`)
+        let pathC=plane.plane.path(`M -100 -100 L -10 -10`)
+        let pathD=plane.plane.path(`M -100 0 L -10 0`)
+        let pathE=plane.plane.path(`M 100 100 L 10 10`)
+        let pathF=plane.plane.path(`M 100 -300 L 10 -300`)
+        let pathI=plane.plane.path(`M 100 300 L 10 300`)
         
-    //     let x=secondPath.createShapeUpdater({a:pathA,b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,i:pathI})
-    //     secondPath.runShapeUpdater(x)
-    // },
-    // ()=>{},
-    // ()=>{
-    //     let pathA=plane.plane.path(`M 10 0 L 100 0`)
-    //     let pathB=plane.plane.path(`M 10 -10 L 100 -100`)
-    //     let pathC=plane.plane.path(`M -10 -10 L -100 -100`)
-    //     let pathD=plane.plane.path(`M -10 0 L -100 0`)
-    //     let pathE=plane.plane.path(`M 10 10 L 100 100`)
-    //     let pathF=plane.plane.path(`M 10 -300 L 100 -300`)
-    //     let pathI=plane.plane.path(`M 10 300 L 100 300`)
+        let x=secondPath.createShapeUpdater({a:pathA,b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,i:pathI})
+        x.runUpdater()
+    },
+    ()=>{},
+    ()=>{
+        let pathA=plane.plane.path(`M 10 0 L 100 0`)
+        let pathB=plane.plane.path(`M 10 -10 L 100 -100`)
+        let pathC=plane.plane.path(`M -10 -10 L -100 -100`)
+        let pathD=plane.plane.path(`M -10 0 L -100 0`)
+        let pathE=plane.plane.path(`M 10 10 L 100 100`)
+        let pathF=plane.plane.path(`M 10 -300 L 100 -300`)
+        let pathI=plane.plane.path(`M 10 300 L 100 300`)
         
-    //     let x=secondPath.createShapeUpdater({a:pathA,b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,i:pathI})
-    //     secondPath.runShapeUpdater(x)
-    // },
-    // ()=>{},
-    // ()=>{
+        let x=secondPath.createShapeUpdater({a:pathA,b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,i:pathI})
+        x.runUpdater()
+    },
+    ()=>{},
+    ()=>{
 
-    //     let pathB=plane.plane.path(`M 100 -100 L 100 -300`)
-    //     let pathC=plane.plane.path(`M -100 -100 L -400 -300`)
-    //     let pathD=plane.plane.path(`M -100 0 L -400 0`)
-    //     let pathE=plane.plane.path(`M 100 100 L 100 300`)
-    //     let pathF=plane.plane.path(`M 100 -300 L 100 -20`)
-    //     let pathG=plane.plane.path(`M -400 -300 L -20 -20`)
-    //     let pathH=plane.plane.path(`M -400 0 L -20 0`)
-    //     let pathI=plane.plane.path(`M 100 300 L 100 20`)
+        let pathB=plane.plane.path(`M 100 -100 L 100 -300`)
+        let pathC=plane.plane.path(`M -100 -100 L -400 -300`)
+        let pathD=plane.plane.path(`M -100 0 L -400 0`)
+        let pathE=plane.plane.path(`M 100 100 L 100 300`)
+        let pathF=plane.plane.path(`M 100 -300 L 100 -20`)
+        let pathG=plane.plane.path(`M -400 -300 L -20 -20`)
+        let pathH=plane.plane.path(`M -400 0 L -20 0`)
+        let pathI=plane.plane.path(`M 100 300 L 100 20`)
         
-    //     let x=secondPath.createShapeUpdater({b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,g:pathG,h:pathH,i:pathI})
-    //     secondPath.runShapeUpdater(x)
-    // },
-    // ()=>{},
-    // ()=>{
-    //     let pathB=plane.plane.path(`M 100 -300 L 100 -100`)
-    //     let pathC=plane.plane.path(`M -400 -300 L -100 -100`)
-    //     let pathD=plane.plane.path(`M -400 0 L -100 0`)
-    //     let pathE=plane.plane.path(`M 100 300 L 100 100`)
-    //     let pathF=plane.plane.path(`M 100 -20 L 100 -300`)
-    //     let pathG=plane.plane.path(`M -20 -20 L -400 -300`)
-    //     let pathH=plane.plane.path(`M -20 0 L -400 0`)
-    //     let pathI=plane.plane.path(`M 100 20 L 100 300`)
+        let x=secondPath.createShapeUpdater({b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,g:pathG,h:pathH,i:pathI})
+        x.runUpdater()
+    },
+    ()=>{},
+    ()=>{
+        let pathB=plane.plane.path(`M 100 -300 L 100 -100`)
+        let pathC=plane.plane.path(`M -400 -300 L -100 -100`)
+        let pathD=plane.plane.path(`M -400 0 L -100 0`)
+        let pathE=plane.plane.path(`M 100 300 L 100 100`)
+        let pathF=plane.plane.path(`M 100 -20 L 100 -300`)
+        let pathG=plane.plane.path(`M -20 -20 L -400 -300`)
+        let pathH=plane.plane.path(`M -20 0 L -400 0`)
+        let pathI=plane.plane.path(`M 100 20 L 100 300`)
         
-    //     let x=secondPath.createShapeUpdater({b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,g:pathG,h:pathH,i:pathI})
-    //     secondPath.runShapeUpdater(x)
-    // },
-    // ()=>{},
-    // ()=>{
-    //     let pathB=plane.plane.path(`M 100 -100 L 100 -300`)
-    //     let pathC=plane.plane.path(`M -100 -100 L -400 -300`)
-    //     let pathD=plane.plane.path(`M -100 0 L -400 0`)
-    //     let pathE=plane.plane.path(`M 100 100 L 100 300`)
+        let x=secondPath.createShapeUpdater({b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,g:pathG,h:pathH,i:pathI})
+        x.runUpdater()
+    },
+    ()=>{},
+    ()=>{
+        let pathB=plane.plane.path(`M 100 -100 L 100 -300`)
+        let pathC=plane.plane.path(`M -100 -100 L -400 -300`)
+        let pathD=plane.plane.path(`M -100 0 L -400 0`)
+        let pathE=plane.plane.path(`M 100 100 L 100 300`)
         
-    //     let x=secondPath.createShapeUpdater({b:pathB,c:pathC,d:pathD,e:pathE})
-    //     secondPath.runShapeUpdater(x)
-    // },
-    // ()=>{
-    //     let indicator=secondPath.createIndicator(plane)
-    //     let t=0
-    //     let I=setInterval(()=>{
-    //         secondPath.updateIndicator(t,indicator)
-    //         t+=0.01
-    //         if(t>1){
-    //             clearInterval(I)
-    //         }
-    //     },80)
-    // },
+        let x=secondPath.createShapeUpdater({b:pathB,c:pathC,d:pathD,e:pathE})
+        x.runUpdater()
+    },
+    ()=>{
+        let indicator=secondPath.createIndicator(plane)
+        let t=0
+        let I=setInterval(()=>{
+            secondPath.updateIndicator(t,indicator)
+            t+=0.01
+            if(t>1){
+                clearInterval(I)
+            }
+        },80)
+    },
     ()=>{
         thirdPath.shape.animate(500).attr({opacity:1})
         thirdPath.label(plane)
@@ -202,7 +202,7 @@ anim.initSteps([
         let pathH=plane.plane.path(`M -200 0 L 0 50`)
         
         let x=thirdPath.createShapeUpdater({e:pathE,f:pathF,g:pathG,h:pathH})
-        thirdPath.runShapeUpdater(x)
+        x.runUpdater()
 
     }
 ])

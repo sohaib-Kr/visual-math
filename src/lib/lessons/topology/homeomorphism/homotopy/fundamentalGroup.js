@@ -4,21 +4,6 @@ export const anim = new vMathAnimation('fundamentalGroup');
 
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
-
-function runShapeUpdater(shapeUpdater,callback=()=>{}){
-    let t=0
-    let s=0
-    let I=setInterval(()=>{
-        s=t*t
-        shapeUpdater(s)
-        t+=0.04
-        if(t>1.04){
-            clearInterval(I)
-            callback()
-        }
-    },50)
-}
-
 let mainPath=anim.createTopoPath({
     codedPath:`M |a|
 C |b| |c| |d|
@@ -73,7 +58,7 @@ anim.initSteps([
         let pathO=plane.plane.path(`M -15 -20 L -200 0`)
         
         let x=mainPath.createShapeUpdater({a:pathA,b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,g:pathG,h:pathH,i:pathI,j:pathJ,k:pathK,l:pathL,m:pathM,n:pathN,o:pathO})
-        runShapeUpdater(x)
+        x.runUpdater()
     },
     ()=>{},
     ()=>{
@@ -94,6 +79,6 @@ anim.initSteps([
         let pathO=plane.plane.path(`M -200 0 L 0 0`)
         
         let x=mainPath.createShapeUpdater({a:pathA,b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,g:pathG,h:pathH,i:pathI,j:pathJ,k:pathK,l:pathL,m:pathM,n:pathN,o:pathO})
-        runShapeUpdater(x,()=>{plane.plane.circle(10).fill('red').center(0,0)})
+        x.runUpdater(()=>{plane.plane.circle(10).fill('red').center(0,0)})
     }
 ])

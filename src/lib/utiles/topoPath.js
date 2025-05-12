@@ -1,3 +1,4 @@
+import {ShapeUpdater} from './shapeUpdater.mjs'
 export function pathDecoder(path){
     if(path.split('|').length%2 ==0){
         throw new Error(`can't parse path: ${path} \n uncorrect number of slashes`)
@@ -70,75 +71,7 @@ export class TopoPath{
         this.currentData=initialData
     }
     createShapeUpdater(matchingSet){
-        //this function matches every point with its transformation path and create a function that 
-        //updates the shape according to a time variable t
-
-        //we check if the matching set is valid (contains at most all the points)
-
-        for(let key in matchingSet){
-            if(!this.decoded.params.includes(key)){
-                throw new Error(`matching set has invalid point: ${key}`)
-            }
-        }
-
-        //we will create an array indicating the static and 
-        // dynamic parts of the path string to generate the needed function
-        let smoothTransPathArray=[]
-        this.decoded.commands.forEach((command,key)=>{
-            let param=this.decoded.params[key]
-            if(param){
-                //in this block we are sure that we aren't in the end of the path
-                if(matchingSet[param]){
-                    //if the param is in the matching set then it is dynamic
-                    //so we add the path and its length to the array
-                    if(typeof smoothTransPathArray[smoothTransPathArray.length-1] === 'string'){
-                        smoothTransPathArray[smoothTransPathArray.length-1]+=' '+command
-                    }
-                    else{
-                        smoothTransPathArray.push(command)
-                    }
-                    smoothTransPathArray.push({
-                        trajectory:matchingSet[param],
-                        length:matchingSet[param].length()})
-                }
-                else{
-                    //if the param is not in the matching set then it is static
-                    if(smoothTransPathArray.length>0 && typeof smoothTransPathArray[smoothTransPathArray.length-1] === 'string'){
-                        smoothTransPathArray[smoothTransPathArray.length-1]+=' '+command+this.currentData[param][0]+' '+this.currentData[param][1]+' '
-                        
-                    }
-                    else{
-                        smoothTransPathArray.push(command+' '+this.currentData[param][0]+' '+this.currentData[param][1])
-                    }
-                }
-            }
-            else{
-                smoothTransPathArray.push(command)
-            }
-        })
-        let smoothCommands=smoothTransPathArray.filter((elem)=>typeof elem === 'string')
-        let smoothParams=smoothTransPathArray.filter((elem)=>typeof elem !== 'string')
-        //here we create the function that will update the shape
-        //this function is either used inside setInterval for animation or in an event listener
-        //the returned function must be as minimal as possible
-        return{
-            update:(t)=>{
-            let newPath=smoothParams.map((param,index)=>{
-                let data=param.trajectory.pointAt(t*param.length)
-                return smoothCommands[index]+data.x+' '+data.y
-            })
-            if(typeof smoothCommands[smoothParams.length] === 'string'){
-                newPath.push(smoothCommands[smoothParams.length])
-            }
-            newPath=newPath.join('')
-            this.shape.plot(newPath)
-        },
-        kill:()=>{
-            matchingSet.forEach((param)=>{
-                param.trajectory.remove()
-            })
-        }
-        }
+        return new ShapeUpdater({shape:this.shape,matchingSet,decoded:this.decoded})
     }
     refresh(){
         let newPath=this.decoded.params.map((param,key)=>{
@@ -205,19 +138,6 @@ export class TopoPath{
         })
         this.#draggablePoints=[]
         
-    }
-    runShapeUpdater(shapeUpdater,callback=()=>{}){
-        let t=0
-        let s=0
-        let I=setInterval(()=>{
-            s=t*t
-            shapeUpdater(s)
-            t+=0.04
-            if(t>1.04){
-                clearInterval(I)
-                callback()
-            }
-        },50)
     }
     label(plane){
         this.decoded.params.forEach((param)=>{
