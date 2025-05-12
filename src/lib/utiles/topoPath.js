@@ -121,7 +121,8 @@ export class TopoPath{
         //here we create the function that will update the shape
         //this function is either used inside setInterval for animation or in an event listener
         //the returned function must be as minimal as possible
-        return((t)=>{
+        return{
+            update:(t)=>{
             let newPath=smoothParams.map((param,index)=>{
                 let data=param.trajectory.pointAt(t*param.length)
                 return smoothCommands[index]+data.x+' '+data.y
@@ -131,7 +132,13 @@ export class TopoPath{
             }
             newPath=newPath.join('')
             this.shape.plot(newPath)
-        })
+        },
+        kill:()=>{
+            matchingSet.forEach((param)=>{
+                param.trajectory.remove()
+            })
+        }
+        }
     }
     refresh(){
         let newPath=this.decoded.params.map((param,key)=>{

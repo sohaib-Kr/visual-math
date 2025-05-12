@@ -1,4 +1,4 @@
-import { vMathAnimation, textStyles } from '../../../library.js';
+import { vMathAnimation, textStyles } from '@/lib/library.js';
 
 export const anim = new vMathAnimation(1200, 800, 'first', 'first');
 {

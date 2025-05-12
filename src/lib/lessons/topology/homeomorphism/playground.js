@@ -1,5 +1,5 @@
-import { VectorField, CartPlane } from '../../../utiles/vector/index.js';
-import { vMathAnimation } from '../../../library.js';
+import { VectorField, CartPlane } from '@/lib/utiles/vector/index.js';
+import { vMathAnimation } from '@/lib/library.js';
 export const anim = new vMathAnimation({width:1200, height:800, parent:'first', id:'first'});
 
 const draw=anim.frame

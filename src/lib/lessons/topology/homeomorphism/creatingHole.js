@@ -1,6 +1,6 @@
-import { VectorField, CartPlane } from '../../../utiles/vector';
-import { vMathAnimation } from '../../../library.js';
-import { VectorTransforms } from '../../../utiles/Transformations.js';
+import { VectorField, CartPlane } from '@/lib/utiles/vector';
+import { vMathAnimation } from '@/lib/library.js';
+import { VectorTransforms } from '@/lib/utiles/Transformations.js';
 export const anim = new vMathAnimation({width:1200, height:800, parent:'first', id:'first'});
 let draw=anim.frame
 let arrow=draw.symbol().path('M 0 0 H 40 L 34 -8 L 37 -9 L 46 2 L 46 2 L 36 13 L 33 11 L 40 4 L 0 4 Z')

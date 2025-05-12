@@ -1,5 +1,5 @@
-import { CartPlane } from '../../../../../utiles/vector';
-import { vMathAnimation } from '../../../../../library.js';
+import { CartPlane } from '@/lib/utiles/vector';
+import { vMathAnimation } from '@/lib/library.js';
 export const anim = new vMathAnimation('exo1');
 
 const draw=anim.frame
