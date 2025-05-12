@@ -119,6 +119,5 @@ export class CartPlane{
     }
     append(svgElem){
         this.plane.add(svgElem)
-
     }
 }

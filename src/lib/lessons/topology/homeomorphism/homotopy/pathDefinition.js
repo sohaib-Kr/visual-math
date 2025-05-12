@@ -36,35 +36,35 @@ plane.append(secondPath.group)
 let textHolder
 let lambdaHolder
 anim.initSteps([
-    ()=>{
-        textHolder=anim.createTextSpace().update('Here are examples of different paths in the plane R^2',true)
-    },
-    ()=>{
-        let aPath=plane.plane.path('M 0 0 L -100 -50')
-        let bPath=plane.plane.path('M 0 0 L -100 -50')
-        let cPath=plane.plane.path('M 100 0 L 200 -250')
-        let dPath=plane.plane.path('M 100 0 L 200 -250')
-        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        x.runUpdater()
-    },
-    ()=>{},
-    ()=>{
-        let aPath=plane.plane.path('M -100 -50 L -100 200')
-        let bPath=plane.plane.path('M -100 -50 L -300 200')
-        let cPath=plane.plane.path('M 200 -250 L -300 -100')
-        let dPath=plane.plane.path('M 200 -250 L -100 -100')
-        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        x.runUpdater()
-    },
-    ()=>{},
-    ()=>{
-        let aPath=plane.plane.path('M -100 200 L 200 200')
-        let bPath=plane.plane.path('M -300 200 L 0 200')
-        let cPath=plane.plane.path('M -300 -100 L 0 -100')
-        let dPath=plane.plane.path('M -100 -100 L -200 -100')
-        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        x.runUpdater()
-    },
+    // ()=>{
+    //     textHolder=anim.createTextSpace().update('Here are examples of different paths in the plane R^2',true)
+    // },
+    // ()=>{
+    //     let aPath=plane.plane.path('M 0 0 L -100 -50')
+    //     let bPath=plane.plane.path('M 0 0 L -100 -50')
+    //     let cPath=plane.plane.path('M 100 0 L 200 -250')
+    //     let dPath=plane.plane.path('M 100 0 L 200 -250')
+    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+    //     x.runUpdater()
+    // },
+    // ()=>{},
+    // ()=>{
+    //     let aPath=plane.plane.path('M -100 -50 L -100 200')
+    //     let bPath=plane.plane.path('M -100 -50 L -300 200')
+    //     let cPath=plane.plane.path('M 200 -250 L -300 -100')
+    //     let dPath=plane.plane.path('M 200 -250 L -100 -100')
+    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+    //     x.runUpdater()
+    // },
+    // ()=>{},
+    // ()=>{
+    //     let aPath=plane.plane.path('M -100 200 L 200 200')
+    //     let bPath=plane.plane.path('M -300 200 L 0 200')
+    //     let cPath=plane.plane.path('M -300 -100 L 0 -100')
+    //     let dPath=plane.plane.path('M -100 -100 L -200 -100')
+    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+    //     x.runUpdater()
+    // },
     ()=>{},
     
     ()=>{
@@ -77,8 +77,8 @@ anim.initSteps([
     },
     ()=>{},
     ()=>{
-        textHolder.update('Use the range slider to change the value of x.',true)
-        lambdaHolder=anim.createTextSpace().update('\\gamma \\left( x \\right)=\\left( 1,1 \\right)',true,true)
+        // textHolder.update('Use the range slider to change the value of x.',true)
+        // lambdaHolder=anim.createTextSpace().update('\\gamma \\left( x \\right)=\\left( 1,1 \\right)',true,true)
         anim.pause()
         let arrowHolderUpdate=arrowHolder.createShapeUpdater({a:mainPath.shape,b:mainPathShadow})
         let length=mainPath.shape.length()
@@ -86,13 +86,21 @@ anim.initSteps([
         mainPathIndicator.animate(500).attr({opacity:1})
         shadowPathIndicator.animate(500).attr({opacity:1})
         arrowHolder.shape.animate(500).attr({opacity:0.5})
-        let range=anim.addControl({name:'rangeInput',type:'range',listener:(event)=>{
-            arrowHolderUpdate(event.target.value/100)
-            let data=mainPath.shape.pointAt(event.target.value*length/100)
+        function sceww(x){
+            arrowHolderUpdate.update(x/100)
+            let data=mainPath.shape.pointAt(x*length/100)
             mainPathIndicator.center(data.x,data.y)
-            let shadowData=mainPathShadow.pointAt(event.target.value*shadowLength/100)
+            let shadowData=mainPathShadow.pointAt(x*shadowLength/100)
             shadowPathIndicator.center(shadowData.x,shadowData.y)
-            lambdaHolder.update('/gamma/left( '+event.target.value/100+' /right)=/left( '+parseInt(data.x)/100+','+(-parseInt(data.y)/100)+' /right)')
+        }
+        let scrub=anim.createScrubber({
+            initialValue:0,
+            animator:sceww,
+            duration:400
+        })
+        let range=anim.addControl({name:'rangeInput',type:'range',listener:(event)=>{
+            scrub.play(event.target.value)
+            // lambdaHolder.update('/gamma/left( '+event.target.value/100+' /right)=/left( '+parseInt(data.x)/100+','+(-parseInt(data.y)/100)+' /right)')
         }})
         let next=anim.addControl({name:'next',type:'button',listener:()=>{
             anim.play()

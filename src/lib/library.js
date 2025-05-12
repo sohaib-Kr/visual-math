@@ -188,6 +188,8 @@ export class vMathAnimation {
     createTopoPath(params){
         return new utiles.TopoPath({frame:this.frame,...params})
     }
-
+    createScrubber(params){
+        return new utiles.Scrubber({...params})
+    }
 } 
 export const textStyles=utiles.textStyles
