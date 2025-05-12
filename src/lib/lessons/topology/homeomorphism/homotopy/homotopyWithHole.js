@@ -77,7 +77,7 @@ function linearDrag(){
     let pathA=plane.plane.path(`M ${Adata.a[0]} ${Adata.a[1]} L ${Bdata.a[0]} ${Bdata.a[1]}`)
     let pathB=plane.plane.path(`M ${Adata.b[0]} ${Adata.b[1]} L ${Bdata.b[0]} ${Bdata.b[1]}`)
     let x=firstPath.createShapeUpdater({a:pathA,b:pathB})
-    x.runUpdater()
+    x.runUpdater(()=>x.kill())
 }
 function nonLinearDrag({a,b,aPrime,bPrime}){
     function scalar(point){
@@ -95,7 +95,7 @@ function nonLinearDrag({a,b,aPrime,bPrime}){
             L ${delta[0]} ${delta[1]} 
             L${bPrime[0]} ${bPrime[1]}`).attr({fill:'none'})
         let x=firstPath.createShapeUpdater({a:pathA,b:pathB})
-        x.runUpdater()
+        x.runUpdater(()=>x.kill())
     }
     else{
         delta=delta2
@@ -149,14 +149,14 @@ anim.initSteps([
         let aPath=plane.plane.path('M -250 -50 L -100 100')
         let bPath=plane.plane.path('M -50 -250 L 100 -100')
         let x=firstPath.createShapeUpdater({a:aPath,b:bPath})
-        x.runUpdater()
+        x.runUpdater(()=>x.kill())
     },
     ()=>{},
     ()=>{
         let aPath=plane.plane.path('M -100 100 L 50 250')
         let bPath=plane.plane.path('M 100 -100 L 250 50')
         let x=firstPath.createShapeUpdater({a:aPath,b:bPath})
-        x.runUpdater()
+        x.runUpdater(()=>x.kill())
     },
     ()=>{},
     ()=>{
@@ -169,6 +169,7 @@ anim.initSteps([
             secondPath.draggable(['a','b'],plane.center)
             restrictFromCenter(firstPath)
             restrictFromCenter(secondPath)
+            x.kill()
         })
     },
     ()=>{

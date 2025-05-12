@@ -36,35 +36,36 @@ plane.append(secondPath.group)
 let textHolder
 let lambdaHolder
 anim.initSteps([
-    // ()=>{
-    //     textHolder=anim.createTextSpace().update('Here are examples of different paths in the plane R^2',true)
-    // },
-    // ()=>{
-    //     let aPath=plane.plane.path('M 0 0 L -100 -50')
-    //     let bPath=plane.plane.path('M 0 0 L -100 -50')
-    //     let cPath=plane.plane.path('M 100 0 L 200 -250')
-    //     let dPath=plane.plane.path('M 100 0 L 200 -250')
-    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     x.runUpdater()
-    // },
-    // ()=>{},
-    // ()=>{
-    //     let aPath=plane.plane.path('M -100 -50 L -100 200')
-    //     let bPath=plane.plane.path('M -100 -50 L -300 200')
-    //     let cPath=plane.plane.path('M 200 -250 L -300 -100')
-    //     let dPath=plane.plane.path('M 200 -250 L -100 -100')
-    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     x.runUpdater()
-    // },
-    // ()=>{},
-    // ()=>{
-    //     let aPath=plane.plane.path('M -100 200 L 200 200')
-    //     let bPath=plane.plane.path('M -300 200 L 0 200')
-    //     let cPath=plane.plane.path('M -300 -100 L 0 -100')
-    //     let dPath=plane.plane.path('M -100 -100 L -200 -100')
-    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     x.runUpdater()
-    // },
+    ()=>{
+        textHolder=anim.createTextSpace().update('Here are examples of different paths in the plane R^2',true)
+    },
+    ()=>{
+        let aPath=plane.plane.path('M 0 0 L -100 -50')
+        let bPath=plane.plane.path('M 0 0 L -100 -50')
+        let cPath=plane.plane.path('M 100 0 L 200 -250')
+        let dPath=plane.plane.path('M 100 0 L 200 -250')
+        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        x.runUpdater(()=>x.kill())
+    },
+    ()=>{},
+    ()=>{
+
+        let aPath=plane.plane.path('M -100 -50 L -100 200')
+        let bPath=plane.plane.path('M -100 -50 L -300 200')
+        let cPath=plane.plane.path('M 200 -250 L -300 -100')
+        let dPath=plane.plane.path('M 200 -250 L -100 -100')
+        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        x.runUpdater(()=>x.kill())
+    },
+    ()=>{},
+    ()=>{
+        let aPath=plane.plane.path('M -100 200 L 200 200')
+        let bPath=plane.plane.path('M -300 200 L 0 200')
+        let cPath=plane.plane.path('M -300 -100 L 0 -100')
+        let dPath=plane.plane.path('M -100 -100 L -200 -100')
+        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        x.runUpdater(()=>x.kill())
+    },
     ()=>{},
     
     ()=>{
@@ -73,7 +74,7 @@ anim.initSteps([
         let cPath=plane.plane.path('M 0 -100 L 200 -250')
         let dPath=plane.plane.path('M -200 -100 L 400 -250')
         let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        x.runUpdater()
+        x.runUpdater(()=>x.kill())
     },
     ()=>{},
     ()=>{
@@ -106,6 +107,8 @@ anim.initSteps([
             anim.play()
             range.kill()
             next.kill()
+            arrowHolderUpdate.kill()
+
         }})
 
     },
@@ -115,7 +118,7 @@ anim.initSteps([
         let cPath=plane.plane.path('M 200 -250 L  100 0')
         let dPath=plane.plane.path('M 400 -250 L 100 0')
         let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        x.runUpdater()
+        x.runUpdater(()=>x.kill())
         arrowHolder.shape.animate(300).attr({opacity:0})
         mainPathIndicator.animate(300).attr({opacity:0})
         shadowPathIndicator.animate(300).attr({opacity:0})
@@ -131,7 +134,7 @@ anim.initSteps([
         let fPath=plane.plane.path('M 100 0 L -450 -50')
         let gPath=plane.plane.path('M 100 0 L  -450 200')
         let x=secondPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath,e:ePath,f:fPath,g:gPath})
-        x.runUpdater()
+        x.runUpdater(()=>x.kill())
         arrowHolder.shape.animate(300).attr({opacity:0})
         mainPathIndicator.animate(300).attr({opacity:0})
         shadowPathIndicator.animate(300).attr({opacity:0})
@@ -156,6 +159,7 @@ anim.initSteps([
             anim.play()
             range.kill()
             next.kill()
+            arrowHolderUpdate.kill()
         }})
     
     }

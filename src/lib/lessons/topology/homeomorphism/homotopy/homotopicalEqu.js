@@ -68,10 +68,31 @@ plane.append(indicator)
 anim.initSteps([
     ()=>{},
     ()=>{
+        changeHomotopyType(1)
+        shapeUpdaterHolder.runUpdater()
+    },
+    ()=>{},
+    ()=>{
+        shapeUpdaterHolder.runReverseUpdater(()=>shapeUpdaterHolder.kill())
+    },
+    ()=>{},
+    ()=>{
+        changeHomotopyType(2)
+        shapeUpdaterHolder.runUpdater()
+    },
+    ()=>{},
+    ()=>{
+        shapeUpdaterHolder.runReverseUpdater(()=>shapeUpdaterHolder.kill())
+    },
+    ()=>{},
+    ()=>{
         changeHomotopyType(3)
         shapeUpdaterHolder.runUpdater()
     },
     ()=>{},
+    ()=>{
+        shapeUpdaterHolder.runReverseUpdater(()=>shapeUpdaterHolder.kill())
+    },
     ()=>{
         anim.pause()
         let data

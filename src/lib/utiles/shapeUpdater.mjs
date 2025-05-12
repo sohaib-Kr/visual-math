@@ -70,8 +70,8 @@ export class ShapeUpdater{
         this.#shape.plot(newPath)
     }
     kill(){
-        this.#matchingSet.forEach((param)=>{
-            param.trajectory.remove()
+        Object.values(this.#matchingSet).forEach((trajectory)=>{
+            trajectory.node.remove()
         })
     }
     runUpdater(callback=()=>{}){
@@ -82,6 +82,19 @@ export class ShapeUpdater{
             this.update(s)
             t+=0.04
             if(t>1.04){
+                clearInterval(I)
+                callback()
+            }
+        },50)
+    }
+    runReverseUpdater(callback=()=>{}){
+        let t=1
+        let s=1
+        let I=setInterval(()=>{
+            s=t*t
+            this.update(s)
+            t-=0.04
+            if(t<0){
                 clearInterval(I)
                 callback()
             }

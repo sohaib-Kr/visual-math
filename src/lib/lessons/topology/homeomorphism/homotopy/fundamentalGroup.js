@@ -58,7 +58,7 @@ anim.initSteps([
         let pathO=plane.plane.path(`M -15 -20 L -200 0`)
         
         let x=mainPath.createShapeUpdater({a:pathA,b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,g:pathG,h:pathH,i:pathI,j:pathJ,k:pathK,l:pathL,m:pathM,n:pathN,o:pathO})
-        x.runUpdater()
+        x.runUpdater(()=>x.kill())
     },
     ()=>{},
     ()=>{
@@ -79,6 +79,9 @@ anim.initSteps([
         let pathO=plane.plane.path(`M -200 0 L 0 0`)
         
         let x=mainPath.createShapeUpdater({a:pathA,b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,g:pathG,h:pathH,i:pathI,j:pathJ,k:pathK,l:pathL,m:pathM,n:pathN,o:pathO})
-        x.runUpdater(()=>{plane.plane.circle(10).fill('red').center(0,0)})
+        x.runUpdater(()=>{
+            plane.plane.circle(10).fill('red').center(0,0)
+            x.kill()
+        })
     }
 ])
