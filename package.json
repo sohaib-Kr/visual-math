@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.2.7",
+    "@supabase/supabase-js": "^2.49.4",
     "@svgdotjs/svg.js": "^3.2.4",
     "@tailwindcss/vite": "^4.0.14",
     "@types/react": "^19.1.3",
