@@ -68,12 +68,6 @@ let exos=
     ]}
     ]
 
-import {anim00,anim01,anim02} from "../../lib/lessons/topology/homeomorphism/homotopy/exercices";
-function loadExercices(){
-    anim00()
-    anim01()
-    anim02()
-}
 ---
 <Lesson>
 <Part>
@@ -135,7 +129,7 @@ The <H>fundamental group</H> <Latex>\pi_1(X, x_0)</Latex> is the set of all homo
 </Part>
 </Lesson>
 <Exercices>
-    <short.ExerciceSection callback={()=>console.log('hehe')} exercices={exos} client:only/>
+    <short.ExerciceSection exercices={exos} client:only/>
 </Exercices>
 
 <script>
@@ -143,11 +137,19 @@ import { anim as pathDefinition} from "../../lib/lessons/topology/homeomorphism/
 import { anim as homotopyWithHole} from "../../lib/lessons/topology/homeomorphism/homotopy/homotopyWithHole.js";
 import { anim as homotopicalEqu} from "../../lib/lessons/topology/homeomorphism/homotopy/homotopicalEqu.js";
 import { anim as fundamentalGroup} from "../../lib/lessons/topology/homeomorphism/homotopy/fundamentalGroup.js";
-
+import {exo00,exo01,exo02} from "../../lib/lessons/topology/homeomorphism/homotopy/exercices"
 pathDefinition.engine[0]()
 homotopyWithHole.engine[0]()
 homotopicalEqu.engine[0]()
 fundamentalGroup.engine[0]()
-
+let I=setInterval(()=>{
+    if(document.getElementById("exerciceSection"))
+    {
+        clearInterval(I)
+        exo00().engine[0]()
+        exo01().engine[0]()
+        exo02().engine[0]()
+    }
+},100)
 
 </script>
