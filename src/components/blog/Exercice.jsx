@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Item from './Item.jsx'
-
+import { gsap } from 'gsap'
+import {ScrollTrigger} from 'gsap/ScrollTrigger'
+gsap.registerPlugin(ScrollTrigger)
 export default function Exercice({exercice,onSubmit}){
-
+  let button=useRef(null)
+  let [submit,setSubmit]=useState(false)
   const calculateAnswers=(answers)=>{
     let score=0
     let error=false
@@ -25,7 +28,7 @@ export default function Exercice({exercice,onSubmit}){
       }
     })
     if(!error){
-      document.getElementById("submit").remove()
+      gsap.to(button.current,{duration:0.5,y:-20,opacity:0,onComplete:()=>button.current.remove()})
       setAnswered(correctAnswers)
       return score
     }
@@ -35,20 +38,28 @@ export default function Exercice({exercice,onSubmit}){
     const [answers,setAnswers]=useState([null,null,null])
   return (
     <div className="w-[90%] relative left-[5%] my-[50px]">
-      <div className="flex w-full h-full flex-nowrap">
+      <div className="flex w-full h-fit flex-nowrap">
       {exercice.items.map((item,index)=>(
           <Item 
           item={item} 
           index={index} 
           answered={answered}
+          submit={submit}
           onChoice={(answer,index)=>{
             let answersPrime=[...answers]
             answersPrime[index]=answer;
-            setAnswers(answersPrime)}}/>
+            setAnswers(answersPrime)}}
+          showButton={()=>{
+              gsap.to(button.current,{delay:0.3,duration:1,y:-20,opacity:1})
+            }}
+          />
             ))}
       </div>
       <div className="h-[70px] my-[30px]">
-        <button id="submit" className=" float-right relative cursor-pointer right-[5%] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() =>{
+        <button ref={button} id="submit" className="opacity-[0] float-right relative cursor-pointer right-[5%] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+         onClick={() =>{
+          setSubmit(true)
+
           onSubmit(calculateAnswers(answers))
         }}>Submit</button>
       </div>
