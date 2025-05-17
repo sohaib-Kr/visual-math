@@ -3,7 +3,7 @@ import { gsap } from 'gsap'
 import FinalResult from './FinalResult.jsx'
 import Exercice from './Exercice.jsx'
 
-export default function ExoSection({exercices}){
+export default function ExoSection({exercices,callback}){
   let bareHeight
   let subBareHeight
   let maxScale
@@ -11,9 +11,11 @@ export default function ExoSection({exercices}){
   let scoreRef=useRef(null)
   let [showScore,setShowScore]=useState(false)
   useEffect(()=>{
+    callback()
     bareHeight=parseInt(window.getComputedStyle(document.getElementById("scoreBare")).height)
     subBareHeight=parseInt(window.getComputedStyle(document.getElementById("scoreBare").children[0]).height)
     maxScale=bareHeight/subBareHeight
+    gsap.to(document.getElementById("scoreBare").children[0],{duration:0,scaleY:0})
   })
     function calculateTotalScore(){
         // do nothing now
@@ -33,8 +35,11 @@ export default function ExoSection({exercices}){
   return (
     <div className="grid">
       <div className="flex flex-col col-[1/2] row-[1/2]">
-        {exercices.map((exo)=>(
-          <Exercice exercice={exo} onSubmit={(score)=>{
+        {exercices.map((exo,index)=>(
+          <Exercice 
+          exercice={exo}
+          exoIndex={index}
+          onSubmit={(score)=>{
             setTotalScore(totalScore+score)
             checkValid(valids+1)
             let element=document.getElementById('scoreBare')

@@ -1,6 +1,8 @@
 import { CartPlane } from '@/lib/utiles/vector';
 import { vMathAnimation } from '@/lib/library.js';
-export const anim = new vMathAnimation('exo1');
+export function init(){
+    
+    const anim = new vMathAnimation('exerciceFrame00');
 
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
@@ -28,3 +30,5 @@ anim.initSteps([
     ()=>{
     }
 ])
+return anim
+}

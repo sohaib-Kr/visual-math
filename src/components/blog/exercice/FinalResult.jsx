@@ -1,7 +1,5 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { gsap } from 'gsap'
-import {ScrollTrigger} from 'gsap/ScrollTrigger'
-gsap.registerPlugin(ScrollTrigger)
 export default function FinalResult({totalScore,completeScore,valid}) {
     let feedback=""
     let percentage=0

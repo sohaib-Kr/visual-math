@@ -1,7 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
-import { gsap } from 'gsap'
-import {ScrollTrigger} from 'gsap/ScrollTrigger'
-gsap.registerPlugin(ScrollTrigger)
+import { useRef } from 'react';
 export default function RadioGroup({item,onChoice,index,submit,update}) { 
   let ref=useRef(null)
   if(submit && update){

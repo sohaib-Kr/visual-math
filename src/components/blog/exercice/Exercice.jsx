@@ -1,23 +1,20 @@
 import { useRef, useState } from 'react';
 import Item from './Item.jsx'
 import { gsap } from 'gsap'
-import {ScrollTrigger} from 'gsap/ScrollTrigger'
-gsap.registerPlugin(ScrollTrigger)
-export default function Exercice({exercice,onSubmit}){
+export default function Exercice({exercice,onSubmit,exoIndex}){
   let button=useRef(null)
   let [submit,setSubmit]=useState(false)
+
+
   const calculateAnswers=(answers)=>{
     let score=0
     let error=false
     let correctAnswers=[]
     answers.forEach((answer,index)=>{
       if(answer===null && !error){
-        //todo:
-
         alert("Please answer all questions")
         error=true
         return
-
       }
       else if(answer===correct[index]){
         score++
@@ -30,14 +27,18 @@ export default function Exercice({exercice,onSubmit}){
     if(!error){
       gsap.to(button.current,{duration:0.5,y:-20,opacity:0,onComplete:()=>button.current.remove()})
       setAnswered(correctAnswers)
-      return score
+      setSubmit(true)
+      onSubmit(score)
     }
   }
+
+
     const correct=[1,2,0]
     const [answered,setAnswered]=useState(false)
     const [answers,setAnswers]=useState([null,null,null])
   return (
     <div className="w-[90%] relative left-[5%] my-[50px]">
+      <h2 className="my-10 text-2xl font-bold text-gray-800">{exercice.question}</h2>
       <div className="flex w-full h-fit flex-nowrap">
       {exercice.items.map((item,index)=>(
           <Item 
@@ -45,6 +46,7 @@ export default function Exercice({exercice,onSubmit}){
           index={index} 
           answered={answered}
           submit={submit}
+          exoIndex={exoIndex}
           onChoice={(answer,index)=>{
             let answersPrime=[...answers]
             answersPrime[index]=answer;
@@ -58,9 +60,7 @@ export default function Exercice({exercice,onSubmit}){
       <div className="h-[70px] my-[30px]">
         <button ref={button} id="submit" className="opacity-[0] float-right relative cursor-pointer right-[5%] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
          onClick={() =>{
-          setSubmit(true)
-
-          onSubmit(calculateAnswers(answers))
+          calculateAnswers(answers)
         }}>Submit</button>
       </div>
     </div>

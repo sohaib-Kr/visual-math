@@ -1,7 +1,4 @@
-import { useRef, useEffect } from 'react';
-import { gsap } from 'gsap'
-import {ScrollTrigger} from 'gsap/ScrollTrigger'
-gsap.registerPlugin(ScrollTrigger)
+import { useRef } from 'react';
 export default function Result({correct,solution,submit,update}) { 
   let ref=useRef(null)
   let display="hidden"
