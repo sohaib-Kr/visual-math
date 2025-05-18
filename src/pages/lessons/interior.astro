@@ -146,9 +146,11 @@ let I=setInterval(()=>{
     if(document.getElementById("exerciceSection"))
     {
         clearInterval(I)
-        exo00().engine[0]()
-        exo01().engine[0]()
-        exo02().engine[0]()
+        setTimeout(()=>{
+            exo00().engine[0]()
+            exo01().engine[0]()
+            exo02().engine[0]()
+        },2000)
     }
 },100)
 

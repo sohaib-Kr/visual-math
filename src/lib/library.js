@@ -13,7 +13,7 @@ gsap.config({easeDefault:'power2.inOut'})
 export class vMathAnimation {
     #pause=false
     #id
-    constructor(id){
+    constructor(id,control=true){
         this.#id=id
         //check if the animation holder exists (it should be a div element with the specified id)
         if (process.env.NODE_ENV === 'development') {
@@ -29,14 +29,23 @@ export class vMathAnimation {
 
         //create the animation frame element
         this.wrapper = document.createElement('div');
+        let controlElem=''
+        if(control){
+            controlElem='<div class="animationControl"></div>'
+        }
         this.wrapper.innerHTML = `
             <div id="${id}Animation" class="animationWrapper">
               <svg class="animation" id="${id}Frame"></svg>
-              <div class="animationControl"></div>
+              ${controlElem}
             </div>`;
             this.wrapper.style.height='100%'
+            this.wrapper.style.width='100%'
             this.wrapper.children[0].style.transformOrigin='top left'
-            this.wrapper.children[0].style.transform='scale('+(ofsetWidth/1200)+','+(ofsetHeight/800)+')'
+            if(!control){
+                console.log(ofsetWidth)
+            }
+            
+                this.wrapper.children[0].style.transform='scale('+(ofsetWidth/1200)+','+(ofsetHeight/800)+')'
         parentElement.appendChild(this.wrapper);
 
         //using SVG.js we load the svg frame element and configure it

@@ -1,5 +1,7 @@
 import { useRef } from 'react';
-export default function RadioGroup({item,onChoice,index,submit,update}) { 
+import { useSubmit } from './Exercice.jsx'
+export default function RadioGroup({item,onChoice,index,update}) {
+  const submit = useSubmit();
   let ref=useRef(null)
   if(submit && update){
     ref.current.remove()

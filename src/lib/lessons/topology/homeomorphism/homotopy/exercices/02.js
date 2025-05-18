@@ -2,7 +2,7 @@ import { CartPlane } from '@/lib/utiles/vector';
 import { vMathAnimation } from '@/lib/library.js';
 export function init(){
     
-    const anim = new vMathAnimation('exerciceFrame02');
+    const anim = new vMathAnimation('exerciceFrame02',false);
 
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
