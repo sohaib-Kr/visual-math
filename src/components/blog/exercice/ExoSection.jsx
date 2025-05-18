@@ -1,14 +1,17 @@
 import {useEffect, useState, useRef} from 'react'
 import { gsap } from 'gsap'
+import { Flip } from 'gsap/all'
 import FinalResult from './FinalResult.jsx'
 import Exercice from './Exercice.jsx'
-
+gsap.registerPlugin(Flip)
 export default function ExoSection({exercices}){
   let bareHeight
   let subBareHeight
   let maxScale
   let completeScore=3*exercices.length
   let scoreRef=useRef(null)
+  let finalScoreHolderRef=useRef(null)
+  let finalScoreRef=useRef(null)
   let [showScore,setShowScore]=useState(false)
   useEffect(()=>{
     bareHeight=parseInt(window.getComputedStyle(document.getElementById("scoreBare")).height)
@@ -22,6 +25,12 @@ export default function ExoSection({exercices}){
   const [totalScore,setTotalScore]=useState(0)
   const [valids,setValids]=useState(0)
   const max=exercices.length
+  function onQuite(target){
+    let state=Flip.getState(target)
+    console.log(state)
+    finalScoreRef.current.appendChild(target)
+    Flip.from(state,{duration:0.5,absolute:true})
+  }
   function checkValid(num){
     if(num==max){
         calculateTotalScore()
@@ -60,6 +69,9 @@ export default function ExoSection({exercices}){
             }})
           }}/>
         ))}
+        <div ref={finalScoreHolderRef} className="h-[100px] w-[200px] bg-white self-end shadow-md rounded-md">
+          <p ref={finalScoreRef} className="text-2xl font-bold text-center">Your final score is:</p>
+        </div>
       </div>
       <div ref={scoreRef} className="col-[1/2] row-[1/2] h-[100px] w-[200px] 
       bg-white rounded-ml grid sticky top-[0px] left-[1000px] opacity-[0]">
@@ -68,7 +80,7 @@ export default function ExoSection({exercices}){
       <div id="scoreBare" className="opacity-[0] h-[600px] grid w-[20px] bg-white sticky top-[50px] left-[1400px] col-[1/2] row-[1/2] border-gray-300 border-2 rounded-md">
         <div className="h-[100px] w-full bg-green-500 self-end origin-bottom"></div>
       </div>
-      <FinalResult totalScore={totalScore} completeScore={completeScore} valid={showScore}/>
+      <FinalResult totalScore={totalScore} onQuite={onQuite} completeScore={completeScore} valid={showScore}/>
     </div>
   );
 }

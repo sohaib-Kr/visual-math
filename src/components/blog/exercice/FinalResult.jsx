@@ -1,15 +1,17 @@
 import { useRef } from 'react';
 import { gsap } from 'gsap'
-export default function FinalResult({totalScore,completeScore,valid}) {
+export default function FinalResult({totalScore,completeScore,valid,onQuite}) {
     let feedback=""
     let percentage=0
     let panel=useRef(null)
+    let percentageRef=useRef(null)
     function listener(){
 
     }
     if(valid){
         listener=function(){
             gsap.to(panel.current,{display:'none',duration:0.5,opacity:0})
+            onQuite(percentageRef.current)
             listener=function(){
                 
             }
@@ -43,7 +45,7 @@ export default function FinalResult({totalScore,completeScore,valid}) {
             <div className="grid h-full grid-rows-[50%_50%]">
               <p className="text-3xl tracking-widest font-sans self-center justify-self-center self-center" style={{color:feedback[1], letterSpacing:'0.1em'}}>{feedback[0]}</p>
               <p className="text-2xl font-light tracking-widest font-sans self-center justify-self-center self-start">your score: 
-                <span style={{color:feedback[1]}}>{percentage}%</span>
+                <span ref={percentageRef} style={{color:feedback[1]}}>{percentage}%</span>
             </p>
           </div>
         </div>

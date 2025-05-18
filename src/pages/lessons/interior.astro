@@ -166,16 +166,19 @@ pathDefinition.engine[0]()
 homotopyWithHole.engine[0]()
 homotopicalEqu.engine[0]()
 fundamentalGroup.engine[0]()
-let I=setInterval(()=>{
-    if(document.getElementById("exerciceSection"))
-    {
-        clearInterval(I)
-        setTimeout(()=>{
+const observer = new MutationObserver(() => {
+    if (document.getElementById("exerciceSection")) {
+        observer.disconnect();
+        setTimeout(() => {
             exo00().engine[0]()
             exo01().engine[0]()
             exo02().engine[0]()
-        },2000)
+        }, 2000)
     }
-},100)
+});
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
 
 </script>
