@@ -1,9 +1,2 @@
-export { default as Paragraph } from './Paragraph.astro';
-export { default as Title } from './Title.astro';
-export { default as Part } from './Part.astro';
-export { default as SubHead } from './SubHead.astro';
-export { default as AnimationFrame } from './AnimationFrame.astro';
-export { default as Latex} from './Latex.astro'
-export { default as H} from './H.astro'
-export { default as Ex} from './Ex.astro'
+export * from './textComps.jsx'
 export { default as ExerciceSection} from './exercice/ExoSection.jsx'
