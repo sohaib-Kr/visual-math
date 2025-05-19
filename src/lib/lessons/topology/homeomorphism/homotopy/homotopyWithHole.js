@@ -3,8 +3,8 @@ import { vMathAnimation } from '@/lib/library.js';
 export const anim = new vMathAnimation('homotopyWithHole');
 
 const draw=anim.frame
+const config=anim.config()
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
-
 function restrictFromCenter(draggable){
     draw.node.addEventListener('mousemove',(event)=>{
         let heads=draggable.currentData
@@ -13,7 +13,6 @@ function restrictFromCenter(draggable){
         let Xb=heads.b[0]
         let Yb=heads.b[1]
         let diff=Math.min(1/(40*(Math.pow(Yb-Ya,2)+Math.pow(Xb-Xa,2))/1_000_000),0.1)
-        document.getElementById('value').textContent=diff
         if(Math.abs((Yb/Xb)-(Ya/Xa)) <= diff || Xa==0 || Xb==0){
             draggable.shape.attr({opacity:0.3})
             console.log('error')
@@ -24,7 +23,7 @@ function restrictFromCenter(draggable){
     })
 }
 
-let center=plane.plane.circle(20).center(0,0).attr({fill:'white',opacity:0.8})
+plane.plane.circle(20).center(0,0).attr({fill:'white',opacity:0.8})
 function matchHeads(headA,headB){
     function dist(x1,y1,x2,y2){
         return Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2))
@@ -127,27 +126,28 @@ let firstPath=anim.createTopoPath({
     codedPath:`M |a| 
         Q 0 0 |b| `,
     initialData:{a:[-250,-50],b:[-50,-250]},
-    attr:{stroke:'red',fill:'none','stroke-width':5,opacity:0}})
+    attr:config.path1})
 let secondPath=anim.createTopoPath({
     codedPath:`M |a| 
         Q 0 0 |b| `,
     initialData:{a:[50,250],b:[250,50]},
-    attr:{stroke:'yellow',fill:'none','stroke-width':5,opacity:0}})
+    attr:config.path1})
 plane.append(firstPath.group)
 plane.append(secondPath.group)
 
-let toDelete=[]
+let textHolder
 
 anim.initSteps([
     ()=>{
-        firstPath.shape.attr({opacity:1})
-        secondPath.shape.attr({opacity:1})
+        anim.vivusRender({elem:firstPath.group.node})
+        anim.vivusRender({elem:secondPath.group.node})
     },
+    ()=>{},
     ()=>{
-        toDelete.push(plane.plane.path('M -250 -50 L 50 250').attr({fill:'none','stroke-width':5,stroke:'green',opacity:0.5}),
-        plane.plane.path('M -50 -250 L 250 50').attr({fill:'none','stroke-width':5,stroke:'green',opacity:0.5}))
+        textHolder=anim.createTextSpace().update(`In this case we can't directly transform the first path into the second one crossing the center`,true)
         let aPath=plane.plane.path('M -250 -50 L -100 100')
         let bPath=plane.plane.path('M -50 -250 L 100 -100')
+        
         let x=firstPath.createShapeUpdater({a:aPath,b:bPath})
         x.runUpdater(()=>x.kill())
     },
@@ -160,20 +160,23 @@ anim.initSteps([
     },
     ()=>{},
     ()=>{
-        toDelete.forEach((path)=>path.remove())
+        textHolder.update(`drag the 2 orange circles to move the paths around`,true)
         let aPath=plane.plane.path('M 50 250 L -250 -50')
         let bPath=plane.plane.path('M 250 50 L -50 -250')
         let x=firstPath.createShapeUpdater({a:aPath,b:bPath})
-        x.runUpdater(()=>{
-            firstPath.draggable(['a','b'],plane.center)
-            secondPath.draggable(['a','b'],plane.center)
-            restrictFromCenter(firstPath)
-            restrictFromCenter(secondPath)
-            x.kill()
+        x.runUpdater({
+            callback:()=>{
+                firstPath.draggable(['a','b'],plane.center)
+                secondPath.draggable(['a','b'],plane.center)
+                restrictFromCenter(firstPath)
+                restrictFromCenter(secondPath)
+                x.kill()
+            }
         })
     },
     ()=>{
         let playHomotopy=anim.addControl({name:'playHomotopy',type:'button',listener:()=>{
+        textHolder.update(`There is always a way to apply homotopy between the two paths correctly`,true)
             generateHomotopy()
             playHomotopy.kill()
         }})

@@ -40,7 +40,7 @@ export default function Exercice({exercice,onSubmit,exoIndex}){
   }
 
 
-    const correct=[1,2,0]
+    const correct=exercice.items.map((item)=>item.solution)
     const [answered,setAnswered]=useState(false)
     const [answers,setAnswers]=useState([null,null,null])
   return (

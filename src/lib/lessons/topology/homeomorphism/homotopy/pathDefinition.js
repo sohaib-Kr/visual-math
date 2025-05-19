@@ -5,11 +5,11 @@ export const anim = new vMathAnimation('pathDefinition');
 
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
-
+const config=anim.config()
 let mainPath=anim.createTopoPath({
     codedPath:`M |a| C |b| |c| |d|`,
     initialData:{a:[0,0],b:[0,0],c:[100,0],d:[100,0]},
-    attr:{stroke:'#98FF98','stroke-width':5,fill:'none','stroke-linecap':'round'}})
+    attr:config.path1})
 
 
 anim.vivusRender({elem:mainPath.group.node})
@@ -22,7 +22,8 @@ plane.append(mainPath.group)
 let secondPath=anim.createTopoPath({
     codedPath:`M |a| C |b| |c| |d| C |e| |f| |g|`,
     initialData:{a:[0,0],b:[0,0],c:[100,0],d:[0,0],e:[100,0],f:[100,0],g:[100,0]},
-    attr:{stroke:'#98FF98','stroke-width':5,fill:'none','stroke-linecap':'round',opacity:0}})
+    attr:config.path1})
+secondPath.shape.attr({opacity:0})
 plane.append(secondPath.group)
 let textHolder
 let lambdaHolder
@@ -31,15 +32,15 @@ let lambdaHolder
 let arrowHolder=anim.createTopoPath({
     codedPath:`M |a| L |b|`,
     initialData:{a:[0,0],b:[100,-100]},
-    attr:{stroke:'white','stroke-width':5,fill:'none',opacity:0}})
+    attr:config.indicationLine})
 plane.append(arrowHolder.group)
 
-let mainPathIndicator=plane.plane.circle(22)
-.attr({fill:'#ff8000',opacity:0})
+let mainPathIndicator=plane.plane.circle()
+.attr({...config.indicationPoint,opacity:0})
 .center(100,-100)
 
-let shadowPathIndicator=plane.plane.circle(22)
-.attr({fill:'#ff8000',opacity:0})
+let shadowPathIndicator=plane.plane.circle()
+.attr({...config.indicationPoint,opacity:0})
 .center(0,0)
 
 plane.append(mainPathIndicator)
@@ -48,33 +49,33 @@ anim.initSteps([
     ()=>{
         textHolder=anim.createTextSpace().update('Here are examples of different paths in the plane R^2',true)
     },
-    ()=>{
-        let aPath=plane.plane.path('M 0 0 L -100 -50')
-        let bPath=plane.plane.path('M 0 0 L -100 -50')
-        let cPath=plane.plane.path('M 100 0 L 200 -250')
-        let dPath=plane.plane.path('M 100 0 L 200 -250')
-        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut3',duration:1000})
-    },
-    ()=>{},
-    ()=>{
+    // ()=>{
+    //     let aPath=plane.plane.path('M 0 0 L -100 -50')
+    //     let bPath=plane.plane.path('M 0 0 L -100 -50')
+    //     let cPath=plane.plane.path('M 100 0 L 200 -250')
+    //     let dPath=plane.plane.path('M 100 0 L 200 -250')
+    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+    //     x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1000})
+    // },
+    // ()=>{},
+    // ()=>{
 
-        let aPath=plane.plane.path('M -100 -50 L -100 200')
-        let bPath=plane.plane.path('M -100 -50 L -300 200')
-        let cPath=plane.plane.path('M 200 -250 L -300 -100')
-        let dPath=plane.plane.path('M 200 -250 L -100 -100')
-        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut3',duration:1000})
-    },
-    ()=>{},
-    ()=>{
-        let aPath=plane.plane.path('M -100 200 L 200 200')
-        let bPath=plane.plane.path('M -300 200 L 0 200')
-        let cPath=plane.plane.path('M -300 -100 L 0 -100')
-        let dPath=plane.plane.path('M -100 -100 L -200 -100')
-        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut3',duration:1000})
-    },
+    //     let aPath=plane.plane.path('M -100 -50 L -100 200')
+    //     let bPath=plane.plane.path('M -100 -50 L -300 200')
+    //     let cPath=plane.plane.path('M 200 -250 L -300 -100')
+    //     let dPath=plane.plane.path('M 200 -250 L -100 -100')
+    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+    //     x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1000})
+    // },
+    // ()=>{},
+    // ()=>{
+    //     let aPath=plane.plane.path('M -100 200 L 200 200')
+    //     let bPath=plane.plane.path('M -300 200 L 0 200')
+    //     let cPath=plane.plane.path('M -300 -100 L 0 -100')
+    //     let dPath=plane.plane.path('M -100 -100 L -200 -100')
+    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+    //     x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1000})
+    // },
     ()=>{},
     
     ()=>{
@@ -85,10 +86,15 @@ anim.initSteps([
         let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
         x.runUpdater({callback:()=>x.kill(),timeFunc:'easeIn2',duration:1000})
     },
+    ()=>{},
     ()=>{
-        // textHolder.update('Use the range slider to change the value of x.',true)
-        // lambdaHolder=anim.createTextSpace().update('\\gamma \\left( x \\right)=\\left( 1,1 \\right)',true,true)
+        textHolder.update('Use the range slider to change the value of x.',true)
+        lambdaHolder=anim.createTextSpace().update('\\gamma \\left( 0.00 \\right)=\\left( 1.00,1.00 \\right)',true,true)
         anim.pause()
+        draw.animate(500).transform({
+            origin: [400,-300],
+            scale: 1.7
+          });
         let arrowHolderUpdate=arrowHolder.createShapeUpdater({a:mainPath.shape,b:mainPathShadow})
         let length=mainPath.shape.length()
         let shadowLength=mainPathShadow.length()
@@ -105,6 +111,7 @@ anim.initSteps([
             shadowPathIndicator.center(shadowData.x,shadowData.y)
             
         }
+        let emph
         let scrub=anim.createScrubber({
             initialValue:0,
             animator:sceww,
@@ -113,13 +120,13 @@ anim.initSteps([
                 emph.updateAll()
             }
         })
-        let emph
         let range=anim.addControl({name:'rangeInput',type:'range',listener:(event)=>{
             scrub.play(event.target.value)
-            // lambdaHolder.update('/gamma/left( '+event.target.value/100+' /right)=/left( '+parseInt(data.x)/100+','+(-parseInt(data.y)/100)+' /right)')
+            let data=mainPath.shape.pointAt(event.target.value*length/100)
+            lambdaHolder.update('\\gamma\\left( '+parseFloat(event.target.value/100).toFixed(2)+' \\right)=\\left( '+parseFloat(parseInt(data.x)/100).toFixed(2)+','+parseFloat(-parseInt(data.y)/100).toFixed(2)+' \\right)',false,true)
         }})
         range.node.addEventListener('mousedown',()=>{
-            emph=anim.emphasize([mainPathIndicator,shadowPathIndicator,arrowHolder.shape])
+            emph=anim.emphasize([arrowHolder.shape,mainPathIndicator,shadowPathIndicator])
         })
         range.node.addEventListener('mouseup',()=>{
             emph.updateAll()
@@ -132,15 +139,19 @@ anim.initSteps([
         }})
     },
     ()=>{
+        draw.animate(500).transform({
+            scale: 1
+          });
         let aPath=plane.plane.path('M 100 -100 L 0 0')
         let bPath=plane.plane.path('M 300 -100 L 0 0')
         let cPath=plane.plane.path('M 200 -250 L  100 0')
         let dPath=plane.plane.path('M 400 -250 L 100 0')
         let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        
+        arrowHolder.shape.animate(300).attr({opacity:0})
+        mainPathIndicator.animate(300).attr({opacity:0})
+        shadowPathIndicator.animate(300).attr({opacity:0})
         x.runUpdater({callback:()=>{
-            arrowHolder.shape.animate(300).attr({opacity:0})
-            mainPathIndicator.animate(300).attr({opacity:0})
-            shadowPathIndicator.animate(300).attr({opacity:0})
             x.kill()
         },timeFunc:'easeOut'})
     },
@@ -163,6 +174,10 @@ anim.initSteps([
         },timeFunc:'easeOut'})
     },
     ()=>{
+        draw.animate(500).transform({
+            origin: [-400,200],
+            scale: 1.7
+          });
         anim.pause()
         let arrowHolderUpdate=arrowHolder.createShapeUpdater({a:secondPath.shape,b:mainPathShadow})
         let length=secondPath.shape.length()
@@ -170,16 +185,45 @@ anim.initSteps([
         arrowHolderUpdate.update(0)
         let data=secondPath.shape.pointAt(0)
         mainPathIndicator.center(data.x,data.y)
+        shadowPathIndicator.center(0,0)
         mainPathIndicator.animate(500).attr({opacity:1})
         shadowPathIndicator.animate(500).attr({opacity:1})
         arrowHolder.shape.animate(500).attr({opacity:0.5})
-        let range=anim.addControl({name:'rangeInput',type:'range',listener:(event)=>{
-            arrowHolderUpdate.update(event.target.value/100)
-            let data=secondPath.shape.pointAt(event.target.value*length/100)
+
+        function sceww(x){
+            let data=secondPath.shape.pointAt(x*length/100)
             mainPathIndicator.center(data.x,data.y)
-            let shadowData=mainPathShadow.pointAt(event.target.value*shadowLength/100)
+            let shadowData=mainPathShadow.pointAt(x*shadowLength/100)
             shadowPathIndicator.center(shadowData.x,shadowData.y)
+            arrowHolderUpdate.update(x/100)
+            
+        }
+
+
+        let emph
+        let scrub=anim.createScrubber({
+            initialValue:0,
+            animator:sceww,
+            duration:400,
+            onUpdate:()=>{
+                emph.updateAll()
+            }
+        })
+
+        let range=anim.addControl({name:'rangeInput',type:'range',listener:(event)=>{
+            scrub.play(event.target.value)
         }})
+
+        range.node.addEventListener('mousedown',()=>{
+            emph=anim.emphasize([arrowHolder.shape,mainPathIndicator,shadowPathIndicator])
+        })
+        range.node.addEventListener('mouseup',()=>{
+            emph.updateAll()
+            emph.remove()
+        })
+
+
+
         //todo
         //add play again button
 

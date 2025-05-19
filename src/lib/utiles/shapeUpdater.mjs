@@ -122,7 +122,7 @@ export class ShapeUpdater{
             trajectory.node.remove()
         })
     }
-    runUpdater({callback=()=>{},duration=500,timeFunc='linear'}){
+    runUpdater({callback=()=>{},duration=500,timeFunc='linear'}={}){
         let tFunc=createTimeFunc(timeFunc)
         
         let t=0
@@ -137,7 +137,7 @@ export class ShapeUpdater{
             }
         },duration/25)
     }
-    runReverseUpdater({callback=()=>{},duration=500,timeFunc='linear'}){
+    runReverseUpdater({callback=()=>{},duration=500,timeFunc='linear'}={}){
         let tFunc=createTimeFunc(timeFunc)
 
         let t=1
@@ -146,7 +146,7 @@ export class ShapeUpdater{
             s=tFunc(t)
             this.update(s)
             t-=0.04
-            if(t<0){
+            if(t<-0.04){
                 clearInterval(I)
                 callback()
             }

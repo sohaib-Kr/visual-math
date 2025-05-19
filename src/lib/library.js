@@ -2,6 +2,7 @@
 import * as utiles from './utiles'
 import { SVG } from '@svgdotjs/svg.js'
 import { gsap } from 'gsap'
+import katex from 'katex'
 
 
 gsap.config({easeDefault:'power2.inOut'})
@@ -29,17 +30,15 @@ export class vMathAnimation {
 
         //create the animation frame element
         this.wrapper = document.createElement('div');
-        let controlElem=''
-        if(control){
-            controlElem='<div class="animationControl"></div>'
-        }
         this.wrapper.innerHTML = `
             <div id="${id}Animation" class="animationWrapper">
               <svg class="animation" id="${id}Frame"></svg>
-              ${controlElem}
             </div>`;
             this.wrapper.style.height='100%'
             this.wrapper.style.width='100%'
+            this.wrapper.style.backgroundColor=this.colorConfig().backgroundColor
+            this.wrapper.style.borderRadius='50px'
+            this.wrapper.style.overflow='hidden'
             this.wrapper.children[0].style.transformOrigin='top left'
             
                 this.wrapper.children[0].style.transform='scale('+(ofsetWidth/1200)+','+(ofsetHeight/800)+')'
@@ -47,7 +46,6 @@ export class vMathAnimation {
 
         //using SVG.js we load the svg frame element and configure it
         this.frame = SVG(`#${id}Frame`).size(1200,800);
-        this.frame.attr({style: 'background-color:'+this.colorConfig().backgroundColor+';border-radius: 50px;'})
 
         //iniitalizing animation variables and the engine[0] function (the main animation loop)
         this.step = 0;
@@ -139,19 +137,30 @@ export class vMathAnimation {
         textSpace.classList.add('textSpace')
         textSpace.style.position='relative'
         textSpace.style.width='80%'
+        textSpace.style.fontSize='21px'
+        textSpace.style.fontWeight='light'
         let obj={
             update:function(newText,fade=false,latex=false){
- 
-                if(fade){
-                    let tween=gsap.to(textSpace,{duration:0.5,y:-10,opacity:0,onComplete:()=>{
+                if(!latex){
+                    if(fade){
+                        let tween=gsap.to(textSpace,{duration:0.5,y:-10,opacity:0,onComplete:()=>{
+                            textSpace.innerHTML=newText
+                            gsap.to(textSpace,{duration:0.5,y:10,opacity:1})
+                        }})
+                    }
+                    else{
                         textSpace.innerHTML=newText
+                    }
+                }
+                else if(fade){
+                    gsap.to(textSpace,{duration:0.5,y:-10,opacity:0,onComplete:()=>{
+                        textSpace.innerHTML=''
+                        katex.render(newText,textSpace,{throwOnError:true,displayMode:false})
                         gsap.to(textSpace,{duration:0.5,y:10,opacity:1})
                     }})
                 }
                 else{
-                    textSpace.innerHTML=newText
-                }
-                if(latex){
+                    textSpace.innerHTML=''
                     katex.render(newText,textSpace,{throwOnError:true,displayMode:false})
                 }
                 return this
@@ -201,6 +210,13 @@ export class vMathAnimation {
     }
     vivusRender(...params){
         return utiles.vivusRender(...params)
+    }
+    config(){
+        return {
+            path1:{stroke:'#98FF98','stroke-width':5,fill:'none','stroke-linecap':'round'},
+            indicationLine:{stroke:'white','stroke-width':5,fill:'none',opacity:0},
+            indicationPoint:{fill:'#ff8000',r:9}
+        }
     }
 } 
 export const textStyles=utiles.textStyles

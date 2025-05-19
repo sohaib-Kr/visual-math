@@ -107,7 +107,7 @@ export class TopoPath{
                     currentData[this.name][0]=x
                     currentData[this.name][1]=y
                 },
-                circle:this.group.circle(10).fill('orange').center(this.currentData[point][0],this.currentData[point][1])
+                circle:this.group.circle(20).fill('orange').center(this.currentData[point][0],this.currentData[point][1])
             }
 
             //and here we create the circles used to drag the points

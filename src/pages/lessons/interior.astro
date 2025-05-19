@@ -21,7 +21,8 @@ let exos=
                 {title:"option1",description:"loop"},
                 {title:"option2",description:"non loop path"},
                 {title:"option3",description:"not a path"},
-            ]
+            ],
+            solution:1
         },
         {
             title:"Item 2",
@@ -29,7 +30,8 @@ let exos=
                 {title:"option1",description:"loop"},
                 {title:"option2",description:"non loop path"},
                 {title:"option3",description:"not a path"},
-            ]
+            ],
+            solution:2
         },
         {
             title:"Item 3",
@@ -37,7 +39,8 @@ let exos=
                 {title:"option1",description:"loop"},
                 {title:"option2",description:"non loop path"},
                 {title:"option3",description:"not a path"},
-        ]
+        ],
+        solution:0
         },
         ]
     },
@@ -49,28 +52,31 @@ let exos=
             options:[
                 {title:"option1",description:"homotopic"},
                 {title:"option2",description:"not homotopic"},
-            ]
+            ],
+            solution:1
         },
         {
             title:"Item 2",
             options:[
                 {title:"option1",description:"homotopic"},
                 {title:"option2",description:"not homotopic"},
-        ]
+        ],
+        solution:1
         },
         {
             title:"Item 3",
             options:[
                 {title:"option1",description:"homotopic"},
                 {title:"option2",description:"not homotopic"},
-        ]
+        ],
+        solution:0
         },
     ]}
     ]
 
 ---
 <Lesson>
-<Part>
+<!-- <Part>
 <Title>Exploring the Interior in Topology</Title>
 
 <SubHead>Paths and Loops</SubHead>
@@ -101,8 +107,8 @@ Two spaces <Latex>X</Latex> and <Latex>Y</Latex> are <H>homotopy equivalent</H> 
     <li>A disk <Latex>D^2</Latex> is homotopy equivalent to a single point, but a circle <Latex>S^1</Latex> is not.</li>
 </ul>
 <AnimationFrame id="homotopicalEqu" style={{
-    width: '90%',
-    height: '300px',
+    width: '110%',
+    height: '400px',
     position: 'relative',
     left: '5%',
     top: '50%'
@@ -110,7 +116,7 @@ Two spaces <Latex>X</Latex> and <Latex>Y</Latex> are <H>homotopy equivalent</H> 
 </Paragraph>
 </Part>
 
-
+ -->
 
 <Part>
 <Title>When Homotopy Fails</Title>
@@ -124,10 +130,10 @@ Homotopy cannot always be performed if a space has "holes" or obstructions.
 </ul>
 </Paragraph>
 <AnimationFrame id="homotopyWithHole" style={{
-    width: '50%',
-    height: '300px',
+    width: '110%',
+    height: '400px',
     position: 'relative',
-    left: '50%',
+    left: '5%',
     top: '50%'
 }}/>
 </Part>
@@ -143,40 +149,40 @@ The <H>fundamental group</H> <Latex>\pi_1(X, x_0)</Latex> is the set of all homo
     <li><Latex>\pi_1(S^1) \cong \mathbb{'{'}Z{'}'}</Latex> (loops are classified by their winding number).</li>
 </ul>
 </Paragraph>
-<AnimationFrame id="fundamentalGroup" style={{
+<!-- <AnimationFrame id="fundamentalGroup" style={{
     width: '50%',
     height: '300px',
     position: 'relative',
     left: '50%',
     top: '50%'
-}}/>
+}}/> -->
 </Part>
 </Lesson>
-<Exercices>
+<!-- <Exercices>
     <short.ExerciceSection exercices={exos} client:only/>
-</Exercices>
+</Exercices> -->
 
 <script>
-import { anim as pathDefinition} from "../../lib/lessons/topology/homeomorphism/homotopy/pathDefinition.js";
+// import { anim as pathDefinition} from "../../lib/lessons/topology/homeomorphism/homotopy/pathDefinition.js";
 import { anim as homotopyWithHole} from "../../lib/lessons/topology/homeomorphism/homotopy/homotopyWithHole.js";
-import { anim as homotopicalEqu} from "../../lib/lessons/topology/homeomorphism/homotopy/homotopicalEqu.js";
-import { anim as fundamentalGroup} from "../../lib/lessons/topology/homeomorphism/homotopy/fundamentalGroup.js";
-import {exo00,exo01,exo02} from "../../lib/lessons/topology/homeomorphism/homotopy/exercices"
-pathDefinition.engine[0]()
+// import { anim as homotopicalEqu} from "../../lib/lessons/topology/homeomorphism/homotopy/homotopicalEqu.js";
+// import { anim as fundamentalGroup} from "../../lib/lessons/topology/homeomorphism/homotopy/fundamentalGroup.js";
+// import {exo00,exo01,exo02} from "../../lib/lessons/topology/homeomorphism/homotopy/exercices"
+// pathDefinition.engine[0]()
 homotopyWithHole.engine[0]()
-homotopicalEqu.engine[0]()
-fundamentalGroup.engine[0]()
-const observer = new MutationObserver(() => {
-    if (document.getElementById("exerciceSection")) {
-        observer.disconnect();
-        exo00().engine[0]()
-        exo01().engine[0]()
-        exo02().engine[0]()
-    }
-});
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
-});
+// homotopicalEqu.engine[0]()
+// fundamentalGroup.engine[0]()
+// const observer = new MutationObserver(() => {
+//     if (document.getElementById("exerciceSection")) {
+//         observer.disconnect();
+//         exo00().engine[0]()
+//         exo01().engine[0]()
+//         exo02().engine[0]()
+//     }
+// });
+// observer.observe(document.body, {
+//     childList: true,
+//     subtree: true
+// });
 
 </script>

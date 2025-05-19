@@ -1,20 +1,21 @@
 import Vivus from 'vivus';
 
 
-export function vivusRender({elem,duration=60}){
+export function vivusRender({elem,duration=100}={}){
     let id='newIdNeverCreatedBefore'
     elem.id=id
-    let originalStyle=Array.from(elem.children).map((child)=>child.style)
     new Vivus(id, {
-        type: 'oneByOne',
+        type: 'sync',
         duration,
         animTimingFunction: Vivus.EASE_OUT,
         onReady:()=>{
             elem.id=''
+        }},
+        ()=>{
+            console.log('complete')
             Array.from(elem.children).forEach((child,index)=>{
-                child.style=originalStyle[index]
+                child.style['stroke-dasharray']='none'
             })
-        }
-    })
+        })
     
 }
