@@ -1,9 +1,56 @@
+function createTimeFunc(timeFunc){
+    let tFunc=function(t){
+        return t
+    }
+    if(timeFunc==='linear'){
+        tFunc=function(t){
+            return t
+        }
+    }
+    else if(timeFunc==='easeIn2'){
+        tFunc=function(t){
+            return t*t
+        }
+    }
+    else if(timeFunc==='easeIn3'){
+        tFunc=function(t){
+            return t*t*t
+        }
+    }
+    else if(timeFunc==='easeIn4'){
+        tFunc=function(t){
+            return t*t*t*t
+        }
+    }
+    else if(timeFunc==='easeOut'){
+        tFunc=function(t){
+            return 1-(1-t)*(1-t)
+        }
+    }
+    else if(timeFunc==='easeOut2'){
+        tFunc=function(t){
+            return 1-(1-t)*(1-t)*(1-t)
+        }
+    }
+    else if(timeFunc==='easeOut3'){
+        tFunc=function(t){
+            return 1-(1-t)*(1-t)*(1-t)
+        }
+    }
+    else if(timeFunc==='easeOut4'){
+        tFunc=function(t){
+            return 1-(1-t)*(1-t)*(1-t)*(1-t)
+        }
+    }
+    return tFunc
+}
+
 export class ShapeUpdater{
     #shape
     #matchingSet
     #smoothParams
     #smoothCommands
-    constructor({shape,matchingSet,decoded}){
+    constructor({shape,matchingSet,decoded,currentData}){
         this.#shape=shape
         this.#matchingSet=matchingSet
             //this function matches every point with its transformation path and create a function that 
@@ -40,11 +87,12 @@ export class ShapeUpdater{
                 else{
                     //if the param is not in the matching set then it is static
                     if(smoothTransPathArray.length>0 && typeof smoothTransPathArray[smoothTransPathArray.length-1] === 'string'){
-                        smoothTransPathArray[smoothTransPathArray.length-1]+=' '+command+this.currentData[param][0]+' '+this.currentData[param][1]+' '
+                    
+                        smoothTransPathArray[smoothTransPathArray.length-1]+=' '+command+currentData[param][0]+' '+currentData[param][1]+' '
                         
                     }
                     else{
-                        smoothTransPathArray.push(command+' '+this.currentData[param][0]+' '+this.currentData[param][1])
+                        smoothTransPathArray.push(command+' '+currentData[param][0]+' '+currentData[param][1])
                     }
                 }
             }
@@ -74,30 +122,34 @@ export class ShapeUpdater{
             trajectory.node.remove()
         })
     }
-    runUpdater(callback=()=>{}){
+    runUpdater({callback=()=>{},duration=500,timeFunc='linear'}){
+        let tFunc=createTimeFunc(timeFunc)
+        
         let t=0
         let s=0
         let I=setInterval(()=>{
-            s=t*t
+            s=tFunc(t)
             this.update(s)
             t+=0.04
             if(t>1.04){
                 clearInterval(I)
                 callback()
             }
-        },50)
+        },duration/25)
     }
-    runReverseUpdater(callback=()=>{}){
+    runReverseUpdater({callback=()=>{},duration=500,timeFunc='linear'}){
+        let tFunc=createTimeFunc(timeFunc)
+
         let t=1
         let s=1
         let I=setInterval(()=>{
-            s=t*t
+            s=tFunc(t)
             this.update(s)
             t-=0.04
             if(t<0){
                 clearInterval(I)
                 callback()
             }
-        },50)
+        },duration/25)
     }
 }

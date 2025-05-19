@@ -6,23 +6,30 @@ export class Scrubber{
     #animator
     #duration
     #currentValue
-    constructor({initialValue,animator,duration}){
+    #currentInterval
+    #callback
+    #onUpdate
+    constructor({initialValue,animator,duration,callback=()=>{},onUpdate=(x)=>{}}){
         this.#currentValue=initialValue
         this.#animator=animator
         this.#duration=duration
+        this.#callback=callback
+        this.#onUpdate=onUpdate
     }
     play(target){
+        this.#currentInterval&&clearInterval(this.#currentInterval)
         let change=target-this.#currentValue
         let dur=Math.abs(change)/100*this.#duration
         let t=0
         let cur=this.#currentValue
-        let interval=setInterval(()=>{
+        this.#currentInterval=setInterval(()=>{
             t+=0.1
             this.#animator(cur+t*change)
             this.#currentValue=cur+t*change
-            console.log(cur+t*change)
+            this.#onUpdate(this.#currentValue)
             if(t>=1){
-                clearInterval(interval)
+                clearInterval(this.#currentInterval)
+                this.#callback()
             }
         },dur/10)
     }

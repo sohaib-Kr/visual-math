@@ -79,8 +79,8 @@ A <H>path</H> in a topological space <Latex>X</Latex> is a continuous function <
 A <H>loop</H> is a special kind of path where the start and end points coincide, i.e., <Latex>\gamma(0) = \gamma(1)</Latex>.
 </Paragraph>
 <AnimationFrame id="pathDefinition" style={{
-    width: '90%',
-    height: '300px',
+    width: '110%',
+    height: '400px',
     position: 'relative',
     left: '5%',
     top: '50%'
@@ -169,11 +169,9 @@ fundamentalGroup.engine[0]()
 const observer = new MutationObserver(() => {
     if (document.getElementById("exerciceSection")) {
         observer.disconnect();
-        setTimeout(() => {
-            exo00().engine[0]()
-            exo01().engine[0]()
-            exo02().engine[0]()
-        }, 2000)
+        exo00().engine[0]()
+        exo01().engine[0]()
+        exo02().engine[0]()
     }
 });
 observer.observe(document.body, {

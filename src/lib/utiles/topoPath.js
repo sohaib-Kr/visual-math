@@ -71,7 +71,7 @@ export class TopoPath{
         this.currentData=initialData
     }
     createShapeUpdater(matchingSet){
-        return new ShapeUpdater({shape:this.shape,matchingSet,decoded:this.decoded})
+        return new ShapeUpdater({shape:this.shape,matchingSet,decoded:this.decoded,currentData:this.currentData})
     }
     refresh(){
         let newPath=this.decoded.params.map((param,key)=>{

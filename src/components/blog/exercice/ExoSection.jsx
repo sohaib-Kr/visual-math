@@ -30,6 +30,7 @@ export default function ExoSection({exercices}){
     console.log(state)
     finalScoreRef.current.appendChild(target)
     Flip.from(state,{duration:0.5,absolute:true})
+    gsap.to(finalScoreHolderRef.current,{duration:0.5,opacity:1})
   }
   function checkValid(num){
     if(num==max){
@@ -69,7 +70,7 @@ export default function ExoSection({exercices}){
             }})
           }}/>
         ))}
-        <div ref={finalScoreHolderRef} className="h-[100px] w-[200px] bg-white self-end shadow-md rounded-md">
+        <div ref={finalScoreHolderRef} className="h-[100px] w-[200px] bg-white self-end shadow-md rounded-md opacity-[0]">
           <p ref={finalScoreRef} className="text-2xl font-bold text-center">Your final score is:</p>
         </div>
       </div>

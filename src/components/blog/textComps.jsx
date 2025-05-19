@@ -6,8 +6,8 @@ export const Part=(props)=> <div className="h-fit m-4 rounded-lg p-8" data-title
 export const Title=(props)=> <span className="font-bold text-orange-500">{props.children}</span>
 export const Latex=(props)=> <span className="katex-input">{props.children}</span>
 export const AnimationFrame=(props)=> (
-<div className="w-full grid grid-cols-[50%_50%] p-[20px] rounded-[10px] grid-rows-[100%] border border-black" style={props.style}>
-  <div className="w-[80%] h-full">
+<div className="w-full grid grid-cols-[40%_60%] p-[20px] rounded-[10px] grid-rows-[100%] border border-black" style={props.style}>
+  <div className="w-[95%] h-full control">
     <div className="flex flex-col gap-2 h-[50%]">
     </div>
     <div className="flex flex-col gap-2 h-[50%] flex-col-reverse">

@@ -41,9 +41,6 @@ export class vMathAnimation {
             this.wrapper.style.height='100%'
             this.wrapper.style.width='100%'
             this.wrapper.children[0].style.transformOrigin='top left'
-            if(!control){
-                console.log(ofsetWidth)
-            }
             
                 this.wrapper.children[0].style.transform='scale('+(ofsetWidth/1200)+','+(ofsetHeight/800)+')'
         parentElement.appendChild(this.wrapper);
@@ -92,7 +89,6 @@ export class vMathAnimation {
                     let t=1
                     let I=setInterval(()=>{
                         input.style.opacity=t
-                        console.log(input.style.opacity)
                         t-=0.04
                         if(t<0){
                             clearInterval(I)
@@ -199,6 +195,12 @@ export class vMathAnimation {
     }
     createScrubber(params){
         return new utiles.Scrubber({...params})
+    }
+    emphasize(...params){
+        return utiles.emphasize(...params)
+    }
+    vivusRender(...params){
+        return utiles.vivusRender(...params)
     }
 } 
 export const textStyles=utiles.textStyles

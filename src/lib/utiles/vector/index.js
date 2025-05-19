@@ -95,13 +95,15 @@ export class CartPlane{
         this.plane=draw.group()
         this.plane.line(0,-height/2,0,height/2).stroke({
             color: '#f6f3f4',
-            width: 2,
-            linecap: 'round'
+            width: 3,
+            linecap: 'round',
+            opacity:0.6
         })
         this.plane.line(-width/2,0,width/2,0).stroke({
             color: '#f6f3f4',
-            width: 2,
-            linecap: 'round'
+            width: 3,
+            linecap: 'round',
+            opacity:0.6
         })
         this.plane.transform({translate:[width/2,height/2]})
 
