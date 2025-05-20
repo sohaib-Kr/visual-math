@@ -45,6 +45,7 @@ let shadowPathIndicator=plane.plane.circle()
 
 plane.append(mainPathIndicator)
 plane.append(shadowPathIndicator)
+let emph
 anim.initSteps([
     ()=>{
         textHolder=anim.createTextSpace().update('Here are examples of different paths in the plane R^2',true)
@@ -111,7 +112,13 @@ anim.initSteps([
             shadowPathIndicator.center(shadowData.x,shadowData.y)
             
         }
-        let emph
+        emph=anim.emphasize([arrowHolder.shape,mainPathIndicator,shadowPathIndicator],{
+            resultStyle:[
+                {opacity:1,filter:'drop-shadow(0 0 15px white) brightness(1.2)'},
+                {opacity:1,filter:'drop-shadow(0 0 15px white) brightness(1.2)'},
+                {opacity:1,filter:'drop-shadow(0 0 15px white) brightness(1.2)'}
+            ]
+        })
         let scrub=anim.createScrubber({
             initialValue:0,
             animator:sceww,
@@ -126,16 +133,16 @@ anim.initSteps([
             lambdaHolder.update('\\gamma\\left( '+parseFloat(event.target.value/100).toFixed(2)+' \\right)=\\left( '+parseFloat(parseInt(data.x)/100).toFixed(2)+','+parseFloat(-parseInt(data.y)/100).toFixed(2)+' \\right)',false,true)
         }})
         range.node.addEventListener('mousedown',()=>{
-            emph=anim.emphasize([arrowHolder.shape,mainPathIndicator,shadowPathIndicator])
+            emph.on()
         })
         range.node.addEventListener('mouseup',()=>{
-            emph.updateAll()
-            emph.remove()
+            emph.off()
         })
         let next=anim.addControl({name:'next',type:'button',listener:()=>{
             anim.play()
             range.kill()
             next.kill()
+            emph.remove()
         }})
     },
     ()=>{
@@ -199,8 +206,13 @@ anim.initSteps([
             
         }
 
-
-        let emph
+        emph=anim.emphasize([arrowHolder.shape,mainPathIndicator,shadowPathIndicator],{
+            resultStyle:[
+                {opacity:1,filter:'drop-shadow(0 0 15px white) brightness(1.2)'},
+                {opacity:1,filter:'drop-shadow(0 0 15px white) brightness(1.2)'},
+                {opacity:1,filter:'drop-shadow(0 0 15px white) brightness(1.2)'}
+            ]
+        })
         let scrub=anim.createScrubber({
             initialValue:0,
             animator:sceww,
@@ -215,11 +227,10 @@ anim.initSteps([
         }})
 
         range.node.addEventListener('mousedown',()=>{
-            emph=anim.emphasize([arrowHolder.shape,mainPathIndicator,shadowPathIndicator])
+            emph.on()
         })
         range.node.addEventListener('mouseup',()=>{
-            emph.updateAll()
-            emph.remove()
+            emph.off()
         })
 
 

@@ -76,7 +76,7 @@ let exos=
 
 ---
 <Lesson>
-<!-- <Part>
+<Part>
 <Title>Exploring the Interior in Topology</Title>
 
 <SubHead>Paths and Loops</SubHead>
@@ -116,7 +116,7 @@ Two spaces <Latex>X</Latex> and <Latex>Y</Latex> are <H>homotopy equivalent</H> 
 </Paragraph>
 </Part>
 
- -->
+
 
 <Part>
 <Title>When Homotopy Fails</Title>
@@ -149,40 +149,49 @@ The <H>fundamental group</H> <Latex>\pi_1(X, x_0)</Latex> is the set of all homo
     <li><Latex>\pi_1(S^1) \cong \mathbb{'{'}Z{'}'}</Latex> (loops are classified by their winding number).</li>
 </ul>
 </Paragraph>
-<!-- <AnimationFrame id="fundamentalGroup" style={{
+<AnimationFrame id="fundamentalGroup" style={{
     width: '50%',
     height: '300px',
     position: 'relative',
     left: '50%',
     top: '50%'
-}}/> -->
+}}/>
+<AnimationFrame id="fundamentalGroup1" style={{
+    width: '50%',
+    height: '300px',
+    position: 'relative',
+    left: '50%',
+    top: '50%'
+}}/>
 </Part>
 </Lesson>
-<!-- <Exercices>
+<Exercices>
     <short.ExerciceSection exercices={exos} client:only/>
-</Exercices> -->
+</Exercices>
 
 <script>
-// import { anim as pathDefinition} from "../../lib/lessons/topology/homeomorphism/homotopy/pathDefinition.js";
+import { anim as pathDefinition} from "../../lib/lessons/topology/homeomorphism/homotopy/pathDefinition.js";
 import { anim as homotopyWithHole} from "../../lib/lessons/topology/homeomorphism/homotopy/homotopyWithHole.js";
-// import { anim as homotopicalEqu} from "../../lib/lessons/topology/homeomorphism/homotopy/homotopicalEqu.js";
-// import { anim as fundamentalGroup} from "../../lib/lessons/topology/homeomorphism/homotopy/fundamentalGroup.js";
-// import {exo00,exo01,exo02} from "../../lib/lessons/topology/homeomorphism/homotopy/exercices"
-// pathDefinition.engine[0]()
+import { anim as homotopicalEqu} from "../../lib/lessons/topology/homeomorphism/homotopy/homotopicalEqu.js";
+import { anim as fundamentalGroup} from "../../lib/lessons/topology/homeomorphism/homotopy/fundamentalGroup.js";
+import { anim as fundamentalGroup1} from "../../lib/lessons/topology/homeomorphism/homotopy/fundamentalGroup1.js";
+import {exo00,exo01,exo02} from "../../lib/lessons/topology/homeomorphism/homotopy/exercices"
+pathDefinition.engine[0]()
 homotopyWithHole.engine[0]()
-// homotopicalEqu.engine[0]()
-// fundamentalGroup.engine[0]()
-// const observer = new MutationObserver(() => {
-//     if (document.getElementById("exerciceSection")) {
-//         observer.disconnect();
-//         exo00().engine[0]()
-//         exo01().engine[0]()
-//         exo02().engine[0]()
-//     }
-// });
-// observer.observe(document.body, {
-//     childList: true,
-//     subtree: true
-// });
+homotopicalEqu.engine[0]()
+fundamentalGroup.engine[0]()
+fundamentalGroup1.engine[0]()
+const observer = new MutationObserver(() => {
+    if (document.getElementById("exerciceSection")) {
+        observer.disconnect();
+        exo00().engine[0]()
+        exo01().engine[0]()
+        exo02().engine[0]()
+    }
+});
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
 
 </script>

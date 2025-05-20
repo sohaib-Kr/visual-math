@@ -155,7 +155,6 @@ export class TopoPath{
         let delta=(nextPoint.y-startPoint.y)/(nextPoint.x-startPoint.x)
         let angle
         if(Math.sign(nextPoint.y*startPoint.y)<0){
-            console.log(Math.sign(startPoint.y-nextPoint.y))
             angle=Math.sign(nextPoint.y-startPoint.y)*90
         }
         else if(nextPoint.y<0){

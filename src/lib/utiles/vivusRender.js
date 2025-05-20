@@ -12,7 +12,6 @@ export function vivusRender({elem,duration=100}={}){
             elem.id=''
         }},
         ()=>{
-            console.log('complete')
             Array.from(elem.children).forEach((child,index)=>{
                 child.style['stroke-dasharray']='none'
             })

@@ -1,3 +1,4 @@
+import gsap from "gsap";
 export function emphasize(elements, options = {}) {
   // Handle single element case by converting to array
   const elems = Array.isArray(elements) ? elements : [elements];
@@ -13,7 +14,7 @@ export function emphasize(elements, options = {}) {
   const svgBox = svg.bbox();
   const shader = svg.rect(svgBox.width, svgBox.height)
     .fill(options.shaderColor || 'black')
-    .opacity(options.opacity !== undefined ? options.opacity : 0.4)
+    .opacity(options.opacity !== undefined ? options.opacity : 0.3)
     .addTo(highlightGroup);
 
   // Store all element copies and their update functions
@@ -46,6 +47,9 @@ export function emphasize(elements, options = {}) {
     
     elemCopy.move(transformed.x, transformed.y);
     
+    elemCopy.attr({opacity:0})
+    console.log(elemCopy)
+    
     return {
       original: elem,
       copy: elemCopy,
@@ -70,24 +74,37 @@ export function emphasize(elements, options = {}) {
   elems.forEach(elem => {
     initialOpacity.push(elem.attr('opacity'));
     trackedElements.push(createPositionedCopy(elem));
-    elem.attr({opacity: 0});
+    elem.attr({opacity:0})
   });
 
   highlightGroup.front();
   
   // Return control object (without observer-related code)
+  let tweens=[null,...options.resultStyle].map((obj,index)=>{
+    return (index==0 ? null : gsap.fromTo(highlightGroup.node.children[index],{opacity:0},{duration:0.5,...obj,paused:true}))
+  })
+  tweens[0]=gsap.fromTo(highlightGroup.node.children[0],{opacity:0},{opacity:0.4,duration:0.5,paused:true})
   return {
-    remove: () => {
-      highlightGroup.remove();
-      trackedElements.forEach((item, index) => {
-        item.original.attr({opacity: initialOpacity[index]});
-      });
-      if (typeof options.callback === 'function') {
-        options.callback(elems);
-      }
-    },
     updateAll: () => trackedElements.forEach(item => item.update()),
     elements: trackedElements,
     highlightGroup,
+    on :function(){
+      tweens.forEach(tween=>tween&&tween.play())
+    },
+    off :function(callback=()=>{}){
+      tweens.forEach(tween=>tween&&tween.reverse()).then(callback)
+    },
+    remove: function() {
+       this.off(()=>{
+        highlightGroup.remove();
+        trackedElements.forEach((item, index) => {
+          item.original.attr({opacity: initialOpacity[index]});
+       });
+      if (typeof options.callback === 'function') {
+        options.callback(elems);
+      }
+    })
+    },
+    
   };
 }
