@@ -48,7 +48,6 @@ export function emphasize(elements, options = {}) {
     elemCopy.move(transformed.x, transformed.y);
     
     elemCopy.attr({opacity:0})
-    console.log(elemCopy)
     
     return {
       original: elem,
@@ -92,7 +91,7 @@ export function emphasize(elements, options = {}) {
       tweens.forEach(tween=>tween&&tween.play())
     },
     off :function(callback=()=>{}){
-      tweens.forEach(tween=>tween&&tween.reverse()).then(callback)
+      tweens.forEach(tween=>tween&&tween.reverse().then(callback))
     },
     remove: function() {
        this.off(()=>{

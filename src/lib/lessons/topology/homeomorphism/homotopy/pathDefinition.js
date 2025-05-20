@@ -1,13 +1,14 @@
 import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
 import Vivus from 'vivus'
-export const anim = new vMathAnimation('pathDefinition');
 
-const draw=anim.frame
-const plane=new CartPlane({draw, unit:{u:30,v:30}})
-const config=anim.config()
-let mainPath=anim.createTopoPath({
-    codedPath:`M |a| C |b| |c| |d|`,
+function init(){
+    const anim = new vMathAnimation('pathDefinition');
+    const draw=anim.frame
+    const plane=new CartPlane({draw, unit:{u:30,v:30}})
+    const config=anim.config()
+    let mainPath=anim.createTopoPath({
+        codedPath:`M |a| C |b| |c| |d|`,
     initialData:{a:[0,0],b:[0,0],c:[100,0],d:[100,0]},
     attr:config.path1})
 
@@ -48,7 +49,11 @@ plane.append(shadowPathIndicator)
 let emph
 anim.initSteps([
     ()=>{
-        textHolder=anim.createTextSpace().update('Here are examples of different paths in the plane R^2',true)
+        textHolder=anim.createTextSpace()
+        textHolder.update({newText:'Here are examples of different paths in the plane |',fade:true,callback:()=>{
+            textHolder.addLatex(['R^2'])
+        }})
+        secondPath.shape.attr({opacity:0.5})
     },
     // ()=>{
     //     let aPath=plane.plane.path('M 0 0 L -100 -50')
@@ -89,8 +94,10 @@ anim.initSteps([
     },
     ()=>{},
     ()=>{
-        textHolder.update('Use the range slider to change the value of x.',true)
-        lambdaHolder=anim.createTextSpace().update('\\gamma \\left( 0.00 \\right)=\\left( 1.00,1.00 \\right)',true,true)
+        textHolder.update({newText:'Use the range slider to change the value of |.',fade:true,callback:()=>{
+            textHolder.addLatex(['R^2'])
+        }})
+        lambdaHolder=anim.createTextSpace().update({newText:'\\gamma \\left( 0.00 \\right)=\\left( 1.00,1.00 \\right)',fade:true,latex:true})
         anim.pause()
         draw.animate(500).transform({
             origin: [400,-300],
@@ -130,7 +137,7 @@ anim.initSteps([
         let range=anim.addControl({name:'rangeInput',type:'range',listener:(event)=>{
             scrub.play(event.target.value)
             let data=mainPath.shape.pointAt(event.target.value*length/100)
-            lambdaHolder.update('\\gamma\\left( '+parseFloat(event.target.value/100).toFixed(2)+' \\right)=\\left( '+parseFloat(parseInt(data.x)/100).toFixed(2)+','+parseFloat(-parseInt(data.y)/100).toFixed(2)+' \\right)',false,true)
+            lambdaHolder.update({newText:'\\gamma\\left( '+parseFloat(event.target.value/100).toFixed(2)+' \\right)=\\left( '+parseFloat(parseInt(data.x)/100).toFixed(2)+','+parseFloat(-parseInt(data.y)/100).toFixed(2)+' \\right)',latex:true})
         }})
         range.node.addEventListener('mousedown',()=>{
             emph.on()
@@ -235,17 +242,14 @@ anim.initSteps([
 
 
 
-        //todo
-        //add play again button
 
         
-        // let next=anim.addControl({name:'play again',type:'button',listener:()=>{
-        //     range.kill()
-        //     next.kill()
-        //     arrowHolderUpdate.kill()
-        //     anim.step=1
-        //     anim.play()
-        // }})
+        let next=anim.addControl({name:'play again',type:'button',listener:()=>{
+            anim.playAgain(init)
+        }})
     
     }
 ])
+return anim
+}
+export const anim = init();

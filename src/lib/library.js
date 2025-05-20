@@ -14,7 +14,7 @@ gsap.config({easeDefault:'power2.inOut'})
 export class vMathAnimation {
     #pause=false
     #id
-    constructor(id,control=true){
+    constructor(id){
         this.#id=id
         //check if the animation holder exists (it should be a div element with the specified id)
         if (process.env.NODE_ENV === 'development') {
@@ -43,7 +43,7 @@ export class vMathAnimation {
             
                 this.wrapper.children[0].style.transform='scale('+(ofsetWidth/1200)+','+(ofsetHeight/800)+')'
         parentElement.appendChild(this.wrapper);
-
+        gsap.fromTo(this.wrapper.parentNode.parentNode,{opacity:0},{duration:0.8,opacity:1})
         //using SVG.js we load the svg frame element and configure it
         this.frame = SVG(`#${id}Frame`).size(1200,800);
 
@@ -130,44 +130,92 @@ export class vMathAnimation {
         }
         return control
     }
-    createTextSpace(){
-        let textSpace=document.getElementById(this.#id)
-        .parentElement.querySelector('.control').children[0]
-        .appendChild(document.createElement('div'))
-        textSpace.classList.add('textSpace')
-        textSpace.style.position='relative'
-        textSpace.style.width='80%'
-        textSpace.style.fontSize='21px'
-        textSpace.style.fontWeight='light'
-        let obj={
-            update:function(newText,fade=false,latex=false){
-                if(!latex){
-                    if(fade){
-                        let tween=gsap.to(textSpace,{duration:0.5,y:-10,opacity:0,onComplete:()=>{
-                            textSpace.innerHTML=newText
-                            gsap.to(textSpace,{duration:0.5,y:10,opacity:1})
-                        }})
+    createTextSpace() {
+        let textSpace = document.getElementById(this.#id)
+            .parentElement.querySelector('.control').children[0]
+            .appendChild(document.createElement('div'));
+        textSpace.classList.add('textSpace');
+        textSpace.style.position = 'relative';
+        textSpace.style.width = '80%';
+        textSpace.style.fontSize = '21px';
+        textSpace.style.fontWeight = 'light';
+    
+        let obj = {
+            update: function({newText, fade = false, latex = false,callback=()=>{}}) {
+                if (!latex) {
+                    if (fade) {
+                        let tween = gsap.to(textSpace, {
+                            duration: 0.5,
+                            y: -10,
+                            opacity: 0,
+                            onComplete: () => {
+                                textSpace.innerHTML = newText;
+                                callback()
+                                gsap.to(textSpace, {duration: 0.5, y: 10, opacity: 1});
+                            }
+                        });
+                    } else {
+                        textSpace.innerHTML = newText;
+                        callback()
                     }
-                    else{
-                        textSpace.innerHTML=newText
+                } else if (fade) {
+                    gsap.to(textSpace, {
+                        duration: 0.5,
+                        y: -10,
+                        opacity: 0,
+                        onComplete: () => {
+                            textSpace.innerHTML = '';
+                            katex.render(newText, textSpace, {throwOnError: true, displayMode: false});
+                            gsap.to(textSpace, {duration: 0.5, y: 10, opacity: 1});
+                        }
+                    });
+                } else {
+                    textSpace.innerHTML = '';
+                    katex.render(newText, textSpace, {throwOnError: true, displayMode: false});
+                }
+                return this;
+            },
+    
+            // New addLatex method
+            addLatex: function(arrayOfLatex) {
+                // Get current text content
+                let currentContent = textSpace.textContent;
+                console.log(currentContent)
+                // Split by pipe character and trim whitespace
+                let textParts = currentContent.split('|').map(part => part.trim());
+                // Combine text parts with latex spans
+                let newHTML = '';
+                for (let i = 0; i < textParts.length; i++) {
+                    if (textParts[i]) {
+                        newHTML += textParts[i];
+                        // Add LaTeX span if we have a corresponding latex string
+                        if (arrayOfLatex[i]) {
+                            newHTML += ` <span class="latex-equation">${arrayOfLatex[i]}</span> `;
+                        }
                     }
                 }
-                else if(fade){
-                    gsap.to(textSpace,{duration:0.5,y:-10,opacity:0,onComplete:()=>{
-                        textSpace.innerHTML=''
-                        katex.render(newText,textSpace,{throwOnError:true,displayMode:false})
-                        gsap.to(textSpace,{duration:0.5,y:10,opacity:1})
-                    }})
-                }
-                else{
-                    textSpace.innerHTML=''
-                    katex.render(newText,textSpace,{throwOnError:true,displayMode:false})
-                }
-                return this
+                
+                // Update the content
+                textSpace.innerHTML = newHTML;
+                
+                // Render all LaTeX spans
+                const latexSpans = textSpace.querySelectorAll('.latex-equation');
+                latexSpans.forEach((span, index) => {
+                    try {
+                        katex.render(arrayOfLatex[index], span, {
+                            throwOnError: true,
+                            displayMode: false
+                        });
+                    } catch (e) {
+                        console.error("KaTeX rendering error:", e);
+                        span.textContent = arrayOfLatex[index];
+                    }
+                });
+                
+                return this;
             }
-
-        }
-        return obj
+        };
+        return obj;
     }
     fadeNextStep(...args){
         utiles.fadeNextStep.bind(this)(...args)
@@ -217,6 +265,15 @@ export class vMathAnimation {
             indicationLine:{stroke:'white','stroke-width':5,fill:'none',opacity:0},
             indicationPoint:{fill:'#ff8000',r:9}
         }
+    }
+    playAgain(init){
+        gsap.to(this.wrapper.parentNode.parentNode,{duration:0.8,opacity:0,onComplete:()=>{
+            this.wrapper.parentNode.parentNode.children[0].children[0].innerHTML=''
+            this.wrapper.parentNode.parentNode.children[0].children[1].innerHTML=''
+            this.wrapper.parentNode.parentNode.style.opacity=1
+            this.wrapper.remove()
+            init().engine[0]()
+        }})
     }
 } 
 export const textStyles=utiles.textStyles
