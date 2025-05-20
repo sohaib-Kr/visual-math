@@ -3,106 +3,27 @@ import Exercices from '../../layouts/Exercices.astro';
 import * as short from '../../components/blog'
 const {Title,SubHead,Paragraph,Part,AnimationFrame,Latex,H,Ex}=short
 import ExoSection from '../../components/blog/exercice/ExoSection'
-title: "Understanding Topological Interior Concepts"
+import Lesson from '@/layouts/Lesson.astro';
+title: "Playground"
 description: "A brief introduction to the fundamental concept of interior in topology"
 pubDate: 2023-11-20
 author: "Math Insights"
 tags: ["mathematics", "topology", "interior"]
 image: "/images/topology-interior.jpg"
 draft: false
-let exos=
-    [
-    {
-        question:"question 1 text of question",
-        items:[{
-            title:"Item 1",
-            options:[
-                {title:"option1",description:"Description of option1"},
-                {title:"option2",description:"Description of option2"},
-                {title:"option3",description:"Description of option3"},
-            ],
-            solution:"this is the explanation of solution for item 1"
-        },
-        {
-            title:"Item 2",
-            options:[
-                {title:"option1",description:"Description of option1"},
-                {title:"option2",description:"Description of option2"},
-                {title:"option3",description:"Description of option3"},
-            ],
-            solution:"this is the explanation of solution for item 2"
-        },
-        {
-            title:"Item 3",
-            options:[
-                {title:"option1",description:"Description of option1"},
-                {title:"option2",description:"Description of option2"},
-                {title:"option3",description:"Description of option3"},
-        ],
-        solution:"this is the explanation of solution for item 3"
-        },
-        ]
-    }
-    // {
-    //     question:"question 2 text of question",
-    //     items:[
-    //     {
-    //         title:"Item 1",
-    //         options:[
-    //             {title:"option1",description:"Description of option1"},
-    //             {title:"option2",description:"Description of option2"},
-    //             {title:"option3",description:"Description of option3"},
-    //         ]
-    //     },
-    //     {
-    //         title:"Item 2",
-    //         options:[
-    //             {title:"option1",description:"Description of option1"},
-    //             {title:"option2",description:"Description of option2"},
-    //             {title:"option3",description:"Description of option3"},
-    //     ]
-    //     },
-    //     {
-    //         title:"Item 3",
-    //         options:[
-    //             {title:"option1",description:"Description of option1"},
-    //             {title:"option2",description:"Description of option2"},
-    //             {title:"option3",description:"Description of option3"},
-    //     ]
-    //     },
-    // ]},
-    // {
-    //     question:"question 3 text of question",
-    //     items:[
-    //         {
-    //         title:"Item 1",
-    //         options:[
-    //             {title:"option1",description:"Description of option1"},
-    //             {title:"option2",description:"Description of option2"},
-    //             {title:"option3",description:"Description of option3"},
-    //         ]
-    //     },
-    //     {
-    //         title:"Item 2",
-    //         options:[
-    //             {title:"option1",description:"Description of option1"},
-    //             {title:"option2",description:"Description of option2"},
-    //             {title:"option3",description:"Description of option3"},
-    //     ]
-    //     },
-    //     {
-    //         title:"Item 3",
-    //         options:[
-    //             {title:"option1",description:"Description of option1"},
-    //             {title:"option2",description:"Description of option2"},
-    //             {title:"option3",description:"Description of option3"},
-    //     ]
-    //     }  
-    // ]
-    // }
-    ]
 ---
-
-<Exercices>
-    <ExoSection exercices={exos} client:only/>
-</Exercices>
+<Lesson>
+<Part>
+<Title>Playground</Title>
+<AnimationFrame id="concatenation" style={{
+    width: '100%',
+    height: '400px',
+    position: 'relative',
+}}/>
+</Part>
+</Lesson>
+<script>
+import { anim as concatenation} from "../../lib/lessons/topology/homeomorphism/homotopy/concatenation.js";
+    
+    concatenation.engine[0]()
+</script>

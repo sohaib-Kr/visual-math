@@ -14,7 +14,31 @@ export function pathDecoder(path){
     return {commands,params}
 }
 
-
+export function createIndicator(plane){
+    let indicator=plane.plane.path('M -10 -10 L 0 0 L -10 10').attr({stroke:'yellow','stroke-width':3,fill:'none'})
+    return indicator
+}
+export function updateIndicator(shape, t, indicator) {
+    const length = shape.length();
+    const epsilon = 0.001; // Small offset to calculate direction
+    
+    // Get current position and next position
+    const currentPoint = shape.pointAt(t * length);
+    const nextPoint = shape.pointAt(Math.min((t + epsilon) * length, length));
+    
+    // Calculate the angle in radians
+    let angle = Math.atan2(nextPoint.y - currentPoint.y, nextPoint.x - currentPoint.x);
+    
+    // Convert to degrees and normalize (0-360)
+    angle = angle * 180 / Math.PI;
+    
+    // Apply transformation
+    indicator.transform({
+        translate: [currentPoint.x, currentPoint.y],
+        rotate: angle,
+        origin: [0, 0]
+    });
+}
 //The TopoPath element is a path element that can be animated 
 //by matching its points with a set of transformation paths
 //it is created by decoding a path string that contains the commands and parameters
@@ -85,7 +109,7 @@ export class TopoPath{
 
 
 
-    draggable(points,center){
+    draggable(points,center,callbacks={onDragStart:()=>{},onDragEnd:()=>{},onReady:()=>{}}){
         //this function let us interact with the shape by draggins some of its points
         //first we assure that the draggable points are valid
         points.forEach((point)=>{
@@ -111,8 +135,14 @@ export class TopoPath{
             }
 
             //and here we create the circles used to drag the points
-            obj.circle.node.addEventListener('mousedown',()=>obj.draggable=true)
-            obj.circle.node.addEventListener('mouseup',()=>obj.draggable=false)
+            obj.circle.node.addEventListener('mousedown',function(){
+                obj.draggable=true
+                callbacks.onDragStart()
+            })
+            obj.circle.node.addEventListener('mouseup',function(){
+                obj.draggable=false
+                callbacks.onDragEnd()
+            })
 
             //here we create the pointData object to store it in pointsData array
             this.#draggablePoints.push(obj)
@@ -127,6 +157,7 @@ export class TopoPath{
             })
             this.refresh()
         }
+        callbacks.onReady()
         this.#frame.node.addEventListener('mousemove',this.#allowDragFunction)
     }
 
@@ -145,24 +176,10 @@ export class TopoPath{
         })
     }
     createIndicator(plane){
-        let indicator=plane.plane.path('M -10 -10 L 0 0 L -10 10').attr({stroke:'yellow','stroke-width':3,fill:'none'})
+        let indicator=createIndicator(plane)
         return indicator
     }
     updateIndicator(t,indicator){
-        let length=this.shape.length()
-        let startPoint=this.shape.pointAt(t*length)
-        let nextPoint=this.shape.pointAt((t+0.01)*length)
-        let delta=(nextPoint.y-startPoint.y)/(nextPoint.x-startPoint.x)
-        let angle
-        if(Math.sign(nextPoint.y*startPoint.y)<0){
-            angle=Math.sign(nextPoint.y-startPoint.y)*90
-        }
-        else if(nextPoint.y<0){
-            angle=180+Math.atan(delta)*180/Math.PI
-        }
-        else{
-            angle=Math.atan(delta)*180/Math.PI
-        }
-        indicator.transform({translate:[startPoint.x,startPoint.y],rotate:angle,origin:[0,0]})
+        updateIndicator(this.shape,t,indicator)
     }
 }

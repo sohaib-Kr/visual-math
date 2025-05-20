@@ -36,7 +36,7 @@ export function emphasize(elements, options = {}) {
 
   // Function to position a copy
   const createPositionedCopy = (elem) => {
-    const elemCopy = elem.clone().addTo(highlightGroup);
+    let elemCopy = elem.clone().addTo(highlightGroup);
     const bbox = elem.bbox();
     
     const matrix = getCumulativeTransform(elem);
@@ -44,7 +44,6 @@ export function emphasize(elements, options = {}) {
     point.x = bbox.x;
     point.y = bbox.y;
     const transformed = point.matrixTransform(matrix);
-    
     elemCopy.move(transformed.x, transformed.y);
     
     elemCopy.attr({opacity:0})

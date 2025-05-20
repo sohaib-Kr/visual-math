@@ -141,6 +141,7 @@ export class vMathAnimation {
         textSpace.style.fontWeight = 'light';
     
         let obj = {
+            textSpace,
             update: function({newText, fade = false, latex = false,callback=()=>{}}) {
                 if (!latex) {
                     if (fade) {
@@ -180,18 +181,15 @@ export class vMathAnimation {
             addLatex: function(arrayOfLatex) {
                 // Get current text content
                 let currentContent = textSpace.textContent;
-                console.log(currentContent)
                 // Split by pipe character and trim whitespace
                 let textParts = currentContent.split('|').map(part => part.trim());
                 // Combine text parts with latex spans
                 let newHTML = '';
                 for (let i = 0; i < textParts.length; i++) {
-                    if (textParts[i]) {
-                        newHTML += textParts[i];
-                        // Add LaTeX span if we have a corresponding latex string
-                        if (arrayOfLatex[i]) {
-                            newHTML += ` <span class="latex-equation">${arrayOfLatex[i]}</span> `;
-                        }
+                    newHTML += textParts[i];
+                    // Add LaTeX span if we have a corresponding latex string
+                    if (arrayOfLatex[i]) {
+                        newHTML += ` <span class="latex-equation">${arrayOfLatex[i]}</span> `;
                     }
                 }
                 
@@ -261,7 +259,7 @@ export class vMathAnimation {
     }
     config(){
         return {
-            path1:{stroke:'#98FF98','stroke-width':5,fill:'none','stroke-linecap':'round'},
+            path1:{stroke:'#98FF98','stroke-width':3,fill:'none','stroke-linecap':'round'},
             indicationLine:{stroke:'white','stroke-width':5,fill:'none',opacity:0},
             indicationPoint:{fill:'#ff8000',r:9}
         }

@@ -5,22 +5,42 @@ export const anim = new vMathAnimation('homotopyWithHole');
 const draw=anim.frame
 const config=anim.config()
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
-function restrictFromCenter(draggable){
-    draw.node.addEventListener('mousemove',(event)=>{
-        let heads=draggable.currentData
-        let Xa=heads.a[0]
-        let Ya=heads.a[1]
-        let Xb=heads.b[0]
-        let Yb=heads.b[1]
-        let diff=Math.min(1/(40*(Math.pow(Yb-Ya,2)+Math.pow(Xb-Xa,2))/1_000_000),0.1)
-        if(Math.abs((Yb/Xb)-(Ya/Xa)) <= diff || Xa==0 || Xb==0){
-            draggable.shape.attr({opacity:0.3})
-            console.log('error')
-        }
-        else{
-            draggable.shape.attr({opacity:1})
-        }
-    })
+function restrictFromCenter(draggable) {
+    const handler = (event) => {
+        const { a: [Xa, Ya], b: [Xb, Yb] } = draggable.currentData;
+        
+        // Calculate distance between points
+        const distance = Math.sqrt(Math.pow(Xb - Xa, 2) + Math.pow(Yb - Ya, 2));
+        
+        // Calculate angles from origin to both points
+        const angleA = Math.atan2(Ya, Xa);
+        const angleB = Math.atan2(Yb, Xb);
+        
+        // Base angular threshold (in radians)
+        const baseThreshold = Math.PI/18; // 10 degrees base
+        
+        // Make threshold inversely proportional to distance
+        // Clamped between 1° and 45° (adjust these values as needed)
+        const minThreshold = Math.PI/180; // 1 degree
+        const maxThreshold = Math.PI/4;   // 45 degrees
+        const distanceFactor = Math.min(Math.max(500/distance, 0.2), 2);
+        const dynamicThreshold = Math.min(Math.max(baseThreshold * distanceFactor, minThreshold), maxThreshold);
+        
+        // Check if angles are too close to being opposite
+        const angularDiff = Math.abs(angleA - angleB);
+        const crossesCenter = angularDiff > Math.PI - dynamicThreshold && 
+                             angularDiff < Math.PI + dynamicThreshold;
+        
+        // Update opacity based on check
+        draggable.shape.attr({ opacity: crossesCenter ? 0.3 : 1 });
+    };
+
+    draw.node.addEventListener('mousemove', handler);
+    
+    // Return cleanup function
+    return () => {
+        draw.node.removeEventListener('mousemove', handler);
+    };
 }
 
 plane.plane.circle(20).center(0,0).attr({fill:'white',opacity:0.8})
@@ -142,9 +162,11 @@ anim.initSteps([
         anim.vivusRender({elem:firstPath.group.node})
         anim.vivusRender({elem:secondPath.group.node})
     },
-    ()=>{},
     ()=>{
-        textHolder=anim.createTextSpace().update(`In this case we can't directly transform the first path into the second one crossing the center`,true)
+        draw.animate(500).transform({scale:1.4,origin:[0,0]})
+    },
+    ()=>{
+        textHolder=anim.createTextSpace().update({newText:`In this case we can't directly transform the first path into the second one crossing the center`,fade:true})
         let aPath=plane.plane.path('M -250 -50 L -100 100')
         let bPath=plane.plane.path('M -50 -250 L 100 -100')
         
@@ -160,7 +182,8 @@ anim.initSteps([
     },
     ()=>{},
     ()=>{
-        textHolder.update(`drag the 2 orange circles to move the paths around`,true)
+        draw.animate(1000).transform({scale:1,origin:[0,0]})
+        textHolder.update({newText:`drag the 2 orange circles to move the paths around`,fade:true})
         let aPath=plane.plane.path('M 50 250 L -250 -50')
         let bPath=plane.plane.path('M 250 50 L -50 -250')
         let x=firstPath.createShapeUpdater({a:aPath,b:bPath})
@@ -175,6 +198,7 @@ anim.initSteps([
         })
     },
     ()=>{
+
         let playHomotopy=anim.addControl({name:'playHomotopy',type:'button',listener:()=>{
         textHolder.update(`There is always a way to apply homotopy between the two paths correctly`,true)
             generateHomotopy()
