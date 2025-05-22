@@ -26,22 +26,6 @@ function init(){
         })
         return group
     }
-
-    function generatePathsNoVivus(commands,previousGroup=null,cb=()=>{}){
-        previousGroup&&previousGroup.animate(500).attr({opacity:0}).after(()=>{
-
-            previousGroup.remove()
-  
-            
-        })
-        let group=plane.plane.group()
-        setTimeout(()=>{
-            commands.forEach((command,index)=>{
-                command&&mainSpace[index].clone().addTo(group).attr({...config.path1,opacity:1})
-            })
-            group.attr({opacity:0}).animate(500).attr({opacity:1}).after(()=>cb())},500) 
-        return group
-    }
     function processBinaryString(binaryStr, parentElement) {
         // 1. Ensure the string is <= 8 characters
         console.log(binaryStr)
@@ -271,82 +255,16 @@ anim.initSteps([
         }})
     },
     ()=>{
-        [...groupHolder.children()].forEach((path)=>{
-            path.animate(200).attr({opacity:0}).after(()=>path.remove())
-        })
-        secondTextHolder.update({newText:'the function | calculates the real number associated to the binary string',fade:true,callback:()=>{
-            secondTextHolder.addLatex(['\\phi'])
+        secondTextHolder.update({newText:'we deduce that | is a surjection from | to |',fade:true,callback:()=>{
+            secondTextHolder.addLatex(['\\omega','\\mathbb{H^*}','\\left\\{ 0,1 \\right\\}^{+\\infty}'])
         }})
-        textHolder.update({
-            newText:'\\phi(\\omega(\\lambda))=\\phi({0}{0}{0}{0}{0}{0}{0}{0})\\newline=0.01',
-            fade:true,
-            latex:true})
+        textHolder.update({newText:'thus the set | is uncountable',fade:true,latex:true,callback:()=>{
+            textHolder.addLatex(['\\mathbb{H^*}'])
+        }})
     },
     ()=>{
         
-        anim.pause()
-        let data=[
-            {
-              bin: [false, true, true, false, true, false, true, false],
-              value: 0.4140625
-            },
-            {
-              bin: [false, true, true, true, true, true, false, false],
-              value: 0.484375
-            },
-            {
-              bin: [false, true, false, true, false, true, false, false],
-              value: 0.328125
-            },
-            {
-              bin: [true, true, false, false, true, false, true, false],
-              value: 0.7890625
-            },
-            {
-              bin: [true, true, true, true, true, true, true, false],
-              value: 0.9921875
-            },
-          ]
-        let i=0
-        let I=setInterval(()=>{
-            groupHolder=generatePathsNoVivus(data[i].bin,groupHolder)
-            i++
-            if(i==data.length){
-                clearInterval(I)
-                anim.play()
-                
-                return null;
-            }
-            let elem=textHolder.textSpace.querySelectorAll('.base')[1]
-            gsap.to(elem,{duration:0.5,opacity:0,onComplete:()=>{
-                elem.innerHTML='<span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal">ϕ</span><span class="mopen">(</span>'+(data[i].bin.map((bit)=>bit?'1':'0')).join('')+'<span class="mclose">)</span>'
-                gsap.to(elem,{duration:0.5,opacity:1})
-            }})
-
-            let elem2=textHolder.textSpace.querySelectorAll('.base')[3].querySelectorAll('.mord')[0]
-            gsap.to(elem2,{duration:0.5,opacity:0,onComplete:()=>{
-                elem2.innerHTML=(data[i].value).toFixed(5)
-                gsap.to(elem2,{duration:0.5,opacity:1})
-            }})
-
-
-        },2000)
-    },
-//     ()=>{
-//         secondTextHolder.update({newText:'By composing | and | we get a function that maps the loop to a real number in |(0,1)|',fade:true,callback:()=>{
-//             secondTextHolder.addLatex(['\\phi','\\omega','\\left(0,1\\right)'])
-//         }})
-//         textHolder.update({newText:`f(\\lambda)=\\phi(\\omega(\\lambda))\\in (0,1) \\newline
-// \\forall \\lambda \\in \\mathcal{H^*}`,fade:true,latex:true})
-//     },
-//     ()=>{
-//         secondTextHolder.update({newText:'the function | is a surjection from | to |',fade:true,callback:()=>{
-//             secondTextHolder.addLatex(['f','\\mathcal{H^*}','\\mathbb{(0,1)}'])
-//         }})
-//         textHolder.update({newText:`\\forall x \\in (0,1) \ \\exists \\ (b_n)=(0,1,1,0\\ ...) . \\newline
-// f\\big( (b_n)_{n=1}^{\\infty} \\big) = \\sum_{n=1}^{\\infty} \\frac{b_n}{2^n}=x \\newline
-// (b_n)=\\omega(\\lambda) \\ . \\ \\exists \\lambda \\in \\mathcal{H^*}`,fade:true,latex:true})
-//     }
+    }
 ])
 return anim
 }
