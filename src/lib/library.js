@@ -260,6 +260,7 @@ export class vMathAnimation {
     config(){
         return {
             path1:{stroke:'#98FF98','stroke-width':3,fill:'none','stroke-linecap':'round'},
+            path2:{stroke:'white','stroke-width':3,fill:'none','stroke-linecap':'round',opacity:0.5},
             indicationLine:{stroke:'white','stroke-width':5,fill:'none',opacity:0},
             indicationPoint:{fill:'#ff8000',r:9}
         }
