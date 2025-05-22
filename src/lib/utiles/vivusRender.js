@@ -1,7 +1,7 @@
 import Vivus from 'vivus';
 
 
-export function vivusRender({elem,duration=100}={}){
+export function vivusRender({elem,duration=100,callback=()=>{}}={}){
     let id='newIdNeverCreatedBefore'
     elem.id=id
 
@@ -18,5 +18,6 @@ export function vivusRender({elem,duration=100}={}){
         Array.from(elem.children).forEach((child,index)=>{
             child.style['stroke-dasharray']='none'
         })
+        callback()
     });
 }

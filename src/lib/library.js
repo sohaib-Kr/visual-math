@@ -69,66 +69,74 @@ export class vMathAnimation {
         this.#pause=false
         this.engine[0]()
     }
-    addControl({name,type,listener}){
-        //this function create a control object that holds the node element of the input,
-        // the listener function that runs when the user interact with it and the kill function that remove the input and its event listeners
-        let control={node:null,listener,kill:null}
-        let input
-        if(type=='range'){
-            input=document.createElement('input')
-            input.type='range'
-            input.min=0
-            input.max=100
-            input.value=0
-            input.addEventListener('input',control.listener)
-            control.kill=()=>{
-                input.removeEventListener('input',control.listener)
-                {
-                    let t=1
-                    let I=setInterval(()=>{
-                        input.style.opacity=t
-                        t-=0.04
-                        if(t<0){
-                            clearInterval(I)
-                            control.node.remove()
-                        }
-                    },20)
-                }
-            }
+    addControl({name, type, listener}) {
+        let control = {node: null, listener, kill: null};
+        let input;
+        
+        if (type === 'range') {
+            input = document.createElement('input');
+            input.type = 'range';
+            input.min = 0;
+            input.max = 100;
+            input.value = 0;
+            input.addEventListener('input', control.listener);
+            control.kill = () => {
+                input.removeEventListener('input', control.listener);
+                gsap.to(input,{duration:0.5,y:-10,opacity:0,onComplete:()=>input.remove()})
+            };
+        } 
+        else if (type === 'button') {
+            input = document.createElement('button');
+            input.textContent = name;
+            input.addEventListener('click', control.listener);
+            control.kill = () => {
+                input.removeEventListener('click', control.listener);
+                gsap.to(input,{duration:0.5,y:-10,opacity:0,onComplete:()=>input.remove()})
+            };
         }
-        else if(type=='button'){
-            input=document.createElement('button')
-            input.textContent=name
-            input.addEventListener('click',control.listener)
-            control.kill=()=>{
-                input.removeEventListener('click',control.listener)
-                {
-                    let t=1
-                    let I=setInterval(()=>{
-                        input.style.opacity=t
-                        t-=0.04
-                        if(t<0){
-                            clearInterval(I)
-                            control.node.remove()
-                        }
-                    },20)
-                }
-            }
+        else if (type === 'text') {
+            input = document.createElement('input');
+input.type = 'text';
+input.placeholder = name || '';
+
+// Add styling to the input element
+Object.assign(input.style, {
+    padding: '8px 12px',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    fontSize: '14px',
+    outline: 'none',
+    transition: 'border-color 0.3s, box-shadow 0.3s',
+    width: '200px',
+    boxSizing: 'border-box',
+    backgroundColor: '#fff',
+    color: '#333',
+    margin: '4px 0'
+});
+
+// Add focus styles
+input.addEventListener('focus', () => {
+    input.style.borderColor = '#4285f4';
+    input.style.boxShadow = '0 0 0 2px rgba(66, 133, 244, 0.2)';
+});
+
+input.addEventListener('blur', () => {
+    input.style.borderColor = '#ccc';
+    input.style.boxShadow = 'none';
+});
+            input.addEventListener('input', control.listener);
+            control.kill = () => {
+                input.removeEventListener('input', control.listener);
+                gsap.to(input,{duration:0.5,y:-10,opacity:0,onComplete:()=>input.remove()})
+            };
         }
-        control.node=input
-        document.getElementById(this.#id).parentElement.querySelector('.control').children[1].appendChild(input)
-        input.style.opacity=0
-        {
-            let t=0
-            let I=setInterval(()=>{
-                input.style.opacity=t
-                t+=0.1
-                if(t>1){
-                    clearInterval(I)
-                }
-            },20)
-        }
-        return control
+        
+        control.node = input;
+        const container = document.getElementById(this.#id).parentElement.querySelector('.control').children[1];
+        container.appendChild(input);
+        gsap.to(input,{duration:0.5,y:10,opacity:1})
+        
+        return control;
     }
     createTextSpace() {
         let textSpace = document.getElementById(this.#id)
@@ -183,6 +191,7 @@ export class vMathAnimation {
                 let currentContent = textSpace.textContent;
                 // Split by pipe character and trim whitespace
                 let textParts = currentContent.split('|').map(part => part.trim());
+                console.log(textParts)
                 // Combine text parts with latex spans
                 let newHTML = '';
                 for (let i = 0; i < textParts.length; i++) {
