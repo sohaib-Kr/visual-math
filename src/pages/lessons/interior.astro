@@ -168,6 +168,25 @@ The <H>fundamental group</H> <Latex>\pi_1(X, x_0)</Latex> is the set of all homo
         <li><Latex>\pi_1(S^1) \cong \mathbb{'{'}Z{'}'}</Latex> (loops are classified by their winding number).</li>
     </ul>
     </Paragraph>
+    <AnimationFrame id="fundamentalGroup1" style={{
+        width: '50%',
+        height: '300px',
+        position: 'relative',
+        left: '50%',
+        top: '50%'
+    }}/>
+    </Part>
+<Part>
+    <Title>Fundamental Group</Title>
+    <Paragraph>
+    The <H>fundamental group</H> <Latex>\pi_1(X, x_0)</Latex> is the set of all homotopy classes of loops based at <Latex>x_0</Latex>, with group operation given by loop concatenation. It captures information about the "holes" in a space.
+    
+    <Ex>Examples:</Ex>
+    <ul>
+        <li><Latex>\pi_1(\mathbb{'{'}R{'}'}^2) = 0</Latex> (no holes, all loops are contractible).</li>
+        <li><Latex>\pi_1(S^1) \cong \mathbb{'{'}Z{'}'}</Latex> (loops are classified by their winding number).</li>
+    </ul>
+    </Paragraph>
     <AnimationFrame id="concatenation" style={{
         width: '50%',
         height: '300px',
@@ -189,7 +208,7 @@ import { anim as fundamentalGroup} from "../../lib/lessons/topology/homeomorphis
 import { anim as fundamentalGroup1} from "../../lib/lessons/topology/homeomorphism/homotopy/fundamentalGroup1.js";
 import { anim as concatenation} from "../../lib/lessons/topology/homeomorphism/homotopy/concatenation.js";
 import {exo00,exo01,exo02} from "../../lib/lessons/topology/homeomorphism/homotopy/exercices"
-// pathDefinition.engine[0]()
+pathDefinition.engine[0]()
 homotopyWithHole.engine[0]()
 homotopicalEqu.engine[0]()
 fundamentalGroup.engine[0]()

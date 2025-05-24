@@ -91,21 +91,26 @@ anim.initSteps([
     //     shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1500,timeFunc:'easeOut'})
     // },
     // ()=>{},
-    ()=>{
-        changeHomotopyType(3)
-        shapeUpdaterHolder.runUpdater({duration:1500,timeFunc:'easeOut'})
-    },
-    ()=>{},
-    ()=>{
-        shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1500,timeFunc:'easeOut'})
-    },
+    // ()=>{
+    //     changeHomotopyType(3)
+    //     shapeUpdaterHolder.runUpdater({duration:1500,timeFunc:'easeOut'})
+    // },
+    // ()=>{},
+    // ()=>{
+    //     shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1500,timeFunc:'easeOut'})
+    // },
     ()=>{
         anim.pause()
+        changeHomotopyType(1)
         draw.animate(800).transform({scale:[1.5,1.3],origin:[0,-100]})
         let indicPos=0
         shapeUpdaterHolder.update(0)
         indicator.animate(800).attr({opacity:1})
-
+        let changeIndicatorEmph=anim.emphasize([indicator],{
+            resultStyle:[
+                {opacity:1}
+            ]
+        })
         function changeIndicator(x){
             indicPos=x
             let data
@@ -113,7 +118,12 @@ anim.initSteps([
             indicator.center(data.x,data.y)
             changeIndicatorEmph.updateAll()
         }
-        let changeIndicatorEmph
+        let changeHomoPathEmph=anim.emphasize([homotopyPath.shape,indicator],{
+            resultStyle:[
+                {opacity:1},
+                {opacity:1}
+            ]
+        })
         let changeIndicatorScrub=anim.createScrubber({
                     initialValue:0,
                     animator:changeIndicator,
@@ -131,7 +141,6 @@ anim.initSteps([
             indicator.center(data.x,data.y)
             changeHomoPathEmph.updateAll()
         }
-        let changeHomoPathEmph
         let changeHomoPathScrub=anim.createScrubber({
                     initialValue:0,
                     animator:changeHomoPath,
@@ -143,30 +152,41 @@ anim.initSteps([
 
 
 
+        
         tInput=anim.addControl({name:'tInput',type:'range',listener:(event)=>{
+            
+            changeHomoPathEmph.updateAll()
             changeHomoPathScrub.play(event.target.value)
         }})
         tInput.node.addEventListener('mousedown',()=>{
-            changeHomoPathEmph=anim.emphasize([homotopyPath.shape,indicator])
+            changeHomoPathEmph.on()
         })
         tInput.node.addEventListener('mouseup',()=>{
             changeHomoPathEmph.updateAll()
-            changeHomoPathEmph.remove()
+            changeIndicatorEmph.updateAll()
+            changeHomoPathEmph.off()
         })
 
 
 
         xInput=anim.addControl({name:'xInput',type:'range',listener:(event)=>{
+            changeIndicatorEmph.updateAll()
             changeIndicatorScrub.play(event.target.value)
         }})
 
         xInput.node.addEventListener('mousedown',()=>{
-            changeIndicatorEmph=anim.emphasize([indicator])
+            changeIndicatorEmph.on()
         })
         xInput.node.addEventListener('mouseup',()=>{
             changeIndicatorEmph.updateAll()
-            changeIndicatorEmph.remove()
+            changeHomoPathEmph.updateAll()
+
+            changeIndicatorEmph.off()
         })
+    },
+    ()=>{
+        changeIndicatorEmph.remove()
+        changeHomoPathEmph.remove()
     }
 
 ])

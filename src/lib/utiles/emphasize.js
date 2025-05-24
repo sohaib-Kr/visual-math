@@ -72,14 +72,14 @@ export function emphasize(elements, options = {}) {
   elems.forEach(elem => {
     initialOpacity.push(elem.attr('opacity'));
     trackedElements.push(createPositionedCopy(elem));
-    elem.attr({opacity:0})
+    // elem.attr({opacity:0})
   });
 
   highlightGroup.front();
   
   // Return control object (without observer-related code)
   let tweens=[null,...options.resultStyle].map((obj,index)=>{
-    return (index==0 ? null : gsap.fromTo(highlightGroup.node.children[index],{opacity:0},{duration:0.5,...obj,paused:true}))
+    return (index==0 ? null : gsap.fromTo(highlightGroup.node.children[index],{opacity:initialOpacity[index]},{duration:0.5,...obj,paused:true}))
   })
   tweens[0]=gsap.fromTo(highlightGroup.node.children[0],{opacity:0},{opacity:0.4,duration:0.5,paused:true})
   return {

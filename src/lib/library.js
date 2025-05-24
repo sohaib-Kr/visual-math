@@ -191,7 +191,6 @@ input.addEventListener('blur', () => {
                 let currentContent = textSpace.textContent;
                 // Split by pipe character and trim whitespace
                 let textParts = currentContent.split('|').map(part => part.trim());
-                console.log(textParts)
                 // Combine text parts with latex spans
                 let newHTML = '';
                 for (let i = 0; i < textParts.length; i++) {

@@ -45,7 +45,7 @@ export default function Exercice({exercice,onSubmit,exoIndex}){
     const [answers,setAnswers]=useState([null,null,null])
   return (
     <SubmitContext.Provider value={submit}>
-      <div className="w-[90%] relative left-[5%] my-[50px]">
+      <div className="w-[90%] relative left-[5%] my-[50px]" key={exoIndex}>
         <h2 className="my-10 text-2xl font-bold text-gray-800">{exercice.question}</h2>
         <div className="flex w-full h-fit flex-nowrap">
         {exercice.items.map((item,index)=>(
