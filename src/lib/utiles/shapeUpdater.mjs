@@ -1,3 +1,4 @@
+import {animateWithRAF} from '../library'
 function createTimeFunc(timeFunc){
     let tFunc=function(t){
         return t
@@ -127,12 +128,12 @@ export class ShapeUpdater{
         
         let t=0
         let s=0
-        let I=setInterval(()=>{
+        let I=animateWithRAF((timestamp,deltaTime)=>{
             s=tFunc(t)
             this.update(s)
             t+=0.04
             if(t>1.04){
-                clearInterval(I)
+                I.stop()
                 callback()
             }
         },duration/25)
@@ -142,12 +143,12 @@ export class ShapeUpdater{
 
         let t=1
         let s=1
-        let I=setInterval(()=>{
+        let I=animateWithRAF((timestamp,deltaTime)=>{
             s=tFunc(t)
             this.update(s)
             t-=0.04
             if(t<-0.04){
-                clearInterval(I)
+                I.stop()
                 callback()
             }
         },duration/25)

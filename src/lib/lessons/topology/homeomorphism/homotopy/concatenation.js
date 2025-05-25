@@ -1,6 +1,7 @@
 import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
 import Vivus from 'vivus'
+import {animateWithRAF} from '@/lib/library'
 import {createIndicator,updateIndicator} from '@/lib/utiles/topoPath.js'
 import gsap from 'gsap'
 
@@ -50,7 +51,7 @@ anim.initSteps([
         let length=firstLoop.length()
         let gammaX=coords[4]
         let gammaY=coords[5]
-        let I=setInterval(()=>{
+        let I=animateWithRAF((timestamp,deltaTime)=>{
             updateIndicator(firstLoop,t,indicator)
             emph.updateAll()
         let {x,y}=firstLoop.pointAt(length*t)
@@ -61,9 +62,9 @@ anim.initSteps([
             t+=0.01
             if(t>=1.01){
                 anim.play()
-                clearInterval(I)
+                I.stop()
             }
-        },30)
+        })
     },
     ()=>{
         emph.remove()
@@ -130,7 +131,7 @@ anim.initSteps([
             let X=coords[15]
             let Y=coords[16]
         let [holder1Faded,holder2Faded]=[false,false]
-        let I=setInterval(()=>{
+        let I=animateWithRAF((timestamp,deltaTime)=>{
             gammaT.textContent=(t/2).toFixed(1);
             ({x,y}=firstLoop.pointAt(firstLength*t))
             gammaT1.textContent=(t).toFixed(1)
@@ -141,8 +142,8 @@ anim.initSteps([
             }
             t+=0.01
             if(t>=1.01){
-                clearInterval(I)
-                let J=setInterval(()=>{
+                I.stop()
+                let J=animateWithRAF((timestamp,deltaTime)=>{
                     gammaT.textContent=(t/2).toFixed(1);
                         ({x,y}=secondLoop.pointAt(secondLength*(t-1)))
                         gammaT2.textContent=(t-1).toFixed(1)
@@ -154,14 +155,14 @@ anim.initSteps([
                         }
                     t+=0.01
                     if(t>=2.01){
-                        clearInterval(J)
+                        J.stop()
                         anim.play()
                     }
-                    },30)
+                    })
             }
-            },30)
+            })
             
-let I3=setInterval(()=>{
+let I3=animateWithRAF((timestamp,deltaTime)=>{
     gammaT.textContent=(t/2).toFixed(1)
     X.textContent=(x/100).toFixed(2)
     Y.textContent=(-y/100).toFixed(2)
@@ -169,10 +170,10 @@ let I3=setInterval(()=>{
     emph.highlightGroup.children()[3]
     .transform({rotate:indicator.transform().rotate})
     if(t>=2.01){
-        clearInterval(I3)
+        I3.stop()
         anim.play()
     }
-    },30)
+    })
 }
 ])
 return anim

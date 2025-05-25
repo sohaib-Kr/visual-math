@@ -1,5 +1,6 @@
 import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
+import { animateWithRAF } from '@/lib/library.js';
 export const anim = new vMathAnimation('fundamentalGroup1');
 
 const draw=anim.frame
@@ -181,13 +182,13 @@ anim.initSteps([
     ()=>{
         let indicator=secondPath.createIndicator(plane)
         let t=0
-        let I=setInterval(()=>{
+        let I=animateWithRAF((timestamp,deltaTime)=>{
             secondPath.updateIndicator(t,indicator)
             t+=0.01
             if(t>1){
-                clearInterval(I)
+                I.stop()
             }
-        },80)
+        })
     },
     ()=>{
         thirdPath.shape.animate(500).attr({opacity:1})

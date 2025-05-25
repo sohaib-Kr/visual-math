@@ -73,32 +73,32 @@ anim.initSteps([
     ()=>{
         textHolder=anim.createTextSpace().update('As you can see there are many ways you can continously transform one path into another',true)
     },
-    // ()=>{
-    //     changeHomotopyType(1)
-    //     shapeUpdaterHolder.runUpdater({duration:1500,timeFunc:'easeOut'})
-    // },
-    // ()=>{},
-    // ()=>{
-    //     shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1500,timeFunc:'easeOut'})
-    // },
-    // ()=>{},
-    // ()=>{
-    //     changeHomotopyType(2)
-    //     shapeUpdaterHolder.runUpdater({duration:1500,timeFunc:'easeOut'})
-    // },
-    // ()=>{},
-    // ()=>{
-    //     shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1500,timeFunc:'easeOut'})
-    // },
-    // ()=>{},
-    // ()=>{
-    //     changeHomotopyType(3)
-    //     shapeUpdaterHolder.runUpdater({duration:1500,timeFunc:'easeOut'})
-    // },
-    // ()=>{},
-    // ()=>{
-    //     shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1500,timeFunc:'easeOut'})
-    // },
+    ()=>{
+        changeHomotopyType(1)
+        shapeUpdaterHolder.runUpdater({duration:1500,timeFunc:'easeOut'})
+    },
+    ()=>{},
+    ()=>{
+        shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1500,timeFunc:'easeOut'})
+    },
+    ()=>{},
+    ()=>{
+        changeHomotopyType(2)
+        shapeUpdaterHolder.runUpdater({duration:1500,timeFunc:'easeOut'})
+    },
+    ()=>{},
+    ()=>{
+        shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1500,timeFunc:'easeOut'})
+    },
+    ()=>{},
+    ()=>{
+        changeHomotopyType(3)
+        shapeUpdaterHolder.runUpdater({duration:1500,timeFunc:'easeOut'})
+    },
+    ()=>{},
+    ()=>{
+        shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1500,timeFunc:'easeOut'})
+    },
     ()=>{
         anim.pause()
         changeHomotopyType(1)

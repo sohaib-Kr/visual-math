@@ -284,3 +284,47 @@ input.addEventListener('blur', () => {
     }
 } 
 export const textStyles=utiles.textStyles
+export const animateWithRAF=(func, { autoStart = true } = {}) => {
+    let isRunning = false;
+    let animationFrameId = null;
+    let lastTimestamp = 0;
+  
+    const loop = (timestamp) => {
+      if (!isRunning) return;
+  
+      // Calculate delta time (time since last frame in ms)
+      const deltaTime = lastTimestamp ? timestamp - lastTimestamp : 0;
+      lastTimestamp = timestamp;
+  
+      // Execute the provided function
+      func(timestamp, deltaTime);
+  
+      // Continue the loop
+      animationFrameId = requestAnimationFrame(loop);
+    };
+  
+    const start = () => {
+      if (isRunning) return;
+      isRunning = true;
+      lastTimestamp = 0;
+      animationFrameId = requestAnimationFrame(loop);
+    };
+  
+    const stop = () => {
+      if (!isRunning) return;
+      isRunning = false;
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    };
+  
+    // Auto-start if enabled
+    if (autoStart) start();
+  
+    return {
+      start,
+      stop,
+      get isRunning() { return isRunning; }
+    };
+}

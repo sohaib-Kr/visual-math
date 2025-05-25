@@ -1,6 +1,7 @@
 import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
 import Vivus from 'vivus'
+import {animateWithRAF} from '@/lib/library'
 import {createIndicator,updateIndicator} from '@/lib/utiles/topoPath.js'
 import gsap from 'gsap'
 import { animateMotion } from '@/lib/utiles/vector/animateMotion';
@@ -114,7 +115,7 @@ anim.initSteps([
         elems.forEach((elem,index)=>{
             gsap.to(elem,{opacity:0.3,duration:0.5})
         })
-        let interval=setInterval(()=>{
+        let interval=animateWithRAF((timestamp,deltaTime)=>{
             gsap.to(elems[i],{opacity:1,duration:0.5});
             (i>=1)&&gsap.to(elems[i-1],{opacity:0.3,duration:0.5});
             (i!=0)&&mainSpace[i-1].animate(500).attr({opacity:0.4})
@@ -124,10 +125,10 @@ anim.initSteps([
                 elems.forEach((elem)=>{
                     gsap.to(elem,{opacity:1,duration:0.5})
                 })
-                clearInterval(interval)
+                interval.stop()
                 anim.play()
             }
-        },1200)
+        })
     },
     ()=>{
         secondTextHolder.update({newText:`The function | encodes the loop to a binary string by
