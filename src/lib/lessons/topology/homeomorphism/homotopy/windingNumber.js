@@ -77,7 +77,7 @@ anim.initSteps([
     //     t=0
     //     let j=[0,0,0,1]
     //     for (let i = 0; i < 3; i++) {
-    //         while(mainPath.pointAt(j[i]*mainPath.length()).x*mainPath.pointAt((j[i]+0.002)*mainPath.length()).x>=0){
+    //         while(mainPath.shape.pointAt(j[i]*mainPath.shape.length()).x*mainPath.shape.pointAt((j[i]+0.002)*mainPath.shape.length()).x>=0){
     //             j[i]+=0.002
     //         }
     //         i<2&&(j[i+1]=j[i]+0.002)
@@ -90,11 +90,11 @@ anim.initSteps([
     //             return
     //         }
     //         let I=setInterval(()=>{
-    //             updateIndicator(mainPath,t,indicator)
+    //             updateIndicator(mainPath.shape,t,indicator)
     //             t+=0.01
     //             if(t>=j[i]){
     //                 t=j[i]
-    //                 updateIndicator(mainPath,j[i],indicator)
+    //                 updateIndicator(mainPath.shape,j[i],indicator)
     //                 clearInterval(I)
     //                 i++
     //                 setTimeout(()=>runWinder(),1000)
@@ -103,18 +103,89 @@ anim.initSteps([
     //     }
     //     runWinder()
     // },
+    // ()=>{
+    //     let aPath=plane.plane.path('M 250 300 L 165 300').attr({fill:'none'})
+    //     let bPath=plane.plane.path('M 150 -100 L 300 165').attr({fill:'none'})
+    //     let cPath=plane.plane.path('M 0 -100 L 300 0').attr({fill:'none'})
+    //     let dPath=plane.plane.path('M 150 -100 L -300 -165').attr({fill:'none'})
+    //     let ePath=plane.plane.path('M 0 -100 L -300 0').attr({fill:'none'})
+    //     let fPath=plane.plane.path('M -250 300 L -165 300').attr({fill:'none'})
+    //     let gPath=plane.plane.path('M -100 -300 L 165 -300').attr({fill:'none'})
+    //     let updater=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath,e:ePath,f:fPath,g:gPath})
+    //     updater.runUpdater({duration:1500,timeFunc:'easeOut'})
+    //     indicator.animate(500).attr({opacity:0})
+    //     intersectLine.animate(500).attr({opacity:0})
+    // },
     ()=>{
-        let aPath=plane.plane.path('M 250 300 L 165 300').attr({fill:'none'})
-        let bPath=plane.plane.path('M 150 -100 L 300 165').attr({fill:'none'})
-        let cPath=plane.plane.path('M 0 -100 L 300 0').attr({fill:'none'})
-        let dPath=plane.plane.path('M 150 -100 L -300 -165').attr({fill:'none'})
-        let ePath=plane.plane.path('M 0 -100 L -300 0').attr({fill:'none'})
-        let fPath=plane.plane.path('M -250 300 L -165 300').attr({fill:'none'})
-        let gPath=plane.plane.path('M -100 -300 L 165 -300').attr({fill:'none'})
-        let updater=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath,e:ePath,f:fPath,g:gPath})
-        updater.runUpdater({duration:1500,timeFunc:'easeOut'})
-        indicator.animate(500).attr({opacity:0})
-        intersectLine.animate(500).attr({opacity:0})
+        mainPath.shape.animate(500).attr({opacity:0}).after(()=>{
+            mainPath=anim.createTopoPath({
+                codedPath:`M |a|
+            C |b| |c| |d|
+            S |e| |a|
+            C |f| |g| |h|
+            S |i| |a|`,
+                initialData:{
+                    a : [100,0],
+            b : [100,-100],
+            c : [-100,-100],
+            d : [-100,0],
+            e : [100,100],
+            f : [100,-300],
+            g : [-400,-300],
+            h : [-400,0],
+            i : [100,300],
+                },
+                attr:{...config.path1,opacity:0}
+            })
+            plane.append(mainPath.group)
+            mainPath.shape.animate(500).attr({opacity:1})
+        })
+    },
+    ()=>{
         anim.pause()
-    }
+        t=0
+        let j=[0,0,1]
+        for (let i = 0; i < 3; i++) {
+            while(mainPath.shape.pointAt(j[i]*mainPath.shape.length()).x*mainPath.shape.pointAt((j[i]+0.002)*mainPath.shape.length()).x>=0){
+                j[i]+=0.002
+            }
+            i<2&&(j[i+1]=j[i]+0.002)
+            if(mainPath.shape.pointAt(j[i]*mainPath.shape.length()).y>0){
+                j[i]+=0.002
+                i-=1
+            }
+        }
+        indicator.animate(500).attr({opacity:1})
+        let i=0
+        function runWinder(){
+            if(i==4){
+                anim.play()
+                return
+            }
+            let I=setInterval(()=>{
+                updateIndicator(mainPath.shape,t,indicator)
+                t+=0.01
+                if(t>=j[i]){
+                    t=j[i]
+                    updateIndicator(mainPath.shape,j[i],indicator)
+                    clearInterval(I)
+                    i++
+                    setTimeout(()=>runWinder(),1000)
+                }
+            },50)
+        }
+        runWinder()
+    },
+    // ()=>{
+    //     let pathA=plane.plane.path(`M 100 0 L 10 0`)
+    //     let pathB=plane.plane.path(`M 100 -100 L 10 -10`)
+    //     let pathC=plane.plane.path(`M -100 -100 L -10 -10`)
+    //     let pathD=plane.plane.path(`M -100 0 L -10 0`)
+    //     let pathE=plane.plane.path(`M 100 100 L 10 10`)
+    //     let pathF=plane.plane.path(`M 100 -300 L 10 -300`)
+    //     let pathI=plane.plane.path(`M 100 300 L 10 300`)
+        
+    //     let x=mainPath.createShapeUpdater({a:pathA,b:pathB,c:pathC,d:pathD,e:pathE,f:pathF,i:pathI})
+    //     x.runUpdater()
+    // },
 ])

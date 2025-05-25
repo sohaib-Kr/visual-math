@@ -34,6 +34,27 @@ export function emphasize(elements, options = {}) {
     return matrix;
   };
 
+  // Function to copy event listeners from original to copy
+  const copyEventListeners = (originalElem, copyElem) => {
+    const originalNode = originalElem.node;
+    const copyNode = copyElem.node;
+    
+    if (!originalNode._events) return; // No events attached
+    
+    // Get all event types registered on the original element
+    const eventTypes = Object.keys(originalNode._events);
+    
+    eventTypes.forEach(eventType => {
+      // Get all listeners for this event type
+      const listeners = originalNode._events[eventType];
+      
+      listeners.forEach(listener => {
+        // Add the same listener to the copy
+        copyNode.addEventListener(eventType, listener.fn, listener);
+      });
+    });
+  };
+
   // Function to position a copy
   const createPositionedCopy = (elem) => {
     let elemCopy = elem.clone().addTo(highlightGroup);
@@ -46,7 +67,10 @@ export function emphasize(elements, options = {}) {
     const transformed = point.matrixTransform(matrix);
     elemCopy.move(transformed.x, transformed.y);
     
-    elemCopy.attr({opacity:0})
+    elemCopy.attr({opacity:0});
+    
+    // Copy event listeners from original to copy
+    copyEventListeners(elem, elemCopy);
     
     return {
       original: elem,
@@ -103,6 +127,5 @@ export function emphasize(elements, options = {}) {
       }
     })
     },
-    
   };
 }

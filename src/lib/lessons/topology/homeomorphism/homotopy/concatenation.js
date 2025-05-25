@@ -10,10 +10,10 @@ function init(){
     const plane=new CartPlane({draw, unit:{u:30,v:30}})
     const config=anim.config()
 
-    const firstLoop=plane.plane.path('M 0 0 C -28 -52 160 -136 200 -100 S 303 -48 253 24 S 44 74 0 0')
+    const firstLoop=plane.plane.path('M 0 0 C -28 -52 160 -136 200 -100 S 303 -48 253 24 S 14 21 0 0')
     .attr({...config.path1})
     .addTo(plane.plane)
-    const secondLoop=plane.plane.path('M 0 0 C -57 11 50 -155 -67 -192 S -35 -244 -4 -258 S 148 -61 0 0')
+    const secondLoop=plane.plane.path('M 0 0 C -44 -74 50 -155 -67 -192 S -35 -244 -4 -258 S 77 71 0 0')
     .attr({...config.path1})
     .addTo(plane.plane)
 let emph
@@ -117,6 +117,7 @@ anim.initSteps([
     },
     ()=>{
         anim.pause()
+        let x,y
         let t=0
             let coords=textHolder.textSpace.querySelectorAll('.mord')
             let holder1=coords[3]
@@ -130,38 +131,49 @@ anim.initSteps([
             let Y=coords[16]
         let [holder1Faded,holder2Faded]=[false,false]
         let I=setInterval(()=>{
-            gammaT.textContent=(t/2).toFixed(1)
-            let x,y
-            if(t<1){
-                ({x,y}=firstLoop.pointAt(firstLength*t))
-                gammaT1.textContent=(t).toFixed(1)
-                updateIndicator(firstLoop,t,indicator)
-                if(!holder1Faded){
-                    holder1Faded=true
-                    gsap.to(holder2,{duration:0.5,opacity:0.3})
-                }
-            }else{
-                ({x,y}=secondLoop.pointAt(secondLength*(t-1)))
-                gammaT2.textContent=(t-1).toFixed(1)
-                updateIndicator(secondLoop,t-1,indicator)
-                if(!holder2Faded){
-                    holder2Faded=true
-                    gsap.to(holder1,{duration:0.5,opacity:0.3})
-                    gsap.to(holder2,{duration:0.5,opacity:1})
-                }
+            gammaT.textContent=(t/2).toFixed(1);
+            ({x,y}=firstLoop.pointAt(firstLength*t))
+            gammaT1.textContent=(t).toFixed(1)
+            updateIndicator(firstLoop,t,indicator)
+            if(!holder1Faded){
+                holder1Faded=true
+                gsap.to(holder2,{duration:0.5,opacity:0.3})
             }
-            X.textContent=(x/100).toFixed(2)
-            Y.textContent=(-y/100).toFixed(2)
-            emph.updateAll()
-            emph.highlightGroup.children()[3]
-            .transform({rotate:indicator.transform().rotate})
             t+=0.01
-            if(t>=2.01){
-                anim.play()
+            if(t>=1.01){
                 clearInterval(I)
+                let J=setInterval(()=>{
+                    gammaT.textContent=(t/2).toFixed(1);
+                        ({x,y}=secondLoop.pointAt(secondLength*(t-1)))
+                        gammaT2.textContent=(t-1).toFixed(1)
+                        updateIndicator(secondLoop,t-1,indicator)
+                        if(!holder2Faded){
+                            holder2Faded=true
+                            gsap.to(holder1,{duration:0.5,opacity:0.3})
+                            gsap.to(holder2,{duration:0.5,opacity:1})
+                        }
+                    t+=0.01
+                    if(t>=2.01){
+                        clearInterval(J)
+                        anim.play()
+                    }
+                    },30)
             }
             },30)
+            
+let I3=setInterval(()=>{
+    gammaT.textContent=(t/2).toFixed(1)
+    X.textContent=(x/100).toFixed(2)
+    Y.textContent=(-y/100).toFixed(2)
+    emph.updateAll()
+    emph.highlightGroup.children()[3]
+    .transform({rotate:indicator.transform().rotate})
+    if(t>=2.01){
+        clearInterval(I3)
+        anim.play()
     }
+    },30)
+}
 ])
 return anim
 }

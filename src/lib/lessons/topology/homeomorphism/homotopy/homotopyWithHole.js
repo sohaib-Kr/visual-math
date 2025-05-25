@@ -156,7 +156,8 @@ plane.append(firstPath.group)
 plane.append(secondPath.group)
 
 let textHolder
-
+let firstPathEmph
+let secondPathEmph
 anim.initSteps([
     ()=>{
         anim.vivusRender({elem:firstPath.group.node})
