@@ -93,7 +93,7 @@ anim.initSteps([
     },
     ()=>{
         textHolder.update({newText:'Use the range slider to change the value of |.',fade:true,callback:()=>{
-            textHolder.addLatex(['R^2'])
+            textHolder.addLatex(['x'])
         }})
         lambdaHolder=anim.createTextSpace().update({newText:'\\gamma \\left( 0.00 \\right)=\\left( 1.00,1.00 \\right)',fade:true,latex:true})
         anim.pause()
@@ -152,6 +152,11 @@ anim.initSteps([
         }})
     },
     ()=>{
+        gsap.to(textHolder.textSpace,{opacity:0,duration:0.5,onComplete:()=>{
+            textHolder.update({newText:`That's an example of loop in |.`,fade:true,callback:()=>{
+                textHolder.addLatex(['R^2'])
+            }})
+        }})
         draw.animate(500).transform({
             scale: 1
           });

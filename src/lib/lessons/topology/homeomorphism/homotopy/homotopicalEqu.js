@@ -1,6 +1,9 @@
 import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
-export const anim = new vMathAnimation('homotopicalEqu');
+
+function init(){
+const anim = new vMathAnimation('homotopicalEqu');
+
 
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
@@ -60,7 +63,6 @@ plane.append(homotopyPath.group)
 
 let textHolder
 let lambdaHolder
-
 let xInput=document.getElementById('xInput')
 let tInput=document.getElementById('tInput')
 let shapeUpdaterHolder
@@ -71,36 +73,40 @@ let indicator=plane.plane.circle()
 plane.append(indicator)
 anim.initSteps([
     ()=>{
-        textHolder=anim.createTextSpace().update('As you can see there are many ways you can continously transform one path into another',true)
+        textHolder=anim.createTextSpace().update({newText:'As you can see there are many ways you can continously transform one path into another',fade:true})
     },
     ()=>{
         changeHomotopyType(1)
-        shapeUpdaterHolder.runUpdater({duration:1500,timeFunc:'easeOut'})
+        shapeUpdaterHolder.runUpdater({duration:1.5})
     },
     ()=>{},
     ()=>{
-        shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1500,timeFunc:'easeOut'})
+        shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1.5})
     },
     ()=>{},
     ()=>{
         changeHomotopyType(2)
-        shapeUpdaterHolder.runUpdater({duration:1500,timeFunc:'easeOut'})
+        shapeUpdaterHolder.runUpdater({duration:1.5})
     },
     ()=>{},
     ()=>{
-        shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1500,timeFunc:'easeOut'})
+        shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1.5})
     },
     ()=>{},
     ()=>{
         changeHomotopyType(3)
-        shapeUpdaterHolder.runUpdater({duration:1500,timeFunc:'easeOut'})
+        shapeUpdaterHolder.runUpdater({duration:1.5})
     },
     ()=>{},
     ()=>{
-        shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1500,timeFunc:'easeOut'})
+        shapeUpdaterHolder.runReverseUpdater({callback:()=>shapeUpdaterHolder.kill(),duration:1.5})
     },
     ()=>{
         anim.pause()
+        textHolder.update({newText:'Use the range slider to change the values of | and |.',fade:true,callback:()=>{
+            textHolder.addLatex(['x','t'])
+        }})
+        lambdaHolder=anim.createTextSpace().update({newText:'\\mathcal{H}\\left( 0.00,0.00 \\right)=\\left( 1.00,1.00 \\right)',fade:true,latex:true})
         changeHomotopyType(1)
         draw.animate(800).transform({scale:[1.5,1.3],origin:[0,-100]})
         let indicPos=0
@@ -148,15 +154,19 @@ anim.initSteps([
                     onUpdate:()=>{
                         changeHomoPathEmph.updateAll()
                     }
-                })
-
-
-
+                })       
         
-        tInput=anim.addControl({name:'tInput',type:'range',listener:(event)=>{
+        anim.addControl({name:'play again',type:'button',listener:()=>{
+            anim.playAgain(init)
+        }}) 
+        let xValue=0
+        tInput=anim.addControl({name:'t',latex:true,type:'range',listener:(event)=>{
             
             changeHomoPathEmph.updateAll()
             changeHomoPathScrub.play(event.target.value)
+            let data=homotopyPath.shape.pointAt(event.target.value*homotopyPath.shape.length()/100)
+            lambdaHolder.update({newText:'\\mathcal{H}\\left( '+parseFloat(event.target.value/100).toFixed(2)+','+parseFloat(indicPos/100).toFixed(2)+' \\right)=\\left( '+parseFloat(parseInt(data.x)/100).toFixed(2)+','+parseFloat(-parseInt(data.y)/100).toFixed(2)+' \\right)',latex:true})
+            xValue=event.target.value
         }})
         tInput.node.addEventListener('mousedown',()=>{
             changeHomoPathEmph.on()
@@ -169,9 +179,11 @@ anim.initSteps([
 
 
 
-        xInput=anim.addControl({name:'xInput',type:'range',listener:(event)=>{
+        xInput=anim.addControl({name:'x',latex:true,type:'range',listener:(event)=>{
             changeIndicatorEmph.updateAll()
             changeIndicatorScrub.play(event.target.value)
+            let data=homotopyPath.shape.pointAt(event.target.value*homotopyPath.shape.length()/100)
+            lambdaHolder.update({newText:'\\mathcal{H}\\left( '+parseFloat(xValue/100).toFixed(2)+','+parseFloat(event.target.value/100).toFixed(2)+' \\right)=\\left( '+parseFloat(parseInt(data.x)/100).toFixed(2)+','+parseFloat(-parseInt(data.y)/100).toFixed(2)+' \\right)',latex:true})
         }})
 
         xInput.node.addEventListener('mousedown',()=>{
@@ -183,10 +195,9 @@ anim.initSteps([
 
             changeIndicatorEmph.off()
         })
-    },
-    ()=>{
-        changeIndicatorEmph.remove()
-        changeHomoPathEmph.remove()
     }
 
 ])
+return anim
+}
+export const anim= init()

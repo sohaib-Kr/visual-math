@@ -69,25 +69,35 @@ export class vMathAnimation {
         this.#pause=false
         this.engine[0]()
     }
-    addControl({name, type, listener}) {
+    addControl({name, type, listener,latex=false}) {
         let control = {node: null, listener, kill: null};
         let input;
         
         if (type === 'range') {
-            input = document.createElement('input');
-            input.type = 'range';
-            input.min = 0;
-            input.max = 100;
-            input.value = 0;
-            input.addEventListener('input', control.listener);
+            let wrapper=document.createElement('div')
+            wrapper.className='flex items-center gap-2'
+            wrapper.innerHTML='<span>'+name+'</span><input type="range" min="0" max="100" value="0">'
+            input = wrapper;
+            input.children[1].style.width='85%'
+            input.children[1].style.marginTop='10px'
+            input.children[1].style.marginBottom='10px'
+            input.children[1].addEventListener('input', control.listener);
+            input.children[0].style.fontFamily='poppins'
+            input.children[0].style.fontSize='20px'
+            input.children[0].style.color='#718096'
+            input.children[0].style.marginTop='10px'
+            input.children[0].style.marginBottom='10px'
+            if(latex){
+                katex.render(name, input.children[0], {throwOnError: true, displayMode: false});
+            }
             control.kill = () => {
-                input.removeEventListener('input', control.listener);
+                input.children[1].removeEventListener('input', control.listener);
                 gsap.to(input,{duration:0.5,y:-10,opacity:0,onComplete:()=>input.remove()})
             };
         } 
         else if (type === 'button') {
             input = document.createElement('button');
-            input.className='font-[poppins] relative bottom-[30px] p-[13px] leading-none px-[9px] text-[21px] cursor-pointer w-fit rounded-md bg-[#b6638b] text-white';
+            input.className='font-[poppins] my-[15px] p-[13px] leading-none px-[9px] text-[21px] cursor-pointer w-fit rounded-md bg-[#b6638b] text-white';
             input.textContent = name;
             input.addEventListener('mouseover', () => {
                 gsap.to(input,{duration:0.3,backgroundColor:'#9c4971'})

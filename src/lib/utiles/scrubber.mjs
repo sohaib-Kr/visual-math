@@ -32,16 +32,5 @@ export class Scrubber{
                 obj.#callback()
             }
         })
-        
-        // animateWithRAF((timestamp,deltaTime)=>{
-        //     t+=0.1
-        //     this.#animator(cur+t*change)
-        //     this.#currentValue=cur+t*change
-        //     this.#onUpdate(this.#currentValue)
-        //     if(t>=1){
-        //         this.#currentInterval.stop()
-        //         this.#callback()
-        //     }
-        // })
     }
 }
