@@ -6,24 +6,33 @@ import { SVG } from '@svgdotjs/svg.js'
 // GSAP setup and initialization
 gsap.registerPlugin(Flip, ScrollTrigger);
 
+
+
 function progressBar(){
-    // Create SVG canvas for progress bar
+
     const draw = SVG().addTo(document.getElementById('progress-bar')).size('100%', '100%');
-    const rectData={
-        x:50,
-        y:50,
-        width:20,
-        height:600,
-    }
-    const barSkeleton=draw.path(`M ${rectData.x} ${rectData.y} 
-        A 1 1 0 0 1 ${rectData.x+rectData.width} ${rectData.y} 
-        V ${rectData.height + rectData.y} 
-        A 1 1 0 0 1 ${rectData.x} ${rectData.height + rectData.y} Z`)
-    .fill('#f6f3f4')
-    const barCurrent=draw.path(`M ${rectData.x} ${rectData.y} 
-        A 1 1 0 0 1 ${rectData.x+rectData.width} ${rectData.y} 
-        V ${rectData.y} 
-        A 1 1 0 0 1 ${rectData.x} ${rectData.y} Z`)
+
+// Rectangle data for the progress bar
+const rectData = {
+    x: 50,
+    y: 50,
+    width: 20,
+    height: 600,
+};
+
+// Create the skeleton of the progress bar
+const barSkeleton = draw.path(`
+    M ${rectData.x + rectData.width / 2} ${rectData.y} 
+    L ${rectData.x + rectData.width / 2} ${rectData.height + rectData.y}`)
+    .stroke({ color: '#f6f3f4', width: 2 })
+
+// Create the current progress bar with shadow
+const barCurrent = draw.path(`
+    M ${rectData.x + rectData.width/2 - 1} ${rectData.y + 1}
+    a 1 1 0 0 1 3 0
+    V ${rectData.y + rectData.height - 1}
+    a 1 1 0 0 1 -3 0
+    Z`)
     .fill('#b15a84')
 
     // Create ScrollTrigger animation for progress bar
@@ -46,10 +55,12 @@ function progressBar(){
     let totalHeight=0
     let currentHeight=0
     points.forEach((point)=>totalHeight+=point.height)
-    points.forEach((point,index)=>{
-        point.circle=draw.circle(30).fill('#f6f3f4')
+    points.forEach((point)=>{
+        point.circle=draw.circle(20).fill('#f6f3f4')
+
         .center(rectData.x+10,rectData.y+rectData.height*(currentHeight/totalHeight))
         point.text=draw.text(point.title).font({size:15,weight:'bold'})
+
         .fill('#bfbfbf')
         .cy(rectData.y+rectData.height*(currentHeight/totalHeight))
         .x(rectData.x+40)
@@ -62,15 +73,16 @@ function progressBar(){
             trigger:document.getElementsByClassName('part')[index],
             start: "top 50%",
             end: "bottom 50%",
+            markers:true,
             onEnter:()=>{
                 point.circle.fill('#b15a84')
                 point.text.fill('#595959')
-                gsap.timeline().to(point.circle.node,{scale:1.2,x:-3,duration:0.3}).to(point.circle.node,{scale:1,x:0,duration:0.3})
+                gsap.timeline().to(point.circle.node,{transformOrigin: "center center",scale:1.2,duration:0.3}).to(point.circle.node,{scale:1,duration:0.3})
             },
             onLeaveBack:()=>{
                 point.circle.fill('#f6f3f4')
                 point.text.fill('#bfbfbf')
-                lastHeight-=point.height
+                lastHeight-=points[index-1].height
             },
             onLeave:()=>{
                 index<points.length-1 ? lastHeight+=point.height : NaN
@@ -80,14 +92,16 @@ function progressBar(){
             },
             onUpdate: (self) => {
                 // Calculate new height based on scroll progress
-                const newheight = rectData.height*((point.height*self.progress+lastHeight)/totalHeight)-20;
+                const newheight = rectData.height*((point.height*self.progress+lastHeight)/totalHeight);
+                console.log(lastHeight)
                 
                 // Update progress bar path
-                barCurrent.plot(`M ${  rectData.x} ${ rectData.y} 
-                    A 1 1 0 0 1 ${ rectData.x+   rectData.width} ${  rectData.y} 
-                    V ${newheight + rectData.y} 
-                    A 1 1 0 0 1 ${ rectData.x} ${newheight + rectData.y} Z`);
-                },
+                barCurrent.plot(`M ${rectData.x + rectData.width/2 - 1} ${rectData.y + 1}
+    a 1 1 0 0 1 3 0
+    V ${rectData.y + newheight}
+    a 1 1 0 0 1 -3 0
+    Z`);
+            },
         })
     })
 }

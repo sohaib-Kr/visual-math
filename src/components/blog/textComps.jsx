@@ -2,7 +2,7 @@ export const Ex=(props)=> <span className="font-bold text-yellow-400">{props.chi
 export const H=(props)=> <span className="font-bold text-red-500">{props.children}</span>
 export const SubHead=(props)=> <h2 className="text-3xl font-bold mb-6 text-slate-800 leading-tight">{props.children}</h2>
 export const Paragraph=(props)=> <p className="text-slate-600 text-lg leading-relaxed mb-6">{props.children}</p>
-export const Part=(props)=> <div className="h-fit m-4 rounded-lg p-8" data-title="First Part" id="part1">{props.children}</div>
+export const Part=(props)=> <div className="h-fit rounded-lg p-8 part" data-title="First Part" id="part1">{props.children}</div>
 export const Title=(props)=> <span className="font-bold text-orange-500">{props.children}</span>
 export const Latex=(props)=> <span className="katex-input">{props.children}</span>
 export const AnimationFrame=(props)=> (

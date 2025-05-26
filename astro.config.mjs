@@ -16,5 +16,8 @@ export default defineConfig({
           '~': path.resolve('./src'), // Optional: Alternative alias
         },
       },
+      optimizeDeps: {
+        include: ['@svgdotjs/svg.js', '@svgdotjs/svg.filter.js']
+      }
   }
 });
