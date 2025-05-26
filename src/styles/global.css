@@ -3,11 +3,12 @@
     @apply row-start-1 row-end-2 col-start-1 col-end-2;
 }
 @font-face {
-    font-family: 'Poppins';
-    src: url('../fonts/Poppins.woff2') format('woff2'),
-         url('../fonts/Poppins.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+    font-family: 'poppins';
+    src: url('../assets/Poppins-Light.ttf') format('woff2'),
+}
+@font-face {
+    font-family: 'merriweather';
+    src: url('../assets/Merriweather-Light.ttf') format('woff2'),
 }
 .fadeOnScroll{
     opacity: 0;

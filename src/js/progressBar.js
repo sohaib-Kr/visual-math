@@ -73,7 +73,6 @@ const barCurrent = draw.path(`
             trigger:document.getElementsByClassName('part')[index],
             start: "top 50%",
             end: "bottom 50%",
-            markers:true,
             onEnter:()=>{
                 point.circle.fill('#b15a84')
                 point.text.fill('#595959')
