@@ -87,7 +87,14 @@ export class vMathAnimation {
         } 
         else if (type === 'button') {
             input = document.createElement('button');
+            input.className='font-[poppins] relative bottom-[30px] p-[13px] leading-none px-[9px] text-[21px] cursor-pointer w-fit rounded-md bg-[#b6638b] text-white';
             input.textContent = name;
+            input.addEventListener('mouseover', () => {
+                gsap.to(input,{duration:0.3,backgroundColor:'#9c4971'})
+            });
+            input.addEventListener('mouseleave', () => {
+                gsap.to(input,{duration:0.3,backgroundColor:'#b6638b'})
+            });
             input.addEventListener('click', control.listener);
             control.kill = () => {
                 input.removeEventListener('click', control.listener);
@@ -142,11 +149,7 @@ input.addEventListener('blur', () => {
         let textSpace = document.getElementById(this.#id)
             .parentElement.querySelector('.control').children[0]
             .appendChild(document.createElement('div'));
-        textSpace.classList.add('textSpace');
-        textSpace.style.position = 'relative';
-        textSpace.style.width = '80%';
-        textSpace.style.fontSize = '21px';
-        textSpace.style.fontWeight = 'light';
+        textSpace.className=('textSpace font-[merriweather] text-gray-600 text-[18px]  tracking-[1px] leading-[1.8] mb-7');
     
         let obj = {
             textSpace,

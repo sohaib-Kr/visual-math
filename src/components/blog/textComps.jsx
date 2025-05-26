@@ -32,9 +32,9 @@ export const Latex = (props) => (
     {props.children}
   </span>
 );
-export const Part=(props)=> <div className="h-fit rounded-lg p-8 part" data-title="First Part" id="part1">{props.children}</div>
+export const Part=(props)=> <div className="h-fit rounded-lg p-8 part" data-title={props.title}>{props.children}</div>
 export const AnimationFrame=(props)=> (
-<div className="w-full grid grid-cols-[40%_60%] p-[20px] rounded-[10px] grid-rows-[100%] border border-black" style={props.style}>
+<div className="w-full my-[90px] grid grid-cols-[40%_60%] grid-rows-[100%] " style={props.style}>
   <div className="w-[95%] h-full control">
     <div className="flex flex-col gap-2 h-[50%]">
     </div>
