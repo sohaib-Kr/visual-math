@@ -1,5 +1,6 @@
 import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
+import gsap from 'gsap';
 import Vivus from 'vivus'
 
 function init(){
@@ -54,48 +55,43 @@ anim.initSteps([
         }})
         secondPath.shape.attr({opacity:0.5})
     },
-    // ()=>{
-    //     let aPath=plane.plane.path('M 0 0 L -100 -50')
-    //     let bPath=plane.plane.path('M 0 0 L -100 -50')
-    //     let cPath=plane.plane.path('M 100 0 L 200 -250')
-    //     let dPath=plane.plane.path('M 100 0 L 200 -250')
-    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1000})
-    // },
-    // ()=>{},
-    // ()=>{
-
-    //     let aPath=plane.plane.path('M -100 -50 L -100 200')
-    //     let bPath=plane.plane.path('M -100 -50 L -300 200')
-    //     let cPath=plane.plane.path('M 200 -250 L -300 -100')
-    //     let dPath=plane.plane.path('M 200 -250 L -100 -100')
-    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1000})
-    // },
-    // ()=>{},
-    // ()=>{
-    //     let aPath=plane.plane.path('M -100 200 L 200 200')
-    //     let bPath=plane.plane.path('M -300 200 L 0 200')
-    //     let cPath=plane.plane.path('M -300 -100 L 0 -100')
-    //     let dPath=plane.plane.path('M -100 -100 L -200 -100')
-    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1000})
-
-    // },
-    // ()=>{},
-    
-    // ()=>{
-    //     let aPath=plane.plane.path('M 200 200 L 100 -100')
-    //     let bPath=plane.plane.path('M 0 200 L 300 -100')
-    //     let cPath=plane.plane.path('M 0 -100 L 200 -250')
-    //     let dPath=plane.plane.path('M -200 -100 L 400 -250')
-    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     x.runUpdater({callback:()=>x.kill(),timeFunc:'easeIn2',duration:1000})
-
-    // },
-    // ()=>{},
+    ()=>{
+        anim.delay=1500
+        let aPath=plane.plane.path('M 0 0 L -100 -50')
+        let bPath=plane.plane.path('M 0 0 L -100 -50')
+        let cPath=plane.plane.path('M 100 0 L 200 -250')
+        let dPath=plane.plane.path('M 100 0 L 200 -250')
+        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
+    },
     ()=>{
 
+        let aPath=plane.plane.path('M -100 -50 L -100 200')
+        let bPath=plane.plane.path('M -100 -50 L -300 200')
+        let cPath=plane.plane.path('M 200 -250 L -300 -100')
+        let dPath=plane.plane.path('M 200 -250 L -100 -100')
+        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
+    },
+    ()=>{
+        let aPath=plane.plane.path('M -100 200 L 200 200')
+        let bPath=plane.plane.path('M -300 200 L 0 200')
+        let cPath=plane.plane.path('M -300 -100 L 0 -100')
+        let dPath=plane.plane.path('M -100 -100 L -200 -100')
+        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
+
+    },
+    ()=>{
+        let aPath=plane.plane.path('M 200 200 L 100 -100')
+        let bPath=plane.plane.path('M 0 200 L 300 -100')
+        let cPath=plane.plane.path('M 0 -100 L 200 -250')
+        let dPath=plane.plane.path('M -200 -100 L 400 -250')
+        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        x.runUpdater({callback:()=>x.kill(),timeFunc:'easeIn2',duration:1.2})
+
+    },
+    ()=>{
         textHolder.update({newText:'Use the range slider to change the value of |.',fade:true,callback:()=>{
             textHolder.addLatex(['R^2'])
         }})
@@ -152,6 +148,7 @@ anim.initSteps([
             range.kill()
             next.kill()
             emph.remove()
+            gsap.to(lambdaHolder.textSpace,{opacity:0,duration:0.5})
         }})
     },
     ()=>{
@@ -190,6 +187,8 @@ anim.initSteps([
         },timeFunc:'easeOut'})
     },
     ()=>{
+        lambdaHolder.update({newText:'\\gamma\\left( 0 \\right)=\\left( -4.50 ,-1.00 \\right)',latex:true})
+        gsap.to(lambdaHolder.textSpace,{opacity:1,duration:0.5})
         draw.animate(500).transform({
             origin: [-400,200],
             scale: 1.7
@@ -233,6 +232,8 @@ anim.initSteps([
 
         let range=anim.addControl({name:'rangeInput',type:'range',listener:(event)=>{
             scrub.play(event.target.value)
+            let data=secondPath.shape.pointAt(event.target.value*length/100)
+            lambdaHolder.update({newText:'\\gamma\\left( '+parseFloat(event.target.value/100).toFixed(2)+' \\right)=\\left( '+parseFloat(parseInt(data.x)/100).toFixed(2)+','+parseFloat(-parseInt(data.y)/100).toFixed(2)+' \\right)',latex:true})
         }})
 
         range.node.addEventListener('mousedown',()=>{
@@ -246,7 +247,7 @@ anim.initSteps([
 
 
         
-        let next=anim.addControl({name:'play again',type:'button',listener:()=>{
+        anim.addControl({name:'play again',type:'button',listener:()=>{
             anim.playAgain(init)
         }})
     

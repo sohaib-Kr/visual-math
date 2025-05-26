@@ -57,13 +57,19 @@ const barCurrent = draw.path(`
     points.forEach((point)=>totalHeight+=point.height)
     points.forEach((point)=>{
         point.circle=draw.circle(20).fill('#f6f3f4')
-
         .center(rectData.x+10,rectData.y+rectData.height*(currentHeight/totalHeight))
-        point.text=draw.text(point.title).font({size:15,weight:'bold'})
 
+
+        let length=point.title ? point.title.length : 0
+        let text= length>15 ? point.title.slice(0,15)+'...' : point.title
+        point.text=draw.text(text)
         .fill('#bfbfbf')
         .cy(rectData.y+rectData.height*(currentHeight/totalHeight))
         .x(rectData.x+40)
+        .attr({
+            'font-family':'poppins',
+            'font-size':'18px',
+        })
         currentHeight+=point.height
     })
     currentHeight=0
@@ -74,13 +80,13 @@ const barCurrent = draw.path(`
             start: "top 50%",
             end: "bottom 50%",
             onEnter:()=>{
-                point.circle.fill('#b15a84')
-                point.text.fill('#595959')
-                gsap.timeline().to(point.circle.node,{transformOrigin: "center center",scale:1.2,duration:0.3}).to(point.circle.node,{scale:1,duration:0.3})
+                point.circle.animate(500).fill('#b15a84')
+                point.text.animate(500).attr({fill:'#595959'})
+                gsap.timeline().to(point.circle.node,{transformOrigin: "center center",scale:1.1,duration:0.3}).to(point.circle.node,{scale:1,duration:0.3})
             },
             onLeaveBack:()=>{
-                point.circle.fill('#f6f3f4')
-                point.text.fill('#bfbfbf')
+                point.circle.animate(500).fill('#f6f3f4')
+                point.text.animate(200).attr({fill:'#bfbfbf'})
                 lastHeight-=points[index-1].height
             },
             onLeave:()=>{
@@ -92,7 +98,6 @@ const barCurrent = draw.path(`
             onUpdate: (self) => {
                 // Calculate new height based on scroll progress
                 const newheight = rectData.height*((point.height*self.progress+lastHeight)/totalHeight);
-                console.log(lastHeight)
                 
                 // Update progress bar path
                 barCurrent.plot(`M ${rectData.x + rectData.width/2 - 1} ${rectData.y + 1}

@@ -1,4 +1,4 @@
-import {animateWithRAF} from '../library'
+import gsap from 'gsap'
 function createTimeFunc(timeFunc){
     let tFunc=function(t){
         return t
@@ -123,34 +123,28 @@ export class ShapeUpdater{
             trajectory.node.remove()
         })
     }
-    runUpdater({callback=()=>{},duration=500,timeFunc='linear'}={}){
-        let tFunc=createTimeFunc(timeFunc)
-        
-        let t=0
-        let s=0
-        let I=animateWithRAF((timestamp,deltaTime)=>{
-            s=tFunc(t)
-            this.update(s)
-            t+=0.04
-            if(t>1.04){
-                I.stop()
+    runUpdater({callback=()=>{},duration=0.5,timeFunc='linear'}={}){
+        let obj=this
+        gsap.to({},{
+            duration:duration,
+            onUpdate:function(t){
+                obj.update(this.progress())
+            },
+            onComplete:()=>{
                 callback()
             }
-        },duration/25)
+        })
     }
-    runReverseUpdater({callback=()=>{},duration=500,timeFunc='linear'}={}){
-        let tFunc=createTimeFunc(timeFunc)
-
-        let t=1
-        let s=1
-        let I=animateWithRAF((timestamp,deltaTime)=>{
-            s=tFunc(t)
-            this.update(s)
-            t-=0.04
-            if(t<-0.04){
-                I.stop()
+    runReverseUpdater({callback=()=>{},duration=0.5,timeFunc='linear'}={}){
+        let obj=this
+        gsap.to({},{
+            duration:duration,
+            onUpdate:function(t){
+                obj.update(1-this.progress())
+            },
+            onComplete:()=>{
                 callback()
             }
-        },duration/25)
+        })
     }
 }
