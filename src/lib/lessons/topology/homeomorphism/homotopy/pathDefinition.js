@@ -132,7 +132,7 @@ anim.initSteps([
                 emph.updateAll()
             }
         })
-        let range=anim.addControl({name:'rangeInput',type:'range',listener:(event)=>{
+        let range=anim.addControl({name:'x',type:'range',latex:true,listener:(event)=>{
             scrub.play(event.target.value)
             let data=mainPath.shape.pointAt(event.target.value*length/100)
             lambdaHolder.update({newText:'\\gamma\\left( '+parseFloat(event.target.value/100).toFixed(2)+' \\right)=\\left( '+parseFloat(parseInt(data.x)/100).toFixed(2)+','+parseFloat(-parseInt(data.y)/100).toFixed(2)+' \\right)',latex:true})
@@ -235,7 +235,7 @@ anim.initSteps([
             }
         })
 
-        let range=anim.addControl({name:'rangeInput',type:'range',listener:(event)=>{
+        let range=anim.addControl({name:'x:',type:'range',latex:true,listener:(event)=>{
             scrub.play(event.target.value)
             let data=secondPath.shape.pointAt(event.target.value*length/100)
             lambdaHolder.update({newText:'\\gamma\\left( '+parseFloat(event.target.value/100).toFixed(2)+' \\right)=\\left( '+parseFloat(parseInt(data.x)/100).toFixed(2)+','+parseFloat(-parseInt(data.y)/100).toFixed(2)+' \\right)',latex:true})

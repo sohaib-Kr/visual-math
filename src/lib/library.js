@@ -78,7 +78,9 @@ export class vMathAnimation {
             wrapper.className='flex items-center gap-2'
             wrapper.innerHTML='<span>'+name+'</span><input type="range" min="0" max="100" value="0">'
             input = wrapper;
-            input.children[1].style.width='85%'
+            input.style.position='relative'
+            input.style.right='10%'
+            input.children[1].style.width='75%'
             input.children[1].style.marginTop='10px'
             input.children[1].style.marginBottom='10px'
             input.children[1].addEventListener('input', control.listener);
@@ -282,7 +284,7 @@ input.addEventListener('blur', () => {
         return {
             path1:{stroke:'#98FF98','stroke-width':3,fill:'none','stroke-linecap':'round'},
             path2:{stroke:'white','stroke-width':3,fill:'none','stroke-linecap':'round',opacity:0.5},
-            indicationLine:{stroke:'white','stroke-width':5,fill:'none',opacity:0},
+            indicationLine:{stroke:'white','stroke-width':2,fill:'none',opacity:0},
             indicationPoint:{fill:'#ff8000',r:9}
         }
     }
