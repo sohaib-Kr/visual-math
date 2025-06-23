@@ -1,13 +1,13 @@
 ---
-const {title, description} = Astro.props;
+const {title} = Astro.props;
 ---
-<div id={`${title}toolTip`} class="grid absolute top-[0] left-[0] opacity-[0] grid-cols-1 grid-rows-1  w-[400px]">
-    <svg id={`${title}toolTipFrame`} class="overlap" viewBox="0 0 250 200" preserveAspectRatio="none">
+<div id={`${title}toolTip`} class="grid absolute top-[0] left-[0] opacity-[0] grid-cols-1 grid-rows-1">
+    <svg id={`${title}toolTipFrame`} class="overlap" preserveAspectRatio="none">
         
       </svg>
-    <div id={`${title}toolTipContent`} class="overlap opacity-[0] relative top-[15px] h-full w-full p-[10px]">
+    <div id={`${title}toolTipContent`} class="overlap opacity-[0] relative top-[15px] h-fit w-fit px-[20px] pt-[5px] pb-[30px] text-lg font-normal leading-relaxed text-gray-700">
 
-        <p class="px-4 text-xl">{description}</p>
+        <slot/>
 
     </div>
 </div>

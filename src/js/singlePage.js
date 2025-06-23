@@ -19,8 +19,38 @@ Array.from(document.getElementsByClassName('fadeOnScroll')).forEach((element)=>{
         
     })
 })
-Array.from(document.getElementsByClassName('katex-input')).forEach((elem)=>{
-    let src=elem.innerText
-    elem.innerText=''
-    katex.render(src,elem)
-})
+// Function to render KaTeX elements
+function renderKatexElements() {
+    const katexInputs = document.querySelectorAll('.katex-input');
+    
+    katexInputs.forEach(element => {
+      // Skip if already rendered
+      if (element.dataset.rendered === 'true') return;
+      
+      try {
+        const texContent = element.textContent;
+        katex.render(texContent, element, {
+          throwOnError: false
+        });
+        element.dataset.rendered = 'true';
+      } catch (e) {
+        console.error('KaTeX rendering error:', e);
+      }
+    });
+  }
+  
+  // Set up MutationObserver to watch for changes
+  const observer = new MutationObserver((mutations) => {
+    renderKatexElements();
+  });
+  
+  // Start observing the document with the configured parameters
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: false,
+    characterData: false
+  });
+  
+  // Initial render
+  document.addEventListener('DOMContentLoaded', renderKatexElements);

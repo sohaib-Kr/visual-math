@@ -1,20 +1,18 @@
 import gsap from 'gsap'
-import { ContentSchemaContainsSlugError } from 'node_modules/astro/dist/core/errors/errors-data'
 import Vivus from 'vivus'
 let elems=document.getElementsByClassName('toolTipLink')
 setTimeout(function(){
-
 for(let elem of elems){
     let title = elem.getAttribute('data-title');
     let box = document.getElementById(`${title}toolTip`);
     let SVG = document.getElementById(`${title}toolTipFrame`);
     let content = document.getElementById(`${title}toolTipContent`);
+    console.log(content)
     let mainContainer=document.getElementById('parts-container')
     let contWidth=parseInt(window.getComputedStyle(mainContainer).width)
     let linkPos=elem.getBoundingClientRect().left-mainContainer.getBoundingClientRect().left
     let lRatio=parseInt(linkPos)/contWidth
-    console.log(elem.getBoundingClientRect().left)
-
+    
 
 
     // Get computed dimensions
