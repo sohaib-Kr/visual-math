@@ -69,7 +69,7 @@ box.style.height = `${height}px`;
     // The pointer tip's position relative to the SVG is (pointerX, pointerTipY)
     let linkX=parseInt(elem.getBoundingClientRect().left)
     let linkY=parseInt(elem.getBoundingClientRect().top)
-    const svgX = linkX - pointerX-10;
+    const svgX = linkX - pointerX+50;
     const svgY = linkY - pointerTipY-10;
 
     // Apply positioning (assuming SVG is inside 'box' with position: absolute)
@@ -77,8 +77,12 @@ box.style.height = `${height}px`;
     box.style.top = `${svgY}px`;
 
     box.style.display='none'
+
+    
+    let clicked=false
     elem.addEventListener('mouseover',function(){
-        new Vivus(`${title}toolTipFrame`, {
+        if(!clicked){
+            new Vivus(`${title}toolTipFrame`, {
                 type: 'oneByOne',
                 duration:150,
                 pathTimingFunction: Vivus.EASE_OUT,
@@ -87,10 +91,14 @@ box.style.height = `${height}px`;
                     gsap.to(`#${title}toolTipContent`,{duration:0.5,delay:0.3,y:-5,opacity:1})
                 }
             })
+        }
     })
-    box.addEventListener('mouseout',function(){
-        gsap.to(`#${title}toolTipContent`,{duration:0.4,delay:0.3,y:5,opacity:0,onComplete:()=>{
-            gsap.to(box,{duration:0.5,y:5,opacity:0})
+    elem.addEventListener('click',function(){
+        clicked=!clicked
+    })
+    elem.addEventListener('mouseout',function(){
+        (!clicked)&&gsap.to(`#${title}toolTipContent`,{duration:0.4,delay:0.3,y:5,opacity:0,onComplete:()=>{
+            gsap.to(box,{duration:0.5,y:5,opacity:0,display:'none'})
         }})
     })
 }

@@ -50,7 +50,7 @@ anim.initSteps([
         let gammaX=coords[4]
         let gammaY=coords[5]
         gsap.to({},{
-            duration:500,
+            duration:3,
             onUpdate:function(){
                 updateIndicator(firstLoop,this.progress(),indicator)
                 emph.updateAll()
@@ -83,7 +83,7 @@ anim.initSteps([
         let gammaX=coords[4]
         let gammaY=coords[5]
         gsap.to({},{
-            duration:500,
+            duration:3,
             onUpdate:function(){
                 updateIndicator(secondLoop,this.progress(),indicator)
             emph.updateAll()
@@ -119,8 +119,7 @@ anim.initSteps([
     ()=>{
         anim.pause()
         let x,y
-        let t=0
-            let coords=textHolder.textSpace.querySelectorAll('.mord')
+        let coords=textHolder.textSpace.querySelectorAll('.mord')
             let holder1=coords[3]
             let holder2=coords[9]
             let firstLength=firstLoop.length()
@@ -132,7 +131,7 @@ anim.initSteps([
             let Y=coords[16]
         let [holder1Faded,holder2Faded]=[false,false]
         gsap.to({},{
-            duration:500,
+            duration:3,
             onUpdate:function(){
             gammaT.textContent=(this.progress()/2).toFixed(1);
             ({x,y}=firstLoop.pointAt(firstLength*this.progress()))
@@ -147,8 +146,8 @@ anim.initSteps([
             anim.play()
         }
         })
-        let J=gsap.to({},{
-            duration:500,
+        gsap.to({},{
+            duration:3,
             onUpdate:function(){
                 gammaT.textContent=(this.progress()/2).toFixed(1);
                 ({x,y}=secondLoop.pointAt(secondLength*(this.progress()-1)))
@@ -159,29 +158,26 @@ anim.initSteps([
                     gsap.to(holder1,{duration:0.5,opacity:0.3})
                     gsap.to(holder2,{duration:0.5,opacity:1})
                 }
-                t+=0.01
-                if(t>=2.01){
-                    J.stop()
-                    anim.play()
-                }
             },
             onComplete:function(){
                 anim.play()
             }
         })
             
-let I3=animateWithRAF((timestamp,deltaTime)=>{
-    gammaT.textContent=(t/2).toFixed(1)
+gsap.to({},{
+    duration:3,
+    onUpdate:function(){
+    gammaT.textContent=(this.progress()/2).toFixed(1)
     X.textContent=(x/100).toFixed(2)
     Y.textContent=(-y/100).toFixed(2)
     emph.updateAll()
     emph.highlightGroup.children()[3]
     .transform({rotate:indicator.transform().rotate})
-    if(t>=2.01){
-        I3.stop()
+    },
+    onComplete:function(){
         anim.play()
     }
-    })
+})
 }
 ])
 return anim
