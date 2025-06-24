@@ -7,7 +7,6 @@ for(let elem of elems){
     let box = document.getElementById(`${title}toolTip`);
     let SVG = document.getElementById(`${title}toolTipFrame`);
     let content = document.getElementById(`${title}toolTipContent`);
-    console.log(content)
     let mainContainer=document.getElementById('parts-container')
     let contWidth=parseInt(window.getComputedStyle(mainContainer).width)
     let linkPos=elem.getBoundingClientRect().left-mainContainer.getBoundingClientRect().left
@@ -79,12 +78,12 @@ box.style.height = `${height}px`;
 
     box.style.display='none'
     elem.addEventListener('mouseover',function(){
-        gsap.to(box,{duration:0.5,y:10,opacity:1,display:'grid'})
         new Vivus(`${title}toolTipFrame`, {
                 type: 'oneByOne',
                 duration:150,
                 pathTimingFunction: Vivus.EASE_OUT,
                 onReady:function(){
+                    gsap.to(box,{duration:0.5,y:10,opacity:1,display:'grid'})
                     gsap.to(`#${title}toolTipContent`,{duration:0.5,delay:0.3,y:-5,opacity:1})
                 }
             })

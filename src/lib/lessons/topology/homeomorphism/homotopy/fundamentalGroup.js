@@ -1,10 +1,10 @@
 import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
-export const anim = new vMathAnimation('fundamentalGroup');
-
-const draw=anim.frame
-const plane=new CartPlane({draw, unit:{u:30,v:30}})
-let mainPath=anim.createTopoPath({
+function init(){
+    const anim = new vMathAnimation('fundamentalGroup');
+    const draw=anim.frame
+    const plane=new CartPlane({draw, unit:{u:30,v:30}})
+    let mainPath=anim.createTopoPath({
     codedPath:`M |a|
 C |b| |c| |d|
 S |e| |f|
@@ -85,3 +85,6 @@ anim.initSteps([
         })
     }
 ])
+return anim
+}
+export const anim = {vMath:init(),init:init};

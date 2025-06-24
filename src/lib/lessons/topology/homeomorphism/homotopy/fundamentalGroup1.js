@@ -1,7 +1,8 @@
 import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
-import { animateWithRAF } from '@/lib/library.js';
-export const anim = new vMathAnimation('fundamentalGroup1');
+import gsap from 'gsap'
+function init(){
+    const anim = new vMathAnimation('fundamentalGroup1');
 
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
@@ -182,12 +183,10 @@ anim.initSteps([
     ()=>{
         let indicator=secondPath.createIndicator(plane)
         let t=0
-        let I=animateWithRAF((timestamp,deltaTime)=>{
-            secondPath.updateIndicator(t,indicator)
-            t+=0.01
-            if(t>1){
-                I.stop()
-            }
+        gsap.to({},{
+            duration:500,
+            onUpdate:function(){secondPath.updateIndicator(this.progress(),indicator)},
+            onComplete:function(){secondPath.updateIndicator(1,indicator)}
         })
     },
     ()=>{
@@ -207,3 +206,6 @@ anim.initSteps([
 
     }
 ])
+return anim
+}
+export const anim = {vMath:init(),init:init};

@@ -1,6 +1,7 @@
 import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
-export const anim = new vMathAnimation('homotopyWithHole');
+function init(){
+    const anim = new vMathAnimation('homotopyWithHole');
 
 const draw=anim.frame
 const config=anim.config()
@@ -207,3 +208,6 @@ anim.initSteps([
         }})
     }
 ])
+return anim
+}
+export const anim = {vMath:init(),init:init};

@@ -43,6 +43,7 @@ export class vMathAnimation {
             
                 this.wrapper.children[0].style.transform='scale('+(ofsetWidth/1200)+','+(ofsetHeight/800)+')'
         parentElement.appendChild(this.wrapper);
+        this.node=this.wrapper.querySelector('.animation')
         gsap.fromTo(this.wrapper.parentNode.parentNode,{opacity:0},{duration:0.8,opacity:1})
         //using SVG.js we load the svg frame element and configure it
         this.frame = SVG(`#${id}Frame`).size(1200,800);
@@ -295,6 +296,16 @@ input.addEventListener('blur', () => {
             this.wrapper.parentNode.parentNode.style.opacity=1
             this.wrapper.remove()
             init().engine[0]()
+        }})
+    }
+    kill(init){
+        this.pause()
+        gsap.to(this.wrapper.parentNode.parentNode,{duration:0.8,opacity:0,onComplete:()=>{
+            this.wrapper.parentNode.parentNode.children[0].children[0].innerHTML=''
+            this.wrapper.parentNode.parentNode.children[0].children[1].innerHTML=''
+            this.wrapper.parentNode.parentNode.style.opacity=1
+            this.wrapper.remove()
+                    // return init()
         }})
     }
 } 

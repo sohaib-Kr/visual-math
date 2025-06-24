@@ -200,4 +200,4 @@ anim.initSteps([
 ])
 return anim
 }
-export const anim= init()
+export const anim = {vMath:init(),init:init};

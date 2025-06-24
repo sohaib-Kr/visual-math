@@ -1,7 +1,6 @@
 import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
 import gsap from 'gsap';
-import Vivus from 'vivus'
 
 function init(){
     const anim = new vMathAnimation('pathDefinition');
@@ -260,4 +259,4 @@ anim.initSteps([
 ])
 return anim
 }
-export const anim = init();
+export const anim = {vMath:init(),init:init};
