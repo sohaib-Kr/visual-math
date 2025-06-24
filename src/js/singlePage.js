@@ -29,9 +29,10 @@ function renderKatexElements() {
       
       try {
         const texContent = element.textContent;
-        katex.render(texContent, element, {
+        console.log(katex.render(texContent, element, {
           throwOnError: false
-        });
+        }))
+        element.classList.remove('katex-input')
         element.dataset.rendered = 'true';
       } catch (e) {
         console.error('KaTeX rendering error:', e);
@@ -40,17 +41,37 @@ function renderKatexElements() {
   }
   
   // Set up MutationObserver to watch for changes
-  const observer = new MutationObserver((mutations) => {
-    renderKatexElements();
-  });
+  // const observer = new MutationObserver((mutations) => {
+  //   renderKatexElements();
+  // });
   
   // Start observing the document with the configured parameters
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-    attributes: false,
-    characterData: false
-  });
+  // observer.observe(document.body, {
+  //   childList: true,
+  //   subtree: true,
+  //   attributes: false,
+  //   characterData: false
+  // });
   
   // Initial render
-  document.addEventListener('DOMContentLoaded', renderKatexElements);
+  // document.addEventListener('DOMContentLoaded', renderKatexElements);
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    
+      gsap.timeline({
+        repeat:-1,
+        ease:'power1.inOut',
+        repeatDelay:4})
+        .to('.toolTipLink',{
+        rotate:2,
+        duration:0.2})
+        .to('.toolTipLink',{
+        rotate:-2,
+        duration:0.2})
+        .to('.toolTipLink',{
+        rotate:1,
+        duration:0.2})
+        .to('.toolTipLink',{
+        rotate:0,
+        duration:0.2})
+  })

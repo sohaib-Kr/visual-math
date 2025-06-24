@@ -27,11 +27,7 @@ export const Title = (props) => (
   </p>
 );
 
-export const Latex = (props) => (
-  <span className="katex-input text-gray-600  text-[16px]">
-    {props.children}
-  </span>
-);
+
 export const Part=(props)=> <div className="h-fit rounded-lg p-8 part" data-title={props.title}>{props.children}</div>
 export const AnimationFrame=(props)=> (
 <div className="w-full my-[90px] grid grid-cols-[40%_60%] grid-rows-[100%] " style={props.style}>

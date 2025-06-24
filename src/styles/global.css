@@ -4,11 +4,13 @@
 }
 @font-face {
     font-family: 'poppins';
-    src: url('../assets/Poppins-Light.ttf') format('woff2'),
+    src: url('../assets/Poppins-Light.ttf') format('woff2');
+    font-display: block;
 }
 @font-face {
     font-family: 'merriweather';
-    src: url('../assets/Merriweather-Light.ttf') format('woff2'),
+    src: url('../assets/Merriweather-Light.ttf') format('woff2');
+    font-display: block;
 }
 .fadeOnScroll{
     opacity: 0;

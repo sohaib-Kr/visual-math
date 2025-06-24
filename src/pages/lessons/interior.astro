@@ -3,7 +3,8 @@ import Lesson from '../../layouts/Lesson.astro';
 import * as short from '../../components/blog'
 import Exercices from '@/layouts/Exercices.astro';
 import ToolTipLink from '../../components/blog/ToolTipLink.astro';
-const {Title,SubHead,Paragraph,Part,AnimationFrame,Latex,H,Ex,ExerciceSection,ToolTip}=short
+import Latex from '../../components/blog/Latex.astro';
+const {Title,SubHead,Paragraph,Part,AnimationFrame,H,Ex,ExerciceSection,ToolTip}=short
 title: "Understanding Topological Interior Concepts"
 description: "A brief introduction to the fundamental concept of interior in topology"
 pubDate: 2023-11-20
@@ -125,7 +126,7 @@ Homotopy cannot always be performed if a space has "holes" or obstructions.
 
 <Ex>Example:</Ex>
 <ul>
-    <li>A loop around a puncture in <Latex>\mathbb {'{'} R {'}'}^2 \setminus \{'{'}0{'}'}\</Latex> cannot be shrunk to a point.</li>
+    <li>A loop around a puncture in <Latex>\mathbb {'{'} R {'}'}^2 \setminus \{'{'} 0 \{'}'}</Latex> cannot be shrunk to a point.</li>
     <li>A non-contractible loop on a torus (like one that wraps around the central hole) has no homotopy to a constant loop.</li>
 </ul>
 </Paragraph>
