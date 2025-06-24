@@ -16,9 +16,9 @@ function init(){
     .attr({...config.path1})
     .addTo(plane.plane)
 let emph
-let indicator
 let textHolder=anim.createTextSpace()
-indicator=createIndicator(plane)
+let indicator=createIndicator(plane)
+updateIndicator(firstLoop,0,indicator)
 
 anim.initSteps([
     ()=>{
@@ -33,18 +33,16 @@ anim.initSteps([
                     `\\newline \\gamma_{2}=(1.00,1.00)`])
             }})
     },
+    ()=>{},
     ()=>{
-        indicator=createIndicator(plane)
+        indicator.attr({opacity:0})
         emph=anim.emphasize([firstLoop,indicator],{resultStyle:[
             {opacity:1},
             {opacity:1,filter:'brightness(2)'}
         ]})
         emph.on()
-    },
-    ()=>{
         anim.pause()
         gsap.to(textHolder.textSpace.children[1],{duration:0.5,opacity:0.3})
-        let t=0
         let coords=textHolder.textSpace.children[0].querySelectorAll('.mord')
         let length=firstLoop.length()
         let gammaX=coords[4]
@@ -59,7 +57,6 @@ anim.initSteps([
             gammaY.textContent=(-y/100).toFixed(2)
             emph.highlightGroup.children()[2]
             .transform({rotate:indicator.transform().rotate})
-            t+=0.01
             },
             onComplete:function(){
                 anim.play()
@@ -67,7 +64,7 @@ anim.initSteps([
         })
     },
     ()=>{
-        emph.remove()
+        emph.off()
         emph=anim.emphasize([secondLoop,indicator],{resultStyle:[
             {opacity:1},
             {opacity:1,filter:'brightness(2)'}
@@ -99,7 +96,7 @@ anim.initSteps([
         })
     },
     ()=>{
-        // emph.remove()
+        emph.remove()
         emph=anim.emphasize([firstLoop,secondLoop,indicator],{resultStyle:[
             {opacity:1},
             {opacity:1},
@@ -118,6 +115,8 @@ anim.initSteps([
     },
     ()=>{
         anim.pause()
+
+
         let x,y
         let coords=textHolder.textSpace.querySelectorAll('.mord')
             let holder1=coords[3]
@@ -130,6 +129,7 @@ anim.initSteps([
             let X=coords[15]
             let Y=coords[16]
         let [holder1Faded,holder2Faded]=[false,false]
+
         gsap.to({},{
             duration:3,
             onUpdate:function(){
@@ -137,45 +137,54 @@ anim.initSteps([
             ({x,y}=firstLoop.pointAt(firstLength*this.progress()))
             gammaT1.textContent=(this.progress()).toFixed(1)
             updateIndicator(firstLoop,this.progress(),indicator)
+            emph.updateAll()
             if(!holder1Faded){
                 holder1Faded=true
                 gsap.to(holder2,{duration:0.5,opacity:0.3})
             }
         },
         onComplete:function(){
-            anim.play()
-        }
-        })
-        gsap.to({},{
-            duration:3,
-            onUpdate:function(){
-                gammaT.textContent=(this.progress()/2).toFixed(1);
-                ({x,y}=secondLoop.pointAt(secondLength*(this.progress()-1)))
-                gammaT2.textContent=(this.progress()-1).toFixed(1)
-                updateIndicator(secondLoop,this.progress()-1,indicator)
-                if(!holder2Faded){
-                    holder2Faded=true
-                    gsap.to(holder1,{duration:0.5,opacity:0.3})
-                    gsap.to(holder2,{duration:0.5,opacity:1})
+            gsap.to({},{
+                duration:3,
+                onUpdate:function(){
+                    gammaT.textContent=(this.progress()/2).toFixed(1);
+                    ({x,y}=secondLoop.pointAt(secondLength*this.progress()))
+                    gammaT2.textContent=(this.progress()).toFixed(1)
+                    updateIndicator(secondLoop,this.progress(),indicator)
+                    emph.updateAll()
+                    if(!holder2Faded){
+                        holder2Faded=true
+                        gsap.to(holder1,{duration:0.5,opacity:0.3})
+                        gsap.to(holder2,{duration:0.5,opacity:1})
+                    }
+                },
+                onComplete:function(){
+                    emph.updateAll()
                 }
-            },
-            onComplete:function(){
-                anim.play()
-            }
+            })
+        }
         })
             
 gsap.to({},{
-    duration:3,
+    duration:6.1,
     onUpdate:function(){
     gammaT.textContent=(this.progress()/2).toFixed(1)
     X.textContent=(x/100).toFixed(2)
     Y.textContent=(-y/100).toFixed(2)
-    emph.updateAll()
-    emph.highlightGroup.children()[3]
-    .transform({rotate:indicator.transform().rotate})
+        emph.updateAll()
+        emph.highlightGroup.children()[3]
+        .transform({rotate:indicator.transform().rotate})
     },
     onComplete:function(){
-        anim.play()
+        emph.updateAll()
+        
+        emph.highlightGroup.children()[3]
+        .transform({rotate:indicator.transform().rotate})
+        emph.off()
+        emph.remove()
+        indicator.animate(1000).attr({opacity:0}).after(function(){
+            indicator.node.remove()
+        })
     }
 })
 }

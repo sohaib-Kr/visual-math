@@ -23,8 +23,15 @@ export function updateIndicator(shape, t, indicator) {
     const epsilon = 0.001; // Small offset to calculate direction
     
     // Get current position and next position
-    const currentPoint = shape.pointAt(t * length);
-    const nextPoint = shape.pointAt(Math.min((t + epsilon) * length, length));
+    let currentPoint,nextPoint
+    if(t<1){
+        currentPoint = shape.pointAt(t * length);
+        nextPoint = shape.pointAt(Math.min((t + epsilon) * length, length));
+    }
+    else if(t==1){
+        currentPoint = shape.pointAt( length-epsilon);
+        nextPoint = shape.pointAt(length);
+    }
     
     // Calculate the angle in radians
     let angle = Math.atan2(nextPoint.y - currentPoint.y, nextPoint.x - currentPoint.x);
