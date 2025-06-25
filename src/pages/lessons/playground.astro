@@ -15,7 +15,7 @@ draft: false
 <Lesson>
 <Part>
 <Title>Playground</Title>
-<AnimationFrame id="exerciceFrame12" style={{
+<AnimationFrame id="concatenation" style={{
     width: '120%',
     height: '400px',
     position: 'relative',
@@ -24,7 +24,6 @@ draft: false
 </Part>
 </Lesson>
 <script>
-import { exo12 } from '@/lib/lessons/topology/homeomorphism/homotopy/exercices';
-let anim=exo12()
-anim.engine[0]()
+import { anim } from '@/lib/lessons/topology/homeomorphism/homotopy/concatenation';
+anim.vMath.engine[0]()
 </script>
