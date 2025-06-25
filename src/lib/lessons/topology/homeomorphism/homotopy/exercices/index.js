@@ -151,3 +151,128 @@ L |b|`,
 
     return anim;
 }
+
+
+
+
+
+
+
+export function exo10() {
+    const anim = new vMathAnimation('exerciceFrame10', false);
+    const draw = anim.frame;
+    const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
+    const config=anim.config()
+    let firstCircle=plane.plane.circle(20).stroke({color:'white',width:3,dasharray:'5 5'}).center(-200, 0).fill('rgba(255, 255, 255, 0.14)')
+    let secondCircle=plane.plane.circle(20).stroke({color:'white',width:3,dasharray:'5 5'}).center(200, 0).fill('rgba(255, 255, 255, 0.14)')
+    let path1=plane.plane.group()
+    path1.path(`M -108 196 C 54 142 -36 -48 93 -119`).center(-200,0)
+    path1.attr({...config.path1,opacity:0});
+    let path2=plane.plane.group()
+    path2.path(`M 167 99 C -5 69 116 -70 -72 -58`).center(200,0)
+    path2.attr({...config.path1,opacity:0});
+
+    // Initialize animation steps
+    anim.initSteps([
+        ()=>{
+            firstCircle.animate(1000).attr({r:200})
+            secondCircle.animate(1000).attr({r:200})
+        },
+        ()=>{
+            anim.vivusRender({elem:path1.node})
+            anim.vivusRender({elem:path2.node})
+            path1.animate(1000).attr({opacity:1})
+            path2.animate(1000).attr({opacity:1})
+            
+        }
+    ]);
+
+    return anim;
+}
+
+export function exo11() {
+    const anim = new vMathAnimation('exerciceFrame11', false);
+    const draw = anim.frame;
+    const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
+    const config=anim.config()
+    plane.plane.circle(20).fill('white').center(200,0)
+    plane.plane.circle(20).fill('white').center(-200,0)
+    let path1=anim.createTopoPath({
+        codedPath:`M |a|
+       C |b| |c| |d|
+       C |e| |f| |a|`,
+        initialData:{a:[-300,0],b:[-300,-300],c:[300,300],d:[300,0],e:[300,-300],f:[-300,300]},
+        attr:{...config.path1,opacity:0.7}})
+    plane.append(path1.group)
+    let path2=plane.plane.group()
+    path2.path(`M -330 0
+       C -330 -300 330 -300 330 0
+       C 330 300 -330 300 -330 0 Z`).fill('none').attr({...config.path1,opacity:0})
+    
+
+    // Initialize animation steps
+    anim.initSteps([
+        ()=>{
+            anim.vivusRender({elem:path1.group.node})
+            path1.shape.animate(1000).attr({opacity:1})
+        },
+        ()=>{
+            anim.vivusRender({elem:path2.node})
+            path2.children()[0].animate(1000).attr({opacity:1})
+        },
+        ()=>{
+            let aPath=plane.plane.path('M -300 0 L -220 0')
+            let bPath=plane.plane.path('M -300 -300 L-220 -90')
+            let fPath=plane.plane.path('M -300 300 L -220 90')
+            let updater=path1.createShapeUpdater({a:aPath,b:bPath,f:fPath})
+            updater.runUpdater({duration:1})
+        }
+    ]);
+
+    return anim;
+}
+
+export function exo12() {
+    const anim = new vMathAnimation('exerciceFrame12', false);
+    const draw = anim.frame;
+    const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
+    const config=anim.config()
+    plane.plane.circle(20).fill('white').center(200,0)
+    plane.plane.circle(20).fill('white').center(-200,0)
+    let path1=anim.createTopoPath({
+        codedPath:`M |a|
+       C |b| |c| |d|
+       C |e| |f| |a|`,
+        initialData:{a:[-300,0],b:[-300,-300],c:[300,300],d:[300,0],e:[300,-300],f:[-300,300]},
+        attr:{...config.path1,opacity:0.7}})
+    plane.append(path1.group)
+    let path2=plane.plane.group()
+    path2.path(`M -330 0
+       C -330 -300 330 -300 330 0
+       C 330 300 -330 300 -330 0 Z`).fill('none').attr({...config.path1,opacity:0})
+    
+
+    // Initialize animation steps
+    anim.initSteps([
+        ()=>{
+            anim.vivusRender({elem:path1.group.node})
+            path1.shape.animate(1000).attr({opacity:1})
+        },
+        ()=>{
+            anim.vivusRender({elem:path2.node})
+            path2.children()[0].animate(1000).attr({opacity:1})
+        },
+        ()=>{
+            let aPath=plane.plane.path('M -300 0 L -330 0')
+            let cPath=plane.plane.path('M 300 300 L 330 300')
+            let dPath=plane.plane.path('M 300 0 L 330 0')
+            let ePath=plane.plane.path('M 300 -300 L 330 -300')
+            let bPath=plane.plane.path('M -300 -300 L-330 300')
+            let fPath=plane.plane.path('M -300 300 L -330 -300')
+            let updater=path1.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath,e:ePath,f:fPath})
+            updater.runUpdater({duration:1})
+        }
+    ]);
+
+    return anim;
+}

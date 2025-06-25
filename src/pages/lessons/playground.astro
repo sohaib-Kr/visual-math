@@ -1,7 +1,7 @@
 ---
 import Exercices from '../../layouts/Exercices.astro';
 import * as short from '../../components/blog'
-const {Title,SubHead,Paragraph,Part,AnimationFrame,Latex,H,Ex}=short
+const {Title,SubHead,Paragraph,Part,AnimationFrame,H,Ex}=short
 import ExoSection from '../../components/blog/exercice/ExoSection'
 import Lesson from '@/layouts/Lesson.astro';
 title: "Playground"
@@ -15,7 +15,7 @@ draft: false
 <Lesson>
 <Part>
 <Title>Playground</Title>
-<AnimationFrame id="test" style={{
+<AnimationFrame id="exerciceFrame12" style={{
     width: '120%',
     height: '400px',
     position: 'relative',
@@ -24,4 +24,7 @@ draft: false
 </Part>
 </Lesson>
 <script>
+import { exo12 } from '@/lib/lessons/topology/homeomorphism/homotopy/exercices';
+let anim=exo12()
+anim.engine[0]()
 </script>
