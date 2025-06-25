@@ -36,15 +36,15 @@ for(let elem of elems){
         gsap.to(elem,{duration:0.5,opacity:1})
     }})
     let title = elem.getAttribute('data-title');
-    let box = document.getElementById(`${title}toolTip`);
-    let SVG = document.getElementById(`${title}toolTipFrame`);
-    let content = document.getElementById(`${title}toolTipContent`);
+    let box = document.getElementById(`${title}toolTip`).cloneNode(true)
+    let SVG =box.querySelector('svg');
+    let content = box.querySelector('div');
     let mainContainer=document.getElementById('parts-container')
     let contWidth=parseInt(window.getComputedStyle(mainContainer).width)
     let linkPos=elem.getBoundingClientRect().left-mainContainer.getBoundingClientRect().left
     let lRatio=parseInt(linkPos)/contWidth
+    document.body.appendChild(box)
     
-
 
     // Get computed dimensions
     let size = window.getComputedStyle(content);
@@ -55,6 +55,9 @@ for(let elem of elems){
     SVG.setAttribute('width', width);
     SVG.setAttribute('height', height);
     SVG.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    let rand=Math.floor(Math.random() * 5000) 
+    SVG.setAttribute('id',`toolTipFrame${rand}`)
+    content.setAttribute('id',`toolTipContent${rand}`)
     
    // Calculate pointer position (centered)
 // Pointer configuration - only position is dynamic
@@ -113,13 +116,13 @@ box.style.height = `${height}px`;
     let clicked=false
     elem.addEventListener('mouseover',function(){
         if(!clicked){
-            new Vivus(`${title}toolTipFrame`, {
+            new Vivus(`toolTipFrame${rand}`, {
                 type: 'oneByOne',
                 duration:150,
                 pathTimingFunction: Vivus.EASE_OUT,
                 onReady:function(){
                     gsap.to(box,{duration:0.5,y:10,opacity:1,display:'grid'})
-                    gsap.to(`#${title}toolTipContent`,{duration:0.5,delay:0.3,y:-5,opacity:1})
+                    gsap.to(`#toolTipContent${rand}`,{duration:0.5,delay:0.3,y:-5,opacity:1})
                 }
             })
         }
@@ -128,7 +131,7 @@ box.style.height = `${height}px`;
         clicked=!clicked
     })
     elem.addEventListener('mouseout',function(){
-        (!clicked)&&gsap.to(`#${title}toolTipContent`,{duration:0.4,delay:0.3,y:5,opacity:0,onComplete:()=>{
+        (!clicked)&&gsap.to(`#toolTipContent${rand}`,{duration:0.4,delay:0.3,y:5,opacity:0,onComplete:()=>{
             gsap.to(box,{duration:0.5,y:5,opacity:0,display:'none'})
         }})
     })
