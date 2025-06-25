@@ -4,7 +4,8 @@ import * as short from '../../components/blog'
 import Exercices from '@/layouts/Exercices.astro';
 import ToolTipLink from '../../components/blog/ToolTipLink.astro';
 import Latex from '../../components/blog/Latex.astro';
-const {Title,SubHead,Paragraph,Part,AnimationFrame,H,Ex,ExerciceSection,ToolTip}=short
+const {Title,SubHead,Paragraph,Part,AnimationFrame,H,Ex,ExerciceSection}=short
+import ToolTip from '../../components/blog/ToolTip.astro';
 title: "Understanding Topological Interior Concepts"
 description: "A brief introduction to the fundamental concept of interior in topology"
 pubDate: 2023-11-20
@@ -195,52 +196,3 @@ Homotopy cannot always be performed if a space has "holes" or obstructions.
 <ToolTip title="identity">
          <p>The identity function <Latex>id</Latex> is the function that maps every element of a set to itself.</p>
           </ToolTip>
-<script>
-import { anim as pathDefinition} from "../../lib/lessons/topology/homeomorphism/homotopy/pathDefinition.js";
-import { anim as homotopyWithHole} from "../../lib/lessons/topology/homeomorphism/homotopy/homotopyWithHole.js";
-import { anim as homotopicalEqu} from "../../lib/lessons/topology/homeomorphism/homotopy/homotopicalEqu.js";
-import { anim as concatenation} from "../../lib/lessons/topology/homeomorphism/homotopy/concatenation.js";
-import {exo00,exo01,exo02} from "../../lib/lessons/topology/homeomorphism/homotopy/exercices"
-let frames={
-    pathDefinition:pathDefinition,
-    homotopyWithHole:homotopyWithHole,
-    homotopicalEqu:homotopicalEqu,
-    concatenation:concatenation
-}
-const observer = new MutationObserver(() => {
-    if (document.getElementById("exerciceSection")) {
-        observer.disconnect();
-        exo00().engine[0]()
-        exo01().engine[0]()
-        exo02().engine[0]()
-    }
-});
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
-});
-
-
-for (let key in frames) {
-  const targetSection = frames[key].vMath.node;
-  let isFirstObservation = true;
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (isFirstObservation) {
-        isFirstObservation = false;
-        return; // Skip the first observation
-      }
-
-      if (entry.isIntersecting) {
-        frames[key].vMath.engine[0]();
-        observer.disconnect()
-      }
-    });
-  }, {
-    threshold: 0.5,
-  });
-
-  observer.observe(targetSection);
-}
-</script>
