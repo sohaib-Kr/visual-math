@@ -3,7 +3,30 @@ import Vivus from 'vivus'
 import { SVG } from '@svgdotjs/svg.js'
 import Flip from 'gsap/Flip'
 import ScrollTrigger from 'gsap/ScrollTrigger'
-gsap.registerPlugin(Flip, ScrollTrigger);
+
+function fadingEffect(){
+    gsap.registerPlugin(ScrollTrigger)
+
+Array.from(document.getElementsByClassName('fadeOnScroll')).forEach((element)=>{
+    ScrollTrigger.create({
+        trigger:element,
+        start: "top 75%",
+        onEnter:()=>{
+            gsap.to(element,{opacity:1,y:-20,duration:0.8})
+        },
+        onLeaveBack:()=>{
+            gsap.to(element,{opacity:0,y:20,duration:0.8})
+        },
+        
+    })
+})
+}
+
+
+
+
+
+
 function initializeToolTips(){ 
 let elems=document.getElementsByClassName('toolTipLink')
 for(let elem of elems){
@@ -66,8 +89,7 @@ SVG.innerHTML = `
         Z" 
       fill="white" 
       stroke="#ccc" 
-      stroke-width="1"
-      vector-effect="non-scaling-stroke"/>
+      stroke-width="1"/>
 `;
 
 // Set the tooltip box dimensions
@@ -111,7 +133,33 @@ box.style.height = `${height}px`;
         }})
     })
 }
+
+gsap.timeline({
+    repeat:-1,
+    ease:'power1.inOut',
+    delay:2,
+    repeatDelay:4})
+    .to('.toolTipLink',{
+    rotate:2,
+    duration:0.2})
+    .to('.toolTipLink',{
+    rotate:-2,
+    duration:0.2})
+    .to('.toolTipLink',{
+    rotate:1,
+    duration:0.2})
+    .to('.toolTipLink',{
+    rotate:0,
+    duration:0.2})
+
 }
+
+
+
+
+
+
+
 
 function progressBar(){
 
@@ -270,6 +318,7 @@ document.addEventListener('DOMContentLoaded',
     function(){
         initializeToolTips()
         progressBar()
+        fadingEffect()
         loadAnimations()
     }
 )
