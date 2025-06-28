@@ -4,7 +4,7 @@ import * as short from '../../components/blog'
 import Exercices from '@/layouts/Exercices.astro';
 import ToolTipLink from '../../components/blog/ToolTipLink.astro';
 import Latex from '../../components/blog/Latex.astro';
-const {Title,SubHead,Paragraph,Part,AnimationFrame,H,Ex,ExerciceSection}=short
+const {Title,SubHead,Paragraph,Part,AnimationFrame,H,Ex,ExerciceSection,Li}=short
 import ToolTip from '../../components/blog/ToolTip.astro';
 title: "Understanding Topological Interior Concepts"
 description: "A brief introduction to the fundamental concept of interior in topology"
@@ -105,7 +105,8 @@ A <H>loop</H> is a special kind of path where the start and end points coincide,
 Two paths (or loops) <Latex>\gamma_0</Latex> and <Latex>\gamma_1</Latex> are <H>homotopic</H> if one can be continuously deformed into the other while 
 keeping endpoints fixed. Formally, a homotopy is a <ToolTipLink title="continuity">continuous map</ToolTipLink> <Latex>H \colon [0,1] \times [0,1] \to X</Latex> such that <Latex>H(0,t) = \gamma_0(t)</Latex> and <Latex>H(1,t) = \gamma_1(t)</Latex>.
 
-Two spaces <Latex>X</Latex> and <Latex>Y</Latex> are <H>homotopy equivalent</H> if there exist maps <Latex>f \colon X \to Y</Latex> and <Latex>g \colon Y \to X</Latex> such that <Latex>g \circ f</Latex> is homotopic to the identity on <Latex>X</Latex>, and <Latex>f \circ g</Latex> is homotopic to the <ToolTipLink title="identity">identity</ToolTipLink> on <Latex>Y</Latex>.
+Two <ToolTipLink title="topoSpace">spaces</ToolTipLink> <Latex>X</Latex> and <Latex>Y</Latex> are <H>homotopy equivalent</H> if there exist maps <Latex>f \colon X \to Y</Latex> and <Latex>g \colon Y \to X</Latex> such that <Latex>g \circ f</Latex> is homotopic to the <ToolTipLink title="identity">identity</ToolTipLink> on <Latex>X</Latex>, and <Latex>f \circ g</Latex> 
+is homotopic to the <ToolTipLink title="identity">identity</ToolTipLink> on <Latex>Y</Latex>.
 
 <Ex>Example:</Ex><ToolTipLink title="disk">A disk <Latex>D^2</Latex></ToolTipLink> is homotopy equivalent to a single point, but <ToolTipLink title="circle">a circle <Latex>S^1</Latex></ToolTipLink> is not.
 <AnimationFrame id="homotopicalEqu" style={{
@@ -126,9 +127,9 @@ Two spaces <Latex>X</Latex> and <Latex>Y</Latex> are <H>homotopy equivalent</H> 
 Homotopy cannot always be performed if a space has "holes" or obstructions.
 
 <Ex>Example:</Ex>
-<ul>
-    <li>A loop around a puncture in <Latex>\mathbb {'{'} R {'}'}^2 \setminus \{'{'} 0 \{'}'}</Latex> cannot be shrunk to a point.</li>
-    <li>A non-contractible loop on a torus (like one that wraps around the central hole) has no homotopy to a constant loop.</li>
+<ul class="list-disc p-[20px] [&>li]:inherit list-disc list-inside">
+    <Li>A loop around a puncture in <Latex>\mathbb {'{'} R {'}'}^2 \setminus \{'{'} 0 \{'}'}</Latex> cannot be shrunk to a point.</Li>
+    <Li>A non-contractible loop on a torus (like one that wraps around the central hole) has no homotopy to a constant loop.</Li>
 </ul>
 </Paragraph>
 <AnimationFrame id="homotopyWithHole" style={{
@@ -143,7 +144,7 @@ Homotopy cannot always be performed if a space has "holes" or obstructions.
 <Part title="Path Concatenation">
     <SubHead>Definition of Concatenation</SubHead>
     <Paragraph>
-    Given two paths <Latex>\gamma_1, \gamma_2 : [0,1] \to X</Latex> in a <ToolTipLink title="topoSpace">topological space</ToolTipLink> <Latex>X</Latex></ToolTipLink> with <Latex>\gamma_1(1) = \gamma_2(0)</Latex>, their concatenation is the path:
+    Given two paths <Latex>\gamma_1, \gamma_2 : [0,1] \to X</Latex> in a <ToolTipLink title="topoSpace">topological space</ToolTipLink> <Latex>X</Latex> with <Latex>\gamma_1(1) = \gamma_2(0)</Latex>, their concatenation is the path:
     
     <Latex>
     (\gamma_1 * \gamma_2)(t) = 
@@ -155,9 +156,9 @@ Homotopy cannot always be performed if a space has "holes" or obstructions.
     <br/>
     <Ex>Key Properties:</Ex>
     <ul>
-        <li>Endpoint matching required: <Latex>\gamma_1</Latex> must end where <Latex>\gamma_2</Latex> begins.</li>
-        <li>Homotopy invariance: If <Latex>\gamma_1 \simeq \gamma_1'</Latex> and <Latex>\gamma_2 \simeq \gamma_2'</Latex>, then <Latex>\gamma_1 * \gamma_2 \simeq \gamma_1' * \gamma_2'</Latex>.</li>
-        <li>Associative up to homotopy: <Latex>(\gamma_1 * \gamma_2) * \gamma_3 \simeq \gamma_1 * (\gamma_2 * \gamma_3)</Latex>.</li>
+        <Li>Endpoint matching required: <Latex>\gamma_1</Latex> must end where <Latex>\gamma_2</Latex> begins.</Li>
+        <Li>Homotopy invariance: If <Latex>\gamma_1 \simeq \gamma_1'</Latex> and <Latex>\gamma_2 \simeq \gamma_2'</Latex>, then <Latex>\gamma_1 * \gamma_2 \simeq \gamma_1' * \gamma_2'</Latex>.</Li>
+        <Li>Associative up to homotopy: <Latex>(\gamma_1 * \gamma_2) * \gamma_3 \simeq \gamma_1 * (\gamma_2 * \gamma_3)</Latex>.</Li>
     </ul>
     </Paragraph>
     <AnimationFrame id="concatenation" style={{
@@ -177,11 +178,11 @@ Homotopy cannot always be performed if a space has "holes" or obstructions.
 <ToolTip title="topoSpace">
     A topological space is an ordered pair <Latex>(X, \tau)</Latex>, where <Latex>X</Latex> is a set,
     and <Latex>\tau</Latex> (the topology)<br/> is a collection of subsets of <Latex>X</Latex> satisfying the following axioms:
-    <ul class="list-disc p-[20px]">
+    <ul>
 
-    <li>The empty set <Latex>\emptyset</Latex> and the set <Latex>X</Latex> itself belong to <Latex>\tau</Latex>.</li>
-    <li>The union of any (finite or infinite) collection of sets in <Latex>\tau</Latex> also belongs to <Latex>\tau</Latex>.</li>
-    <li>The intersection of any finite collection of sets in <Latex>\tau</Latex> also belongs to <Latex>\tau</Latex>.</li>
+    <li>The empty set <Latex>\emptyset</Latex> and the set <Latex>X</Latex> itself belong to <Latex>\tau</Latex>.</Li>
+    <li>The union of any (finite or infinite) collection of sets in <Latex>\tau</Latex> also belongs to <Latex>\tau</Latex>.</Li>
+    <li>The intersection of any finite collection of sets in <Latex>\tau</Latex> also belongs to <Latex>\tau</Latex>.</Li>
  </ul>
  </ToolTip>
  <ToolTip title="continuity">

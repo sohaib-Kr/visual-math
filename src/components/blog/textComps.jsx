@@ -21,6 +21,11 @@ export const Paragraph = (props) => (
     {props.children}
   </p>
 );
+export const Li = (props) => (
+  <li className="font-[merriweather] text-gray-600 text-[20px]  tracking-[1px] leading-[2.2] mb-7">
+    {props.children}
+  </li>
+);
 export const Title = (props) => (
   <p className="text-orange-700 text-[38px] tracking-[1.9px] font-[poppins] mb-[80px]">
     {props.children}
