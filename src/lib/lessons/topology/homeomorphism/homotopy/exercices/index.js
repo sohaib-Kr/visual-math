@@ -14,9 +14,8 @@ export function exo00() {
     const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
 
     // Create main circle and path
-    plane.plane.circle(20).fill('white').center(0, 0);
     let mainPath = plane.plane.path(`M 0 0 L 400 0 L 0 0`);
-    mainPath.attr({ stroke: 'red', 'stroke-width': 5, fill: 'none' });
+    mainPath.attr({...anim.config().path1});
 
     // Create indicator line
     let indicatorLine = anim.createTopoPath({
@@ -29,22 +28,48 @@ L |b|`,
         attr: { stroke: 'white', 'stroke-width': 5, fill: 'none', opacity: 0.5 }
     });
     plane.append(indicatorLine.group);
+    plane.plane.circle(15).attr({fill:'orange'}).center(0,0)
+
+    let lambda2=anim.latex('/\\lambda(1)',plane.plane.node,
+        {
+            'font-size':'35px',
+            'font-family':'Palatino, serif',
+            color:'#d7d7d7'
+        }
+    )
+    let lambda1=anim.latex('/\\lambda(0)',plane.plane.node,
+        {
+            'font-size':'35px',
+            'font-family':'Palatino, serif',
+            color:'#d7d7d7'
+        }
+    )
+    console.log(lambda1,lambda2)
+    lambda1.move(-20,30)
+    lambda2.move(-90,-50)
 
     // Initialize animation steps
     anim.initSteps([
         () => { },
+        ()=>{
+            draw.animate(500).transform({
+                origin: [400,-100],
+                scale: 1.4
+              });
+        },
         () => {
             let x = indicatorLine.createShapeUpdater({ b: mainPath });
-            x.runUpdater({duration:2000});
+            x.runUpdater({timeFunc:'easeOut2',duration:1.5});
         },
         ()=>{
             anim.delay=1000
         },
         () => {
             anim.step=1
+
+            console.log('reset')
         }
     ]);
-
     return anim;
 }
 
@@ -61,9 +86,10 @@ export function exo01() {
     const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
 
     // Create main circle and path
-    plane.plane.circle(20).fill('white').center(0, 0);
-    let mainPath = plane.plane.path(`M 200 0 A 1 1 0 0 0 -200 0 A 1 1 0 0 0 200 0 A 200 200 0 0 0 167 -110`);
-    mainPath.attr({ stroke: 'red', 'stroke-width': 5, fill: 'none' });
+    plane.plane.circle(15).attr({fill:'orange'}).center(200,0)
+    plane.plane.circle(15).attr({fill:'orange'}).center(-92,-178)
+    let mainPath = plane.plane.path(`M 200 0 A 1 1 0 0 0 -200 0 A 1 1 0 0 0 200 0 A 200 200 0 0 0 -92 -178`);
+    mainPath.attr({...anim.config().path1});
 
     // Create indicator line
     let indicatorLine = anim.createTopoPath({
@@ -75,14 +101,36 @@ L |b|`,
         },
         attr: { stroke: 'white', 'stroke-width': 5, fill: 'none', opacity: 0.5 }
     });
-    plane.append(indicatorLine.group);
+    plane.append(indicatorLine.group)
+    let lambda2=anim.latex('/\\lambda(1)',plane.plane.node,
+        {
+            'font-size':'35px',
+            'font-family':'Palatino, serif',
+            color:'#d7d7d7'
+        }
+    )
+    let lambda1=anim.latex('/\\lambda(0)',plane.plane.node,
+        {
+            'font-size':'35px',
+            'font-family':'Palatino, serif',
+            color:'#d7d7d7'
+        }
+    )
+    lambda1.move(220,0)
+    lambda2.move(-92,-170)
 
     // Initialize animation steps
     anim.initSteps([
         () => { },
+        ()=>{
+            draw.animate(500).transform({
+                origin: [200,-200],
+                scale: 1.4
+              });
+        },
         () => {
             let x = indicatorLine.createShapeUpdater({ b: mainPath });
-            x.runUpdater({duration:2000});
+            x.runUpdater({timeFunc:'easeIn2',duration:3});
         },
         ()=>{
             anim.delay=1000
@@ -106,15 +154,23 @@ export function exo02() {
     const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
 
     // Create main circle and paths
-    plane.plane.circle(20).fill('white').center(0, 0);
-    let mainPath = plane.plane.path(`M 200 0 A 1 1 0 0 0 -200 0 A 1 1 0 0 0 200 0 A 200 200 0 0 0 167 -110`);
-    mainPath.attr({ stroke: 'red', 'stroke-width': 5, fill: 'none' });
+    plane.plane.path(`M 200 0 A 1 1 0 0 0 -200 0`)
+    .attr({fill:'rgba(255, 255, 255, 0.14)',
+        stroke:'rgba(255, 255, 255, 0.53)',
+        'stroke-width':3,
+    });
+    plane.plane.path(`M -200 0 A 1 1 0 0 0 200 0`)
+    .attr({fill:'rgba(255, 255, 255, 0.14)',
+        stroke:'rgba(255, 255, 255, 0.53)',
+        'stroke-width':3,
+        'stroke-dasharray':'5 5'
+    });
 
-    let firstPath = plane.plane.path(`M -100 0 C -100 100 -200 -100 -200 0`);
-    firstPath.attr({ stroke: 'yellow', 'stroke-width': 5, fill: 'none' });
+    let firstPath = plane.plane.path(`M -52 9 C -122 -65 -22 -116 -100 -173.2`);
+    firstPath.attr({...anim.config().path1});
 
     let secondPath = plane.plane.path(`M 0 200 C -50 100 100 0 100 100`);
-    secondPath.attr({ stroke: 'yellow', 'stroke-width': 5, fill: 'none' });
+    secondPath.attr({...anim.config().path1});
 
     // Create indicator line
     let indicatorLine = anim.createTopoPath({
@@ -124,21 +180,45 @@ L |b|`,
             a: [300, -300],
             b: [-100, 0],
         },
-        attr: { stroke: 'white', 'stroke-width': 5, fill: 'none', opacity: 0.5 }
+        attr: { stroke: 'white', 'stroke-width': 3, fill: 'none', opacity: 0.5 }
     });
     plane.append(indicatorLine.group);
 
+    plane.plane.circle(15).attr({fill:'orange'}).center(-50,10)
+    plane.plane.circle(15).attr({fill:'orange'}).center(100,100)
+    let lambda2=anim.latex('/\\lambda(1)',plane.plane.node,
+        {
+            'font-size':'30px',
+            'font-family':'Palatino, serif',
+            color:'#d7d7d7'
+        }
+    )
+    let lambda1=anim.latex('/\\lambda(0)',plane.plane.node,
+        {
+            'font-size':'30px',
+            'font-family':'Palatino, serif',
+            color:'#d7d7d7'
+        }
+    )
+    lambda1.move(-80,30)
+    lambda2.move(100,100)
     // Initialize animation steps
     anim.initSteps([
         () => { },
+        ()=>{
+            draw.animate(500).transform({
+                origin: [0,0],
+                scale: 1.7
+              });
+        },
         () => {
             let x = indicatorLine.createShapeUpdater({ b: firstPath });
             x.runUpdater({
                 callback:()=> {
                 let y = indicatorLine.createShapeUpdater({ b: secondPath });
-                y.runUpdater({duration:1000});
+                y.runUpdater({timeFunc:'easeOut2',duration:1.5});
             },
-            duration:1000
+            timeFunc:'easeOut2',duration:1.5
             });
         },
         ()=>{
@@ -175,7 +255,7 @@ export function exo10() {
     // Initialize animation steps
     anim.initSteps([
         ()=>{
-            firstCircle.animate(1000).attr({r:200})
+                        firstCircle.animate(1000).attr({r:200})
             secondCircle.animate(1000).attr({r:200})
         },
         ()=>{

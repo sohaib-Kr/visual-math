@@ -2,7 +2,7 @@
 export const textStyles = {
     explanation: {
         style: 'font:300 24px Palatino, serif',
-        fill: '#d7d7d7',
+        color: '#d7d7d7',
         class: 'explanation-text',
     },
     latex: {

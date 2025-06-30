@@ -267,12 +267,13 @@ const barCurrent = draw.path(`
     })
 }
 
+
 async function loadAnimations(){
     const {anim:pathDefinition} = await import("@/lib/lessons/topology/homeomorphism/homotopy/pathDefinition.js");
     const {anim:homotopyWithHole} = await import("@/lib/lessons/topology/homeomorphism/homotopy/homotopyWithHole.js");
     const {anim:homotopicalEqu} = await import("@/lib/lessons/topology/homeomorphism/homotopy/homotopicalEqu.js");
     const {anim:concatenation} = await import("@/lib/lessons/topology/homeomorphism/homotopy/concatenation.js");
-    const {exo00,exo01,exo02} = await import("@/lib/lessons/topology/homeomorphism/homotopy/exercices")
+    const {exo00,exo01,exo02,exo10,exo11,exo12} = await import("@/lib/lessons/topology/homeomorphism/homotopy/exercices")
 let frames={
     pathDefinition:pathDefinition,
     homotopyWithHole:homotopyWithHole,
@@ -285,6 +286,9 @@ const observer = new MutationObserver(() => {
         exo00().engine[0]()
         exo01().engine[0]()
         exo02().engine[0]()
+        exo10().engine[0]()
+        exo11().engine[0]()
+        exo12().engine[0]()
     }
 });
 observer.observe(document.body, {
@@ -317,11 +321,19 @@ for (let key in frames) {
 }
 }
 
+
+
+
+
+
+
 document.addEventListener('DOMContentLoaded',
     function(){
+
         initializeToolTips()
         progressBar()
         fadingEffect()
         loadAnimations()
+        // observeExerciceSection()
     }
 )

@@ -127,6 +127,7 @@ export class ShapeUpdater{
         let obj=this
         gsap.to({},{
             duration:duration,
+            ease:timeFunc,
             onUpdate:function(t){
                 obj.update(this.progress())
             },
@@ -139,6 +140,7 @@ export class ShapeUpdater{
         let obj=this
         gsap.to({},{
             duration:duration,
+            ease:timeFunc,
             onUpdate:function(t){
                 obj.update(1-this.progress())
             },

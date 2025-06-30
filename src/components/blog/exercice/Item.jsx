@@ -41,10 +41,10 @@ export default function Item({item, index, answered,onChoice,showButton,exoIndex
   },[answered])
   return (
     <>
-      <div ref={ref} className={"mx-4  flex-none opacity-[0] my-2 p-4 w-[400px] h-fit "+str+" border-gray-200 border-2 rounded-md shadow-[0px_2px_5px_0px_#d9d9d9]"} 
+      <div ref={ref} className={"mx-4 flex-none opacity-[0] my-2 p-4 w-[400px] h-fit "+str} 
       style={{fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif', color: 'rgb(55, 65, 81)'}} 
       key={index}>
-          <div id={"exerciceFrame"+exoIndex+""+index} className="w-[90%] mx-[5%] mb-[20px] h-[300px] bg-purple-500 rounded-[10px]">
+          <div id={"exerciceFrame"+exoIndex+""+index} className="w-[90%] mx-[5%] mb-[20px] h-[300px] ">
             
           </div>
           <div className="grid h-[200px]">

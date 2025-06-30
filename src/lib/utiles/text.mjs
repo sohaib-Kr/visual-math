@@ -16,7 +16,7 @@ function latex(inputString,parent,textStyle) {
     //the input string should be a string of the form 'text/_text/_text'
     //where / is the separator between regular text and latex text
     if (process.env.NODE_ENV === 'development') {
-        if (!(document.getElementById(parent) instanceof HTMLElement)) {
+        if (parent instanceof HTMLElement) {
             throw new Error('cannot create latex: parent does not exist')
         }
     }
@@ -38,6 +38,7 @@ function latex(inputString,parent,textStyle) {
     Object.assign(result.style,textStyle)
     holder.node.appendChild(result)
     parent.appendChild(holder.node)
+    return holder
 }
 
 function createDynamicLatex(text){

@@ -11,19 +11,20 @@ export default function RadioGroup({item,onChoice,index,update}) {
           <div ref={ref} className={"grid radio-group my-[20px] col-[1/2] row-[1/2]"}>
             {item.options.map((option,i) => (
               <div key={option.title} 
-              className="radio-option grid grid-cols-[70%_30%] gap-[20px] relative left-[4%]">
-                <label htmlFor={`${item.title}-${option.title}`} className="text-lg self-center font-medium tracking-widest text-gray-600" style={{ letterSpacing: '0.05em', color: 'rgb(87, 95, 105)' }}>
-                  {option.description}
-                </label>
+              className="radio-option grid grid-cols-[8%_92%] relative left-[10%] self-center gap-[20px]">
+                
                 <input
                   type="radio"
                   name={item.title}
                   value={option.index}
-                  className="self-center w-[25px] h-[25px]"
+                  className="w-[25px] h-[25px] self-center"
                   onChange={(e) => {
                     onChoice(i,index)
                   }}
                 />
+                <label htmlFor={`${item.title}-${option.title}`} className="text-lg font-medium tracking-widest text-gray-600" style={{ letterSpacing: '0.05em', color: 'rgb(87, 95, 105)' }}>
+                {option.description}
+              </label>
               </div>
             ))}
           </div>
