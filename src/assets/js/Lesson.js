@@ -3,6 +3,7 @@ import Vivus from 'vivus'
 import { SVG } from '@svgdotjs/svg.js'
 import Flip from 'gsap/Flip'
 import ScrollTrigger from 'gsap/ScrollTrigger'
+import katex from 'katex'
 
 function fadingEffect(){
     gsap.registerPlugin(ScrollTrigger)
@@ -329,6 +330,20 @@ async function exosInitialization(){
     })
 }
 
+function katexObserver(){
+    const katexObserver = new MutationObserver((mutations, observer) => {
+        const latexInputs = document.querySelectorAll('.latexInput');
+        if (latexInputs.length > 0) {
+          latexInputs.forEach(latexInput => {
+            katex.render(latexInput.textContent, latexInput, { throwOnError: false });
+          });
+          observer.disconnect(); // Stop observing after processing
+        }
+      });
+      
+      katexObserver.observe(document.body, { childList: true, subtree: true });
+
+}
 
 
 document.addEventListener('DOMContentLoaded',
@@ -339,5 +354,6 @@ document.addEventListener('DOMContentLoaded',
         fadingEffect()
         loadAnimations()
         exosInitialization()
+        katexObserver()
     }
 )

@@ -3,8 +3,22 @@ import { gsap } from 'gsap'
 import { Flip } from 'gsap/all'
 import FinalResult from './FinalResult.jsx'
 import Exercice from './Exercice.jsx'
+import katex from 'katex'
 gsap.registerPlugin(Flip)
+function updateLatexInsideExos(exos){
+  exos.forEach((exo,index)=>{
+    exo.items.forEach((item,index)=>{
+      let elem=document.createElement('d')
+      elem.innerHTML=item.infos
+      Array.from(elem.querySelectorAll('.latexInput')).forEach((input)=>{
+        const newInfos=katex.renderToString(input.textContent,{throwOnError:false})
+        item.infos=newInfos
+      })
+    })
+  })
+}
 export default function ExoSection({exercices}){
+  updateLatexInsideExos(exercices)
   let bareHeight
   let subBareHeight
   let maxScale

@@ -74,6 +74,9 @@ L |b|`,
     return anim;
 }
 },
+
+
+
 exo01:{
     question:function() {
     const anim = new vMathAnimation('exerciceFrame01', false);
@@ -81,8 +84,6 @@ exo01:{
     const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
 
     // Create main circle and path
-    plane.plane.circle(15).attr({fill:'orange'}).center(200,0)
-    plane.plane.circle(15).attr({fill:'orange'}).center(-92,-178)
     let mainPath = plane.plane.path(`M 200 0 A 1 1 0 0 0 -200 0 A 1 1 0 0 0 200 0 A 200 200 0 0 0 -92 -178`);
     mainPath.attr({...anim.config().path1});
 
@@ -115,6 +116,9 @@ L |b|`,
     lambda2.move(-92,-170)
 
     // Initialize animation steps
+    
+    plane.plane.circle(15).attr({fill:'orange'}).center(200,0)
+    plane.plane.circle(15).attr({fill:'orange'}).center(-92,-178)
     anim.initSteps([
         () => { },
         ()=>{
@@ -243,9 +247,16 @@ exo10:{
 
     // Initialize animation steps
     anim.initSteps([
+        ()=>{},
         ()=>{
-                        firstCircle.animate(1000).attr({r:200})
+            firstCircle.animate(1000).attr({r:200})
             secondCircle.animate(1000).attr({r:200})
+        },
+        ()=>{
+            draw.animate(500).transform({
+                origin: [0,0],
+                scale: 1.4
+              });
         },
         ()=>{
             anim.vivusRender({elem:path1.node})
@@ -289,6 +300,12 @@ exo11:{
         ()=>{
             anim.vivusRender({elem:path2.node})
             path2.children()[0].animate(1000).attr({opacity:1})
+        },
+        ()=>{
+            draw.animate(500).transform({
+                origin: [0,0],
+                scale: 1.4
+              });
         },
         ()=>{
             if(this.answered){
@@ -348,7 +365,12 @@ exo12:{
             path2.children()[0].animate(1000).attr({opacity:1})
         },
         ()=>{
-            console.log(this.answered)
+            draw.animate(500).transform({
+                origin: [0,0],
+                scale: 1.4
+              });
+        },
+        ()=>{
             if(this.answered){
             let aPath=plane.plane.path('M -300 0 L -330 0')
             let cPath=plane.plane.path('M 300 300 L 330 300')
