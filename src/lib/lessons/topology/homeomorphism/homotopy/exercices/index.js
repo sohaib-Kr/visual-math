@@ -8,7 +8,9 @@ import { vMathAnimation } from '@/lib/library.js';
 
 
 
-export function exo00() {
+export const exercices={
+    exo00:{
+    question:function() {
     const anim = new vMathAnimation('exerciceFrame00', false);
     const draw = anim.frame;
     const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
@@ -44,7 +46,6 @@ L |b|`,
             color:'#d7d7d7'
         }
     )
-    console.log(lambda1,lambda2)
     lambda1.move(-20,30)
     lambda2.move(-90,-50)
 
@@ -64,23 +65,17 @@ L |b|`,
         ()=>{
             anim.delay=1000
         },
-        () => {
-            anim.step=1
-
-            console.log('reset')
+        ()=>{
+            if(!this.answered){
+                anim.step=1
+            }
         }
     ]);
     return anim;
 }
-
-
-
-
-
-
-
-
-export function exo01() {
+},
+exo01:{
+    question:function() {
     const anim = new vMathAnimation('exerciceFrame01', false);
     const draw = anim.frame;
     const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
@@ -135,20 +130,18 @@ L |b|`,
         ()=>{
             anim.delay=1000
         },
-        () => {
-            anim.step=1
+        ()=>{
+            if(!this.answered){
+                anim.step=1
+            }
         }
     ]);
 
     return anim;
 }
-
-
-
-
-
-
-export function exo02() {
+},
+exo02:{
+    question:function() {
     const anim = new vMathAnimation('exerciceFrame02', false);
     const draw = anim.frame;
     const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
@@ -225,20 +218,16 @@ L |b|`,
             anim.delay=1000
         },
         () => {
-            anim.step=1
+            if(!this.answered){
+                anim.step=1
+            }
         }
     ]);
 
     return anim;
-}
-
-
-
-
-
-
-
-export function exo10() {
+}   },
+exo10:{
+    question:function() {
     const anim = new vMathAnimation('exerciceFrame10', false);
     const draw = anim.frame;
     const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
@@ -269,8 +258,10 @@ export function exo10() {
 
     return anim;
 }
-
-export function exo11() {
+},
+exo11:{
+    answered:false,
+    question:function() {
     const anim = new vMathAnimation('exerciceFrame11', false);
     const draw = anim.frame;
     const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
@@ -288,8 +279,7 @@ export function exo11() {
     path2.path(`M -330 0
        C -330 -300 330 -300 330 0
        C 330 300 -330 300 -330 0 Z`).fill('none').attr({...config.path1,opacity:0})
-    
-
+    let updater
     // Initialize animation steps
     anim.initSteps([
         ()=>{
@@ -301,24 +291,38 @@ export function exo11() {
             path2.children()[0].animate(1000).attr({opacity:1})
         },
         ()=>{
-            let aPath=plane.plane.path('M -300 0 L -220 0')
-            let bPath=plane.plane.path('M -300 -300 L-220 -90')
-            let fPath=plane.plane.path('M -300 300 L -220 90')
-            let updater=path1.createShapeUpdater({a:aPath,b:bPath,f:fPath})
-            updater.runUpdater({duration:1})
+            if(this.answered){
+                let aPath=plane.plane.path('M -300 0 L -220 0')
+                let bPath=plane.plane.path('M -300 -300 L-220 -90')
+                let fPath=plane.plane.path('M -300 300 L -220 90')
+                updater=path1.createShapeUpdater({a:aPath,b:bPath,f:fPath})
+                updater.runUpdater({duration:1})
+            }
+            else{
+                anim.step=2
+            }
+        },
+        ()=>{},
+        ()=>{
+            if(this.answered){
+                updater.runReverseUpdater({duration:1})
+            }
+        },
+        ()=>{
+            anim.step=2
         }
     ]);
 
     return anim;
 }
-
-export function exo12() {
+},
+exo12:{
+    answered:false,
+    question:function() {
     const anim = new vMathAnimation('exerciceFrame12', false);
     const draw = anim.frame;
     const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
     const config=anim.config()
-    plane.plane.circle(20).fill('white').center(200,0)
-    plane.plane.circle(20).fill('white').center(-200,0)
     let path1=anim.createTopoPath({
         codedPath:`M |a|
        C |b| |c| |d|
@@ -333,6 +337,7 @@ export function exo12() {
     
 
     // Initialize animation steps
+    let updater
     anim.initSteps([
         ()=>{
             anim.vivusRender({elem:path1.group.node})
@@ -343,16 +348,34 @@ export function exo12() {
             path2.children()[0].animate(1000).attr({opacity:1})
         },
         ()=>{
+            console.log(this.answered)
+            if(this.answered){
             let aPath=plane.plane.path('M -300 0 L -330 0')
             let cPath=plane.plane.path('M 300 300 L 330 300')
             let dPath=plane.plane.path('M 300 0 L 330 0')
             let ePath=plane.plane.path('M 300 -300 L 330 -300')
             let bPath=plane.plane.path('M -300 -300 L-330 300')
             let fPath=plane.plane.path('M -300 300 L -330 -300')
-            let updater=path1.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath,e:ePath,f:fPath})
+            updater=path1.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath,e:ePath,f:fPath})
             updater.runUpdater({duration:1})
+            }
+            else{
+                anim.step=2
+            }
+        },
+        ()=>{},
+        ()=>{
+            if(this.answered){
+                updater.runReverseUpdater({duration:1})
+            }
+        },
+        ()=>{},
+        ()=>{
+            anim.step=2
         }
     ]);
 
     return anim;
+},
+}
 }

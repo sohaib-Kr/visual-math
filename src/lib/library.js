@@ -305,7 +305,7 @@ input.addEventListener('blur', () => {
             this.wrapper.parentNode.parentNode.children[0].children[1].innerHTML=''
             this.wrapper.parentNode.parentNode.style.opacity=1
             this.wrapper.remove()
-                    // return init()
+            return init()
         }})
     }
 } 

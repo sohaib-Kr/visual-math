@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useSubmit } from './Exercice.jsx'
-export default function Result({correct,solution,update}) { 
+export default function Result({correct,solution,update,solutionMessage}) { 
   const submit = useSubmit();
   let ref=useRef(null)
   let display="hidden"
@@ -15,7 +15,7 @@ export default function Result({correct,solution,update}) {
        style={{ letterSpacing: '0.05em', color: 'rgb(87, 95, 105)' }}>
         {correct ? "correct" : "wrong"}
       </p>
-      <p className="relative top-[20px] justify-self-center text-center text-lg font-medium tracking-widest text-gray-600" style={{ letterSpacing: '0.05em', color: 'rgb(87, 95, 105)' }}>{solution}</p>
+      <p className="relative top-[20px] justify-self-center text-center text-lg font-medium tracking-widest text-gray-600" style={{ letterSpacing: '0.05em', color: 'rgb(87, 95, 105)' }}>{solutionMessage}</p>
     </div>
     </>
   );

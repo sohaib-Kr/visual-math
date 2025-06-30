@@ -44,12 +44,11 @@ export default function Item({item, index, answered,onChoice,showButton,exoIndex
       <div ref={ref} className={"mx-4 flex-none opacity-[0] my-2 p-4 w-[400px] h-fit "+str} 
       style={{fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif', color: 'rgb(55, 65, 81)'}} 
       key={index}>
-          <div id={"exerciceFrame"+exoIndex+""+index} className="w-[90%] mx-[5%] mb-[20px] h-[300px] ">
-            
-          </div>
+        <div id={"exerciceFrame"+exoIndex+""+index} className="w-[90%] mx-[5%] mb-[20px] h-[300px] ">
+        </div>
           <div className="grid h-[200px]">
           <RadioGroup item={item} update={update} onChoice={onRadioSelect} index={index}/>
-          <Result answer={answer} correct={correct} update={update} solution={item.solution}/>
+          <Result answer={answer} correct={correct} update={update} solution={item.solution} solutionMessage={item.solutionMessage}/>
           </div>
       </div>
     </>

@@ -273,28 +273,13 @@ async function loadAnimations(){
     const {anim:homotopyWithHole} = await import("@/lib/lessons/topology/homeomorphism/homotopy/homotopyWithHole.js");
     const {anim:homotopicalEqu} = await import("@/lib/lessons/topology/homeomorphism/homotopy/homotopicalEqu.js");
     const {anim:concatenation} = await import("@/lib/lessons/topology/homeomorphism/homotopy/concatenation.js");
-    const {exo00,exo01,exo02,exo10,exo11,exo12} = await import("@/lib/lessons/topology/homeomorphism/homotopy/exercices")
 let frames={
     pathDefinition:pathDefinition,
     homotopyWithHole:homotopyWithHole,
     homotopicalEqu:homotopicalEqu,
     concatenation:concatenation
 }
-const observer = new MutationObserver(() => {
-    if (document.getElementById("exerciceSection")) {
-        observer.disconnect();
-        exo00().engine[0]()
-        exo01().engine[0]()
-        exo02().engine[0]()
-        exo10().engine[0]()
-        exo11().engine[0]()
-        exo12().engine[0]()
-    }
-});
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
-});
+
 
 
 for (let key in frames) {
@@ -324,6 +309,25 @@ for (let key in frames) {
 
 
 
+async function exosInitialization(){
+    const {exercices} = await import("@/lib/lessons/topology/homeomorphism/homotopy/exercices")
+    const observer = new MutationObserver(() => {
+        if (document.getElementById("exerciceSection")) {
+            observer.disconnect();
+            for (let key in exercices){
+                exercices[key].question().engine[0]()
+            }
+        }
+    });
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    document.addEventListener('exerciceAnswered',(event)=>{
+        exercices[event.detail.name].answered=true
+        
+    })
+}
 
 
 
@@ -334,6 +338,6 @@ document.addEventListener('DOMContentLoaded',
         progressBar()
         fadingEffect()
         loadAnimations()
-        // observeExerciceSection()
+        exosInitialization()
     }
 )

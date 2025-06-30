@@ -34,7 +34,6 @@ function latex(inputString,parent,textStyle) {
         });
     })
     let holder=this.frame.foreignObject(1000,1000,'<div></div>')
-    console.log(result)
     Object.assign(result.style,textStyle)
     holder.node.appendChild(result)
     parent.appendChild(holder.node)

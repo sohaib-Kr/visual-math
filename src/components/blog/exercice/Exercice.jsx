@@ -36,6 +36,12 @@ export default function Exercice({exercice,onSubmit,exoIndex}){
       setAnswered(correctAnswers)
       setSubmit(true)
       onSubmit(score)
+      setTimeout(()=>{
+        exercice.items.forEach((item,index)=>{
+            let event=new CustomEvent('exerciceAnswered', { detail: { name:'exo'+exoIndex+''+index} });
+            document.dispatchEvent(event)
+        })
+      },2000)
     }
   }
 
