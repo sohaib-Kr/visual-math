@@ -24,11 +24,17 @@ draft: false
 <div id="rangeInputWrapper">
 
 </div>
-<input type="range" class="rangeInput" min="0" max="100" value="50">
+<div><input type="radio" name="test" value="0" class="radioInput"/></div>
+<div><input type="radio" name="test" value="1" class="radioInput"/></div>
+<div><input type="radio" name="test" value="2" class="radioInput"/></div>
 </Part>
 </Lesson>
 <script>
-
+// document.querySelectorAll('.radioInput').forEach((input)=>{
+//     input.addEventListener('change',function(){
+//         console.log(this.value)
+//     })
+// })
     // Create an SVG.js instance
 
 // import { exo02 } from '@/lib/lessons/topology/homeomorphism/homotopy/exercices';

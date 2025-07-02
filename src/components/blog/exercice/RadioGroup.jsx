@@ -13,15 +13,17 @@ export default function RadioGroup({item,onChoice,index,update}) {
               <div key={option.title} 
               className="radio-option grid grid-cols-[8%_92%] relative left-[10%] self-center gap-[20px]">
                 
-                <input
-                  type="radio"
-                  name={item.title}
-                  value={option.index}
-                  className="w-[25px] h-[25px] self-center"
-                  onChange={(e) => {
-                    onChoice(i,index)
-                  }}
-                />
+                <div>
+                  <input
+                      type="radio"
+                      name={item.title}
+                      value={option.index}
+                      className="radioInput w-[25px] h-[25px] self-center"
+                      onChange={(e) => {
+                        onChoice(i,index)
+                      }}
+                  />
+                </div>
                 <label htmlFor={`${item.title}-${option.title}`} className="text-lg font-medium tracking-widest text-gray-600" style={{ letterSpacing: '0.05em', color: 'rgb(87, 95, 105)' }}>
                 {option.description}
               </label>

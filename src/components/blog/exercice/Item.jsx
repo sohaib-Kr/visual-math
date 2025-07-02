@@ -4,24 +4,15 @@ import {ScrollTrigger} from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 import RadioGroup from './RadioGroup.jsx'
 import Result from './Result.jsx'
-import { useSubmit } from './Exercice.jsx'
 import katex from 'katex'
 export default function Item({item, index, answered,onChoice,showButton,exoIndex}) { 
-  // let infos=document.createElement('p')
-  // infos.innerHTML=item.infos
-  // useEffect(()=>{
-  //   Array.from(infos.querySelectorAll('.latexInput')).forEach((input)=>{
-  //     console.log(input.textContent)
-  //     katex.render(input.textContent,input,{throwOnError:false})
-  //   })
-  // },[])
-  const submit = useSubmit();
   let correct=answered[index]
   let [answer,setAnswer]=useState('')
   let [update,setUpdate]=useState(false)
   let [str,setStr]=useState("bg-white")
   let onRadioSelect=(i,index)=>{
     setAnswer(i)
+    console.log(i)
     onChoice(i,index)
   }
   let ref=useRef(null)

@@ -458,6 +458,92 @@ function initCustomSlider(input) {
   }
 
 
+
+
+
+
+
+
+
+
+// Custom slider initialization function
+function initCustomRadio(input) {
+    // Create wrapper and insert before the input
+    const name=input.name
+    const otherInputs = document.querySelectorAll('input[type="radio"][name="'+name+'"]')
+    const wrapper = document.createElement('div');
+    wrapper.className = 'radio-input-wrapper';
+    wrapper.style.display='inline-block'
+    input.parentNode.insertBefore(wrapper, input);
+    
+    // Setup SVG canvas
+    const draw = SVG().addTo(wrapper).size(70, 70);
+    const group = draw.group();
+    
+    // Create slider elements
+    const circle = group.circle(20).fill('#ffffff').stroke({color:'#9c4971',width:2}).move(3,3)
+
+    
+
+  
+  
+    circle.node.addEventListener('mousedown', (e) => {
+      const clickEvent = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+      });
+      input.dispatchEvent(clickEvent);
+      circle.animate(100).fill('#9c4971')
+      otherInputs.forEach((otherInput) => {
+        if (otherInput !== input) {
+            SVG(otherInput.parentNode.querySelector('.radio-input-wrapper').querySelector('circle')).animate(100).fill('#ffffff')
+        }
+      });
+    });
+  
+  }
+  
+  // MutationObserver to watch for range inputs
+  function setupRadioInputObserver() {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1) { // Element node
+            if (node.classList.contains('radioInput')) {
+              initCustomRadio(node);
+            }
+            const inputs = node.querySelectorAll('.radioInput');
+            inputs.forEach(initCustomRadio);
+          }
+        });
+      });
+    });
+  
+    observer.observe(document.body, { childList: true, subtree: true });
+  
+    // Initialize existing inputs
+    document.querySelectorAll('.rangeInput').forEach(initCustomSlider);
+    document.querySelectorAll('.radioInput').forEach(initCustomRadio);
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 document.addEventListener('DOMContentLoaded',
     function(){
 
@@ -467,5 +553,6 @@ document.addEventListener('DOMContentLoaded',
         loadAnimations()
         exosInitialization()
         setupRangeInputObserver()
+        setupRadioInputObserver()
     }
 )
