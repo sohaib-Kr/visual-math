@@ -55,7 +55,7 @@ export default function Item({item, index, answered,onChoice,showButton,exoIndex
         <div id={"exerciceFrame"+exoIndex+""+index} className="w-[90%] mx-[5%] mb-[20px] h-[300px] ">
         </div>
         <div className="h-fit w-full pl-[40px] pt-[10px]" key='immutable-element'> 
-          <p key='immutable-element' dangerouslySetInnerHTML={{ __html: item.infos }} />
+          <p dangerouslySetInnerHTML={{ __html: item.infos }} />
         </div>
           <div className="grid h-[200px]">
           <RadioGroup item={item} update={update} onChoice={onRadioSelect} index={index}/>

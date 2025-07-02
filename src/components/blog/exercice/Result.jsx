@@ -15,7 +15,9 @@ export default function Result({correct,solution,update,solutionMessage}) {
        style={{ letterSpacing: '0.05em', color: 'rgb(87, 95, 105)' }}>
         {correct ? "correct" : "wrong"}
       </p>
-      <p className="relative top-[20px] justify-self-center text-center text-lg font-medium tracking-widest text-gray-600" style={{ letterSpacing: '0.05em', color: 'rgb(87, 95, 105)' }}>{solutionMessage}</p>
+      <p className="relative top-[20px] justify-self-center text-center text-lg font-medium tracking-widest text-gray-600" 
+      style={{ letterSpacing: '0.05em', color: 'rgb(87, 95, 105)' }} 
+      dangerouslySetInnerHTML={{ __html: solutionMessage }}></p>
     </div>
     </>
   );

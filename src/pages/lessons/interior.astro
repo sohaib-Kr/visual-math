@@ -6,6 +6,7 @@ import ToolTipLink from '../../components/blog/ToolTipLink.astro';
 import Latex from '../../components/blog/Latex.astro';
 const {Title,SubHead,Paragraph,Part,AnimationFrame,H,Ex,ExerciceSection,Li}=short
 import ToolTip from '../../components/blog/ToolTip.astro';
+import katex from 'katex'
 title: "Understanding Topological Interior Concepts"
 description: "A brief introduction to the fundamental concept of interior in topology"
 pubDate: 2023-11-20
@@ -27,7 +28,7 @@ let exos=
             ],
             solution:0,
             solutionMessage:"Sometimes the trajectory of a path doesn't look like a loop, but it can still be a loop.",
-            infos:"<span class=latexInput>\\mathbb{R}^2</span>"
+            infos:"|\\mathbb{R}^2|"
         },
         {
             title:"Item 2",
@@ -38,7 +39,7 @@ let exos=
             ],
             solution:1,
             solutionMessage:"This path's trajectory looks like a loop but it doesn't match the definition",
-            infos:"<span class=latexInput>\\mathbb{R}^2</span>"
+            infos:"|\\mathbb{R}^2|"
         },
         {
             title:"Item 3",
@@ -49,7 +50,7 @@ let exos=
         ],
         solution:1,
         solutionMessage:"This cannot be a path in the regular topology but continuity changes when we consider the subspace topology.",
-        infos:"<span class=latexInput>D \\cup \\partial D^+</span>"
+        infos:"|D \\cup \\partial D^+|"
         },
         ]
     },
@@ -63,8 +64,8 @@ let exos=
                 {title:"option2",description:"not homotopic"},
             ],
             solution:1,
-            solutionMessage:"",
-            infos:"<span class=latexInput>D_a \\cup D_b \\quad | \\quad D_a \\cap D_b = \\emptyset</span>"
+            solutionMessage:"The absense of homotopy here is a result of the space being disconnected.",
+            infos:"|D_a \\cup D_b \\quad : \\quad D_a \\cap D_b = \\emptyset|"
         },
         {
             title:"Item 2",
@@ -73,8 +74,8 @@ let exos=
                 {title:"option2",description:"not homotopic"},
         ],
         solution:1,
-        solutionMessage:"",
-        infos:"<span class=latexInput>\\mathbb{R}^2 \\setminus \\{p_1, p_2\\}</span>"
+        solutionMessage:"In the case of ponctured plane, the existense of a homotopy between these two paths implies that their winding numbers around both of the points |p_1| and |p_2| are equal.",
+        infos:"|\\mathbb{R}^2 \\setminus \\{p_1, p_2\\}|"
         },
         {
             title:"Item 3",
@@ -84,10 +85,38 @@ let exos=
         ],
         solution:0,
         solutionMessage:"",
-        infos:"<span class=latexInput>\\mathbb{R}^2</span>"
+        infos:"|\\mathbb{R}^2|"
         },
     ]}
     ]
+
+    function updateLatexInsideExos(exos){
+  exos.forEach((exo,index)=>{
+    exo.items.forEach((item,index)=>{
+
+      //rendering item.infos latex
+      let infos=item.infos.split('|')
+      infos.forEach((latex,index)=>{
+        if(index%2==1){
+            const newInfos=katex.renderToString(latex,{throwOnError:false})
+            infos[index]=newInfos}
+      })
+      item.infos=infos.join('')
+      
+
+      //rendering item.solutionMessage latex
+      let solutionMessage=item.solutionMessage.split('|')
+      solutionMessage.forEach((latex,index)=>{
+        if(index%2==1){
+            const newInfos=katex.renderToString(latex,{throwOnError:false})
+            solutionMessage[index]=newInfos}
+      })
+      item.solutionMessage=solutionMessage.join('')
+
+    })
+  })
+}
+updateLatexInsideExos(exos)
 
 ---
 

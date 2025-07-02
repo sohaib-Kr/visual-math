@@ -84,12 +84,14 @@ export class vMathAnimation {
             input.children[1].style.width='75%'
             input.children[1].style.marginTop='10px'
             input.children[1].style.marginBottom='10px'
-            input.children[1].addEventListener('input', control.listener);
+            input.children[1].addEventListener('input', control.listener,{passive:true});
             input.children[0].style.fontFamily='poppins'
             input.children[0].style.fontSize='20px'
             input.children[0].style.color='#718096'
             input.children[0].style.marginTop='10px'
             input.children[0].style.marginBottom='10px'
+            wrapper.querySelector('input').className='rangeInput'
+            
             if(latex){
                 katex.render(name, input.children[0], {throwOnError: true, displayMode: false});
             }

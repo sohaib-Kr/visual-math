@@ -4,7 +4,7 @@ import { SVG } from '@svgdotjs/svg.js'
 import Flip from 'gsap/Flip'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import katex from 'katex'
-
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 function fadingEffect(){
     gsap.registerPlugin(ScrollTrigger)
 
@@ -29,6 +29,7 @@ Array.from(document.getElementsByClassName('fadeOnScroll')).forEach((element)=>{
 
 
 function initializeToolTips(){ 
+    gsap.registerPlugin(ScrollToPlugin)
 let elems=document.getElementsByClassName('toolTipLink')
 for(let elem of elems){
     gsap.to(elem,{duration:0.5,opacity:0,onComplete:function(){
@@ -206,7 +207,7 @@ const barCurrent = draw.path(`
     const points=[]
     Array.from(document.getElementById('parts-container').children).forEach((child,index)=>{
         points.push({
-            height:parseInt(parseInt(window.getComputedStyle(child).height)),
+            height:parseInt(window.getComputedStyle(child).height),
             title:child.getAttribute('data-title')
         })
     })
@@ -228,6 +229,19 @@ const barCurrent = draw.path(`
             'font-family':'poppins',
             'font-size':'18px',
         })
+        point.text.node.style.cursor='pointer'
+        let ssnapShot=currentHeight
+        point.text.node.addEventListener('click',()=>{
+            console.log(ssnapShot)
+            gsap.to(window,{
+                duration:1,
+                scrollTo:{
+                    y:ssnapShot,
+                    behavior:'smooth'
+                }
+            })
+        })
+
         currentHeight+=point.height
     })
     currentHeight=0
@@ -330,20 +344,118 @@ async function exosInitialization(){
     })
 }
 
-function katexObserver(){
-    const katexObserver = new MutationObserver((mutations, observer) => {
-        const latexInputs = document.querySelectorAll('.latexInput');
-        if (latexInputs.length > 0) {
-          latexInputs.forEach(latexInput => {
-            katex.render(latexInput.textContent, latexInput, { throwOnError: false });
-          });
-          observer.disconnect(); // Stop observing after processing
-        }
-      });
+// Custom slider initialization function
+function initCustomSlider(input) {
+    // Create wrapper and insert before the input
+    const wrapper = document.createElement('div');
+    wrapper.className = 'range-input-wrapper';
+    input.parentNode.insertBefore(wrapper, input);
+    
+    // Setup SVG canvas
+    const draw = SVG().addTo(wrapper).size(300, 50);
+    const group = draw.group();
+    
+    // Create slider elements
+    const thickLine = group.rect(240, 22).fill('#9c4971').radius(10);
+    const thinLine = group.rect(210, 6).fill('white').radius(5).move(15, 8);
+    const greenLine = group.rect(50, 6).fill('#ffd480').radius(5).move(15, 8);
+    const circle = group.circle(14).fill('#ffd480').center(50, 11);
+    
+    group.transform({ translate: { x: 20, y: 20 } });
+  
+    // Convert between pixel positions and input values
+    function positionToValue(x) {
+      const minX = 15;
+      const maxX = 225;
+      const min = parseFloat(input.min) || 0;
+      const max = parseFloat(input.max) || 100;
+      const normalized = (x - minX) / (maxX - minX);
+      return Math.round(normalized * (max - min)) + min;
+    }
+  
+    function valueToPosition(value) {
+      const min = parseFloat(input.min) || 0;
+      const max = parseFloat(input.max) || 100;
+      return 15 + ((value - min) / (max - min)) * (225 - 15);
+    }
+  
+    // Update slider position and input value
+    const eventDisp=new Event('input')
+    function moveToPosition(x) {
+      x = Math.max(15, Math.min(x, 225));
+      const value = positionToValue(x);
       
-      katexObserver.observe(document.body, { childList: true, subtree: true });
-
-}
+      input.value = value;
+      (eventDisp.currentTarget!=null)&&input.dispatchEvent(eventDisp);
+      
+      gsap.to(circle.node, { attr: { cx: x }, duration: 0.3, ease: "power2.out" });
+      gsap.to(greenLine.node, { attr: { width: x - 15 }, duration: 0.3, ease: "power2.out" });
+    }
+  
+    // Mouse event handlers
+    
+    const rect = wrapper.getBoundingClientRect();
+    function onMouseMove(e) {
+      const x = e.clientX - rect.left - 20;
+      moveToPosition(x);
+    }
+  
+    function onMouseUp() {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    }
+  
+    // Initialize slider position
+    function initPosition() {
+      const value = parseFloat(input.value) || (parseFloat(input.min) || 0);
+      const x = valueToPosition(value);
+      circle.center(x, 11);
+      greenLine.width(x - 15);
+    }
+  
+    // Event listeners
+    wrapper.addEventListener('mousedown', (e) => {
+      const rect = wrapper.getBoundingClientRect();
+      const x = e.clientX - rect.left - 20;
+      moveToPosition(x);
+      
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    });
+  
+    input.addEventListener('input', () => {
+      const value = parseFloat(input.value) || 0;
+      const x = valueToPosition(value);
+      moveToPosition(x);
+    });
+  
+    wrapper.addEventListener('selectstart', (e) => e.preventDefault());
+  
+    // Initialize
+    initPosition();
+  }
+  
+  // MutationObserver to watch for range inputs
+  function setupRangeInputObserver() {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1) { // Element node
+            if (node.classList.contains('rangeInput')) {
+              initCustomSlider(node);
+            }
+            const inputs = node.querySelectorAll('.rangeInput');
+            inputs.forEach(initCustomSlider);
+          }
+        });
+      });
+    });
+  
+    observer.observe(document.body, { childList: true, subtree: true });
+  
+    // Initialize existing inputs
+    document.querySelectorAll('.rangeInput').forEach(initCustomSlider);
+  }
 
 
 document.addEventListener('DOMContentLoaded',
@@ -354,6 +466,6 @@ document.addEventListener('DOMContentLoaded',
         fadingEffect()
         loadAnimations()
         exosInitialization()
-        katexObserver()
+        setupRangeInputObserver()
     }
 )
