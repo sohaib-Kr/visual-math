@@ -572,7 +572,7 @@ function initCustomRadio(input) {
 
 document.addEventListener('DOMContentLoaded',
     function(){
-         fadingEffect()
+        fadingEffect()
         initializeToolTips()
         progressBar()
         loadAnimations()

@@ -39,16 +39,17 @@ function changeHomotopyType(type){
                 break;
     }
 }
-window.changeHomotopyType=changeHomotopyType
 
-plane.plane.path(`
+let firstPath=plane.plane.group()
+firstPath.path(`
     M -150 -300
     C -150 -100
     150 -100
     150 -300
     `).attr(config.path1)
 
-plane.plane.path(`
+let secondPath=plane.plane.group()
+secondPath.path(`
     M 200 50
     C 50 50
     50 250
@@ -58,7 +59,7 @@ plane.plane.path(`
 let homotopyPath=anim.createTopoPath({
     codedPath:`M |a| C |b| |c| |d|`,
     initialData:{a:[-150,-300],b:[-150,-100],c:[150,-100],d:[150,-300]},
-    attr:{...config.path1,opacity:0.7}})
+    attr:{...config.path1}})
 plane.append(homotopyPath.group)
 
 let textHolder
@@ -72,6 +73,16 @@ let indicator=plane.plane.circle()
 .center(-150,-300)
 plane.append(indicator)
 anim.initSteps([
+    ()=>{
+        anim.vivusRender({elem:firstPath.node,onReady:()=>{
+            firstPath.children()[0].attr({opacity:1})
+        },callback:()=>{
+            homotopyPath.shape.attr({opacity:0.7})
+        }})
+        anim.vivusRender({elem:secondPath.node,onReady:()=>{
+            secondPath.children()[0].attr({opacity:1})
+        }})
+    },
     ()=>{
         textHolder=anim.createTextSpace().update({newText:'As you can see there are many ways you can continously transform one path into another',fade:true})
     },

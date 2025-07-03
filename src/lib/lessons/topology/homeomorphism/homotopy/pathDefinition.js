@@ -13,8 +13,8 @@ function init(){
     attr:config.path1})
 
 
-
-let mainPathShadow=mainPath.shape.clone().attr({opacity:0.5}).addTo(plane.plane)
+let mainPathShadowGroup=mainPath.group.clone().addTo(plane.plane)
+let mainPathShadow=mainPathShadowGroup.children()[0]
 plane.append(mainPath.group)
 
 
@@ -23,7 +23,6 @@ let secondPath=anim.createTopoPath({
     codedPath:`M |a| C |b| |c| |d| C |e| |f| |g|`,
     initialData:{a:[0,0],b:[0,0],c:[100,0],d:[0,0],e:[100,0],f:[100,0],g:[100,0]},
     attr:config.path1})
-secondPath.shape.attr({opacity:0})
 plane.append(secondPath.group)
 let textHolder
 let lambdaHolder
@@ -47,36 +46,40 @@ plane.append(mainPathIndicator)
 plane.append(shadowPathIndicator)
 let emph
 anim.initSteps([
-    // ()=>{
-    //     textHolder=anim.createTextSpace()
-    //     textHolder.update({newText:'Here are examples of different paths in the plane |',fade:true,callback:()=>{
-    //         textHolder.addLatex(['R^2'])
-    //     }})
-    //     secondPath.shape.attr({opacity:0.5})
-    // },
-    // ()=>{
-    //     anim.delay=1500
-    //     let aPath=plane.plane.path('M 0 0 L -100 -50')
-    //     let bPath=plane.plane.path('M 0 0 L -100 -50')
-    //     let cPath=plane.plane.path('M 100 0 L 200 -250')
-    //     let dPath=plane.plane.path('M 100 0 L 200 -250')
-    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
-    // },
-    // ()=>{
-
-    //     let aPath=plane.plane.path('M -100 -50 L -100 200')
-    //     let bPath=plane.plane.path('M -100 -50 L -300 200')
-    //     let cPath=plane.plane.path('M 200 -250 L -300 -100')
-    //     let dPath=plane.plane.path('M 200 -250 L -100 -100')
-    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-    //     x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
-    // },
     ()=>{
         textHolder=anim.createTextSpace()
         textHolder.update({newText:'Here are examples of different paths in the plane |',fade:true,callback:()=>{
             textHolder.addLatex(['R^2'])
         }})
+        anim.vivusRender({elem:mainPath.group.node,onReady:()=>{
+            mainPath.shape.attr({opacity:1})
+        }})
+        anim.vivusRender({elem:mainPathShadowGroup.node,onReady:()=>{
+            mainPathShadow.attr({opacity:0.5})
+        }})
+        anim.vivusRender({elem:secondPath.group.node,onReady:()=>{
+            secondPath.shape.attr({opacity:0.5})
+        }})
+    },
+    ()=>{
+        anim.delay=1500
+        let aPath=plane.plane.path('M 0 0 L -100 -50')
+        let bPath=plane.plane.path('M 0 0 L -100 -50')
+        let cPath=plane.plane.path('M 100 0 L 200 -250')
+        let dPath=plane.plane.path('M 100 0 L 200 -250')
+        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
+    },
+    ()=>{
+
+        let aPath=plane.plane.path('M -100 -50 L -100 200')
+        let bPath=plane.plane.path('M -100 -50 L -300 200')
+        let cPath=plane.plane.path('M 200 -250 L -300 -100')
+        let dPath=plane.plane.path('M 200 -250 L -100 -100')
+        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+        x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
+    },
+    ()=>{
         let aPath=plane.plane.path('M -100 200 L 200 200')
         let bPath=plane.plane.path('M -300 200 L 0 200')
         let cPath=plane.plane.path('M -300 -100 L 0 -100')
@@ -136,6 +139,7 @@ anim.initSteps([
             }
         })
         let range=anim.addControl({name:'x',type:'range',latex:true,listener:(event)=>{
+            console.log(event.target.value)
             scrub.play(event.target.value)
             let data=mainPath.shape.pointAt(event.target.value*length/100)
             lambdaHolder.update({newText:'\\gamma\\left( '+parseFloat(event.target.value/100).toFixed(2)+' \\right)=\\left( '+parseFloat(parseInt(data.x)/100).toFixed(2)+','+parseFloat(-parseInt(data.y)/100).toFixed(2)+' \\right)',latex:true})

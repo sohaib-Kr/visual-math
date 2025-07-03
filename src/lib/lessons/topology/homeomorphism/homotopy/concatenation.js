@@ -8,13 +8,12 @@ function init(){
     const draw=anim.frame
     const plane=new CartPlane({draw, unit:{u:30,v:30}})
     const config=anim.config()
-
-    const firstLoop=plane.plane.path('M 0 0 C -28 -52 160 -136 200 -100 S 303 -48 253 24 S 14 21 0 0')
+    const firstLoopGroup=plane.plane.group()
+    const firstLoop=firstLoopGroup.path('M 0 0 C -28 -52 160 -136 200 -100 S 303 -48 253 24 S 14 21 0 0')
     .attr({...config.path1})
-    .addTo(plane.plane)
-    const secondLoop=plane.plane.path('M 0 0 C -44 -74 50 -155 -67 -192 S -35 -244 -4 -258 S 77 71 0 0')
+    const secondLoopGroup=plane.plane.group()
+    const secondLoop=secondLoopGroup.path('M 0 0 C -44 -74 50 -155 -67 -192 S -35 -244 -4 -258 S 77 71 0 0')
     .attr({...config.path1})
-    .addTo(plane.plane)
 let textHolder=anim.createTextSpace()
 let indicator=createIndicator(plane)
 updateIndicator(firstLoop,0,indicator)
@@ -31,6 +30,14 @@ anim.initSteps([
                     `\\gamma_{1}=(1.00,1.00) `,
                     `\\newline \\gamma_{2}=(1.00,1.00)`])
             }})
+    },
+    ()=>{
+        anim.vivusRender({elem:firstLoopGroup.node,duration:50,onReady:()=>{
+            firstLoop.animate(1000).attr({opacity:1})
+        }})
+        anim.vivusRender({elem:secondLoopGroup.node,duration:50,onReady:()=>{
+            secondLoop.animate(1000).attr({opacity:1})
+        }})
     },
     ()=>{},
     ()=>{

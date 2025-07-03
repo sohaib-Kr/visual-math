@@ -6,8 +6,9 @@ function init(){
 const draw=anim.frame
 const config=anim.config()
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
+let playHomotopy
 function restrictFromCenter(draggable) {
-    const handler = (event) => {
+    const handler = () => {
         const { a: [Xa, Ya], b: [Xb, Yb] } = draggable.currentData;
         
         // Calculate distance between points
@@ -34,6 +35,9 @@ function restrictFromCenter(draggable) {
         
         // Update opacity based on check
         draggable.shape.attr({ opacity: crossesCenter ? 0.3 : 1 });
+        if(crossesCenter){
+            playHomotopy.node.disabled=true
+        }
     };
 
     draw.node.addEventListener('mousemove', handler);
@@ -161,8 +165,12 @@ let firstPathEmph
 let secondPathEmph
 anim.initSteps([
     ()=>{
-        anim.vivusRender({elem:firstPath.group.node})
-        anim.vivusRender({elem:secondPath.group.node})
+        anim.vivusRender({elem:firstPath.group.node,onReady:()=>{
+            firstPath.shape.attr({opacity:1})
+        }})
+        anim.vivusRender({elem:secondPath.group.node,onReady:()=>{
+            secondPath.shape.attr({opacity:1})
+        }})
     },
     ()=>{
         draw.animate(500).transform({scale:1.4,origin:[0,0]})
@@ -201,8 +209,8 @@ anim.initSteps([
     },
     ()=>{
 
-        let playHomotopy=anim.addControl({name:'playHomotopy',type:'button',listener:()=>{
-        textHolder.update(`There is always a way to apply homotopy between the two paths correctly`,true)
+        playHomotopy=anim.addControl({name:'playHomotopy',type:'button',listener:()=>{
+            textHolder.update(`There is always a way to apply homotopy between the two paths correctly`,true)
             generateHomotopy()
             playHomotopy.kill()
         }})

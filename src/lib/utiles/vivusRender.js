@@ -1,7 +1,7 @@
 import Vivus from 'vivus';
 
 
-export function vivusRender({elem,duration=50,callback=()=>{}}={}){
+export function vivusRender({elem,duration=50,callback=()=>{},onReady=()=>{}}={}){
     let id='newIdNeverCreatedBefore'
     elem.id=id
     let styles=[]
@@ -14,6 +14,7 @@ export function vivusRender({elem,duration=50,callback=()=>{}}={}){
         pathTimingFunction: Vivus.LINEAR, // Add this for consistent timing
         onReady: function() {
             elem.id = '';
+            onReady()
         },
     },
     ()=>{

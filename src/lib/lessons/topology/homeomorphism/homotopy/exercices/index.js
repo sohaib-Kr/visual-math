@@ -16,7 +16,8 @@ export const exercices={
     const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
 
     // Create main circle and path
-    let mainPath = plane.plane.path(`M 0 0 L 400 0 L 0 0`);
+    let mainPathGroup=plane.plane.group()
+    let mainPath = mainPathGroup.path(`M 0 0 L 400 0 L 0 0`);
     mainPath.attr({...anim.config().path1});
 
     // Create indicator line
@@ -58,6 +59,11 @@ L |b|`,
                 scale: 1.4
               });
         },
+        ()=>{
+            anim.vivusRender({elem:mainPathGroup.node,duration:50,onReady:()=>{
+                mainPath.animate(1000).attr({opacity:1})
+            }})
+        },
         () => {
             let x = indicatorLine.createShapeUpdater({ b: mainPath });
             x.runUpdater({timeFunc:'easeOut2',duration:1.5});
@@ -67,7 +73,7 @@ L |b|`,
         },
         ()=>{
             if(!this.answered){
-                anim.step=1
+                anim.step=3
             }
         }
     ]);
@@ -84,7 +90,8 @@ exo01:{
     const plane = new CartPlane({ draw, unit: { u: 30, v: 30 } });
 
     // Create main circle and path
-    let mainPath = plane.plane.path(`M 200 0 A 1 1 0 0 0 -200 0 A 1 1 0 0 0 200 0 A 200 200 0 0 0 -92 -178`);
+    let mainPathGroup=plane.plane.group()
+    let mainPath = mainPathGroup.path(`M 200 0 A 1 1 0 0 0 -200 0 A 1 1 0 0 0 200 0 A 200 200 0 0 0 -92 -178`);
     mainPath.attr({...anim.config().path1});
 
     // Create indicator line
@@ -127,6 +134,11 @@ L |b|`,
                 scale: 1.4
               });
         },
+        ()=>{
+            anim.vivusRender({elem:mainPathGroup.node,duration:50,onReady:()=>{
+                mainPath.animate(1000).attr({opacity:1})
+            }})
+        },
         () => {
             let x = indicatorLine.createShapeUpdater({ b: mainPath });
             x.runUpdater({timeFunc:'easeIn2',duration:3});
@@ -136,7 +148,7 @@ L |b|`,
         },
         ()=>{
             if(!this.answered){
-                anim.step=1
+                anim.step=3
             }
         }
     ]);
@@ -162,11 +174,14 @@ exo02:{
         'stroke-width':3,
         'stroke-dasharray':'5 5'
     });
+    
+    let firstPathGroup=plane.plane.group()
+    let secondPathGroup=plane.plane.group()
 
-    let firstPath = plane.plane.path(`M -52 9 C -122 -65 -22 -116 -100 -173.2`);
+    let firstPath = firstPathGroup.path(`M -52 9 C -122 -65 -22 -116 -100 -173.2`);
     firstPath.attr({...anim.config().path1});
 
-    let secondPath = plane.plane.path(`M 0 200 C -50 100 100 0 100 100`);
+    let secondPath = secondPathGroup.path(`M 0 200 C -50 100 100 0 100 100`);
     secondPath.attr({...anim.config().path1});
 
     // Create indicator line
@@ -208,6 +223,15 @@ L |b|`,
                 scale: 1.7
               });
         },
+        ()=>{
+            anim.vivusRender({elem:firstPathGroup.node,duration:50,onReady:()=>{
+                firstPath.animate(1000).attr({opacity:1})
+            },callback:()=>{
+                anim.vivusRender({elem:secondPathGroup.node,duration:50,onReady:()=>{
+                    secondPath.animate(1000).attr({opacity:1})
+                }})
+            }})
+        },
         () => {
             let x = indicatorLine.createShapeUpdater({ b: firstPath });
             x.runUpdater({
@@ -223,7 +247,7 @@ L |b|`,
         },
         () => {
             if(!this.answered){
-                anim.step=1
+                anim.step=3
             }
         }
     ]);
@@ -284,7 +308,7 @@ exo11:{
        C |b| |c| |d|
        C |e| |f| |a|`,
         initialData:{a:[-300,0],b:[-300,-300],c:[300,300],d:[300,0],e:[300,-300],f:[-300,300]},
-        attr:{...config.path1,opacity:0.7}})
+        attr:{...config.path1,opacity:0}})
     plane.append(path1.group)
     let path2=plane.plane.group()
     path2.path(`M -330 0
@@ -345,7 +369,7 @@ exo12:{
        C |b| |c| |d|
        C |e| |f| |a|`,
         initialData:{a:[-300,0],b:[-300,-300],c:[300,300],d:[300,0],e:[300,-300],f:[-300,300]},
-        attr:{...config.path1,opacity:0.7}})
+        attr:{...config.path1,opacity:0}})
     plane.append(path1.group)
     let path2=plane.plane.group()
     path2.path(`M -330 0
