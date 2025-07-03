@@ -16,14 +16,14 @@ export default function Item({item, index, answered,onChoice,showButton,exoIndex
     onChoice(i,index)
   }
   let ref=useRef(null)
-  useEffect(()=>{
-    gsap.to(ref.current,{duration:1,y:-20,opacity:1,scrollTrigger:{
-      trigger:ref.current,
-      start:"top 65%",
-      end:"top 20%",
-      onEnter:()=>showButton()
-    }})
-  },[])
+  // useEffect(()=>{
+  //   gsap.to(ref.current,{duration:1,y:-20,opacity:1,scrollTrigger:{
+  //     trigger:ref.current,
+  //     start:"top 65%",
+  //     end:"top 20%",
+  //     onEnter:()=>showButton()
+  //   }})
+  // },[])
   useEffect(()=>{
     if(answered){
     gsap.to(ref.current,{duration:1,rotateY:90,onComplete:()=>{
@@ -40,7 +40,7 @@ export default function Item({item, index, answered,onChoice,showButton,exoIndex
   },[answered])
   return (
     <>
-      <div ref={ref} className={"mx-4 flex-none opacity-[0] my-2 p-4 w-[400px] h-fit "+str} 
+      <div ref={ref} className={"mx-4 flex-none my-2 p-4 w-[400px] h-fit "+str} 
       style={{fontFamily: 'Inter, Roboto, Helvetica, Arial, sans-serif', color: 'rgb(55, 65, 81)'}} 
       key={index}>
         <div id={"exerciceFrame"+exoIndex+""+index} className="w-[90%] mx-[5%] mb-[20px] h-[300px] ">

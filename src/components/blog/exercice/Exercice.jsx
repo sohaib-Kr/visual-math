@@ -71,7 +71,7 @@ export default function Exercice({exercice,onSubmit,exoIndex}){
               ))}
         </div>
         <div className="h-[70px] my-[30px]">
-          <button ref={button} id="submit" className="opacity-[0] float-right relative cursor-pointer right-[5%] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          <button ref={button} id="submit" className="float-right relative cursor-pointer right-[5%] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
            onClick={() =>{
             calculateAnswers(answers)
           }}>Submit</button>

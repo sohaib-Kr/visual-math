@@ -334,7 +334,30 @@ async function exosInitialization(){
         if (document.getElementById("exerciceSection")) {
             observer.disconnect();
             for (let key in exercices){
-                exercices[key].question().engine[0]()
+                const targetAnim = exercices[key].question();
+                const targetSection = targetAnim.frame.node;
+                let visibilityTimer = null;
+                const intersectionObserver = new IntersectionObserver((entries) => {
+                  entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                      // Element is visible - start a 1-second timer
+                      visibilityTimer = setTimeout(() => {
+                        targetAnim.engine[0]();
+                        intersectionObserver.disconnect(); // Stop observing after triggering
+                      }, 1000); // 1000ms = 1 second
+                    } else {
+                      // Element is no longer visible - cancel the timer
+                      if (visibilityTimer) {
+                        clearTimeout(visibilityTimer);
+                        visibilityTimer = null;
+                      }
+                    }
+                  });
+                }, {
+                  threshold: 0.8, // At least 50% of the element must be visible
+                });
+              
+                intersectionObserver.observe(targetSection);
             }
         }
     });
@@ -344,7 +367,6 @@ async function exosInitialization(){
     });
     document.addEventListener('exerciceAnswered',(event)=>{
         exercices[event.detail.name].answered=true
-        
     })
 }
 
