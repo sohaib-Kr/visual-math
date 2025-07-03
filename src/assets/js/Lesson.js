@@ -13,7 +13,7 @@ Array.from(document.getElementsByClassName('fadeOnScroll')).forEach((element)=>{
         trigger:element,
         start: "top 75%",
         onEnter:()=>{
-            gsap.to(element,{opacity:1,y:-20,duration:0.8})
+            gsap.fromTo(element,{opacity:0,y:20},{opacity:1,y:0,duration:0.8})
         },
         onLeaveBack:()=>{
             gsap.to(element,{opacity:0,y:20,duration:0.8})
@@ -73,7 +73,7 @@ let pointerX = width * pointerConfig.position;
 
 // Fixed other values
 const cornerRadius = 10;
-const pointerStartY = height - 21; // Fixed vertical start position
+const pointerStartY = height - 26; // Fixed vertical start position
 const pointerTipY = height - 1;    // Fixed tip position (Y-coordinate of pointer tip)
 const bodyBottomCutoff = height - 30; // Fixed where body rounding starts
 
@@ -106,7 +106,7 @@ box.style.height = `${height}px`;
     let linkX=parseInt(elem.getBoundingClientRect().left)
     let linkY=parseInt(elem.getBoundingClientRect().top)
     const svgX = linkX - pointerX+50;
-    const svgY = linkY - pointerTipY-10;
+    const svgY = linkY - pointerTipY-20;
 
     // Apply positioning (assuming SVG is inside 'box' with position: absolute)
     box.style.left = `${svgX}px`;
@@ -299,22 +299,26 @@ let frames={
 
 for (let key in frames) {
   const targetSection = frames[key].vMath.node;
-  let isFirstObservation = true;
+  let visibilityTimer = null;
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (isFirstObservation) {
-        isFirstObservation = false;
-        return; // Skip the first observation
-      }
-
       if (entry.isIntersecting) {
-        frames[key].vMath.engine[0]();
-        observer.disconnect()
+        // Element is visible - start a 1-second timer
+        visibilityTimer = setTimeout(() => {
+          frames[key].vMath.engine[0]();
+          observer.disconnect(); // Stop observing after triggering
+        }, 1000); // 1000ms = 1 second
+      } else {
+        // Element is no longer visible - cancel the timer
+        if (visibilityTimer) {
+          clearTimeout(visibilityTimer);
+          visibilityTimer = null;
+        }
       }
     });
   }, {
-    threshold: 0.5,
+    threshold: 0.8, // At least 50% of the element must be visible
   });
 
   observer.observe(targetSection);
@@ -546,10 +550,9 @@ function initCustomRadio(input) {
 
 document.addEventListener('DOMContentLoaded',
     function(){
-
+         fadingEffect()
         initializeToolTips()
         progressBar()
-        fadingEffect()
         loadAnimations()
         exosInitialization()
         setupRangeInputObserver()

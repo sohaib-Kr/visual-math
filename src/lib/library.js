@@ -34,14 +34,14 @@ export class vMathAnimation {
             <div id="${id}Animation" class="animationWrapper">
               <svg class="animation" id="${id}Frame"></svg>
             </div>`;
-            this.wrapper.style.height='100%'
             this.wrapper.style.width='100%'
+            this.wrapper.style.aspectRatio='3/2'
             this.wrapper.style.backgroundColor=this.colorConfig().backgroundColor
             this.wrapper.style.borderRadius='50px'
             this.wrapper.style.overflow='hidden'
             this.wrapper.children[0].style.transformOrigin='top left'
             
-                this.wrapper.children[0].style.transform='scale('+(ofsetWidth/1200)+','+(ofsetHeight/800)+')'
+                this.wrapper.children[0].style.transform='scale('+(ofsetWidth/1200)+')'
         parentElement.appendChild(this.wrapper);
         this.node=this.wrapper.querySelector('.animation')
         gsap.fromTo(this.wrapper.parentNode.parentNode,{opacity:0},{duration:0.8,opacity:1})

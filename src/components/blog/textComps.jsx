@@ -11,23 +11,23 @@ export const H = (props) => (
 );
 
 export const SubHead = (props) => (
-  <h2 className="text-[35px] mt-[65px] tracking-[1.5px] font-[poppins] mb-6 text-gray-700 leading-tight">
+  <h2 className="text-[35px] mt-[65px] tracking-[1.5px] font-[poppins] mb-6 text-gray-700 leading-tight fadeOnScroll">
     {props.children}
   </h2>
 );
 
 export const Paragraph = (props) => (
-  <p className="font-[merriweather] text-gray-600 text-[20px]  tracking-[1px] leading-[2.2] mb-7">
+  <p className="font-[merriweather] text-gray-600 text-[20px]  tracking-[1px] leading-[2.2] mb-7 fadeOnScroll">
     {props.children}
   </p>
 );
 export const Li = (props) => (
-  <li className="font-[merriweather] text-gray-600 text-[20px]  tracking-[1px] leading-[2.2] mb-7">
+  <li className="font-[merriweather] text-gray-600 text-[20px]  tracking-[1px] leading-[2.2] mb-7 fadeOnScroll">
     {props.children}
   </li>
 );
 export const Title = (props) => (
-  <p className="text-orange-700 text-[38px] tracking-[1.9px] font-[poppins] mb-[80px]">
+  <p className="text-orange-700 text-[38px] tracking-[1.9px] font-[poppins] mb-[80px] fadeOnScroll">
     {props.children}
   </p>
 );
