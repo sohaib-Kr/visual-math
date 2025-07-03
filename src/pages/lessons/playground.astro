@@ -15,28 +15,16 @@ draft: false
 <Lesson>
 <Part>
 <Title>Playground</Title>
-<!-- <AnimationFrame id="exerciceFrame02" style={{
+<AnimationFrame id="concatenation" style={{
     width: '120%',
     height: '400px',
     position: 'relative',
     left:'-10%'
-}}/> -->
-<div id="rangeInputWrapper">
-
-</div>
-<div><input type="radio" name="test" value="0" class="radioInput"/></div>
-<div><input type="radio" name="test" value="1" class="radioInput"/></div>
-<div><input type="radio" name="test" value="2" class="radioInput"/></div>
+}}/>
 </Part>
 </Lesson>
 <script>
-// document.querySelectorAll('.radioInput').forEach((input)=>{
-//     input.addEventListener('change',function(){
-//         console.log(this.value)
-//     })
-// })
-    // Create an SVG.js instance
 
-// import { exo02 } from '@/lib/lessons/topology/homeomorphism/homotopy/exercices';
-// exo02().engine[0]()
+import { anim as concatenation } from '@/lib/lessons/topology/homeomorphism/homotopy/concatenation';
+concatenation.vMath.engine[0]()
 </script>

@@ -27,7 +27,12 @@ plane.append(secondPath.group)
 let textHolder
 let lambdaHolder
 
-
+let lambda1Indicator=plane.plane.circle(0).attr({fill:'#ff778a'}).center(400,-250)
+let lambda2Indicator=plane.plane.circle(0).attr({fill:'#ff778a'}).center(100,-100)
+let lambda1text=anim.latex('/\\lambda(1)',plane.plane.node,{fontFamily:'poppins',fontSize:'20px',color:'#ff99a7'})
+.move(430,-250).attr({opacity:0})
+let lambda2text=anim.latex('/\\lambda(0)',plane.plane.node,{fontFamily:'poppins',fontSize:'20px',color:'#ff99a7'})
+.move(40,-140).attr({opacity:0})
 let arrowHolder=anim.createTopoPath({
     codedPath:`M |a| L |b|`,
     initialData:{a:[0,0],b:[100,-100]},
@@ -61,33 +66,34 @@ anim.initSteps([
             secondPath.shape.attr({opacity:0.5})
         }})
     },
-    ()=>{
-        anim.delay=1500
-        let aPath=plane.plane.path('M 0 0 L -100 -50')
-        let bPath=plane.plane.path('M 0 0 L -100 -50')
-        let cPath=plane.plane.path('M 100 0 L 200 -250')
-        let dPath=plane.plane.path('M 100 0 L 200 -250')
-        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
-    },
-    ()=>{
+    // ()=>{},
+    // ()=>{
+    //     anim.delay=1500
+    //     let aPath=plane.plane.path('M 0 0 L -100 -50')
+    //     let bPath=plane.plane.path('M 0 0 L -100 -50')
+    //     let cPath=plane.plane.path('M 100 0 L 200 -250')
+    //     let dPath=plane.plane.path('M 100 0 L 200 -250')
+    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+    //     x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
+    // },
+    // ()=>{
 
-        let aPath=plane.plane.path('M -100 -50 L -100 200')
-        let bPath=plane.plane.path('M -100 -50 L -300 200')
-        let cPath=plane.plane.path('M 200 -250 L -300 -100')
-        let dPath=plane.plane.path('M 200 -250 L -100 -100')
-        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
-    },
-    ()=>{
-        let aPath=plane.plane.path('M -100 200 L 200 200')
-        let bPath=plane.plane.path('M -300 200 L 0 200')
-        let cPath=plane.plane.path('M -300 -100 L 0 -100')
-        let dPath=plane.plane.path('M -100 -100 L -200 -100')
-        let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
-        x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
+    //     let aPath=plane.plane.path('M -100 -50 L -100 200')
+    //     let bPath=plane.plane.path('M -100 -50 L -300 200')
+    //     let cPath=plane.plane.path('M 200 -250 L -300 -100')
+    //     let dPath=plane.plane.path('M 200 -250 L -100 -100')
+    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+    //     x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
+    // },
+    // ()=>{
+    //     let aPath=plane.plane.path('M -100 200 L 200 200')
+    //     let bPath=plane.plane.path('M -300 200 L 0 200')
+    //     let cPath=plane.plane.path('M -300 -100 L 0 -100')
+    //     let dPath=plane.plane.path('M -100 -100 L -200 -100')
+    //     let x=mainPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})
+    //     x.runUpdater({callback:()=>x.kill(),timeFunc:'easeOut2',duration:1.2})
 
-    },
+    // },
     ()=>{
         let aPath=plane.plane.path('M 200 200 L 100 -100')
         let bPath=plane.plane.path('M 0 200 L 300 -100')
@@ -106,7 +112,12 @@ anim.initSteps([
         draw.animate(500).transform({
             origin: [400,-300],
             scale: 1.7
-          });
+          }).after(()=>{
+            lambda1Indicator.animate(500).attr({r:7})
+            lambda2Indicator.animate(500).attr({r:7})
+            lambda1text.animate(500).attr({opacity:1})
+            lambda2text.animate(500).attr({opacity:1})
+          })
         let arrowHolderUpdate=arrowHolder.createShapeUpdater({a:mainPath.shape,b:mainPathShadow})
         let length=mainPath.shape.length()
         let shadowLength=mainPathShadow.length()
@@ -139,7 +150,6 @@ anim.initSteps([
             }
         })
         let range=anim.addControl({name:'x',type:'range',latex:true,listener:(event)=>{
-            console.log(event.target.value)
             scrub.play(event.target.value)
             let data=mainPath.shape.pointAt(event.target.value*length/100)
             lambdaHolder.update({newText:'\\gamma\\left( '+parseFloat(event.target.value/100).toFixed(2)+' \\right)=\\left( '+parseFloat(parseInt(data.x)/100).toFixed(2)+','+parseFloat(-parseInt(data.y)/100).toFixed(2)+' \\right)',latex:true})
@@ -151,11 +161,17 @@ anim.initSteps([
             emph.off()
         })
         let next=anim.addControl({name:'next',type:'button',listener:()=>{
-            anim.play()
-            range.kill()
-            next.kill()
-            emph.remove()
-            gsap.to(lambdaHolder.textSpace,{opacity:0,duration:0.5})
+            
+            lambda1text.animate(500).attr({opacity:0})
+            lambda2text.animate(500).attr({opacity:0})
+            lambda1Indicator.animate(500).attr({r:0})
+            lambda2Indicator.animate(500).attr({r:0}).after(()=>{
+                anim.play()
+                range.kill()
+                next.kill()
+                // emph.remove()
+                gsap.to(lambdaHolder.textSpace,{opacity:0,duration:0.5})
+            })
         }})
     },
     ()=>{
@@ -178,8 +194,9 @@ anim.initSteps([
         shadowPathIndicator.animate(300).attr({opacity:0})
         x.runUpdater({callback:()=>{
             x.kill()
-        },timeFunc:'easeOut'})
+        },timeFunc:'easeOut',duration:1})
     },
+    ()=>{},
     ()=>{
         mainPath.shape.node.remove()
         secondPath.shape.attr({opacity:1})
@@ -192,11 +209,11 @@ anim.initSteps([
         let gPath=plane.plane.path('M 100 0 L  -450 100')
         let x=secondPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath,e:ePath,f:fPath,g:gPath})
         x.runUpdater({callback:()=>{
-            arrowHolder.shape.animate(300).attr({opacity:0})
-            mainPathIndicator.animate(300).attr({opacity:0})
-            shadowPathIndicator.animate(300).attr({opacity:0})
+            arrowHolder.shape.animate(500).attr({opacity:0})
+            mainPathIndicator.animate(500).attr({opacity:0})
+            shadowPathIndicator.animate(500).attr({opacity:0})
             x.kill()
-        },timeFunc:'easeOut'})
+        },timeFunc:'easeOut',duration:1})
     },
     ()=>{
         lambdaHolder.update({newText:'\\gamma\\left( 0 \\right)=\\left( -4.50 ,-1.00 \\right)',latex:true})

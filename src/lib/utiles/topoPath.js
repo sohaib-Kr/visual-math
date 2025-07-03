@@ -15,7 +15,7 @@ export function pathDecoder(path){
 }
 
 export function createIndicator(plane){
-    let indicator=plane.plane.path('M -10 -10 L 0 0 L -10 10').attr({stroke:'yellow','stroke-width':3,fill:'none'})
+    let indicator=plane.plane.path('M -10 -10 L 0 0 L -10 10').attr({stroke:'#ffa31a','stroke-width':4,fill:'none'})
     return indicator
 }
 export function updateIndicator(shape, t, indicator) {
@@ -138,9 +138,9 @@ export class TopoPath{
                     currentData[this.name][0]=x
                     currentData[this.name][1]=y
                 },
-                circle:this.group.circle(20).fill('orange').center(this.currentData[point][0],this.currentData[point][1])
+                circle:this.group.circle(0).fill('orange').center(this.currentData[point][0],this.currentData[point][1])
             }
-
+            obj.circle.animate(500).attr({r:10})
             //and here we create the circles used to drag the points
             obj.circle.node.addEventListener('mousedown',function(){
                 obj.draggable=true

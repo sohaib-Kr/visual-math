@@ -12,10 +12,11 @@ function init(){
     const firstLoop=firstLoopGroup.path('M 0 0 C -28 -52 160 -136 200 -100 S 303 -48 253 24 S 14 21 0 0')
     .attr({...config.path1})
     const secondLoopGroup=plane.plane.group()
-    const secondLoop=secondLoopGroup.path('M 0 0 C -44 -74 50 -155 -67 -192 S -35 -244 -4 -258 S 77 71 0 0')
+    const secondLoop=secondLoopGroup.path('M 0 0 C -62 -61 -101 -75 -101 -147 S -74 -297 -4 -258 S 77 71 0 0')
     .attr({...config.path1})
 let textHolder=anim.createTextSpace()
 let indicator=createIndicator(plane)
+indicator.attr({opacity:0})
 updateIndicator(firstLoop,0,indicator)
 
 anim.initSteps([
@@ -39,9 +40,12 @@ anim.initSteps([
             secondLoop.animate(1000).attr({opacity:1})
         }})
     },
-    ()=>{},
+    ()=>{
+        indicator.animate(500).attr({opacity:1})
+    },
     ()=>{
         anim.pause()
+        secondLoop.animate(500).attr({opacity:0.5})
         gsap.to(textHolder.textSpace.children[1],{duration:0.5,opacity:0.3})
         let coords=textHolder.textSpace.children[0].querySelectorAll('.mord')
         let length=firstLoop.length()
@@ -65,6 +69,8 @@ anim.initSteps([
     },
     ()=>{
         anim.pause()
+        secondLoop.animate(500).attr({opacity:1})
+        firstLoop.animate(500).attr({opacity:0})
         gsap.to(textHolder.textSpace.children[1],{duration:0.5,opacity:1})
         gsap.to(textHolder.textSpace.children[0],{duration:0.5,opacity:0.3})
         let coords=textHolder.textSpace.children[1].querySelectorAll('.mord')
@@ -95,6 +101,7 @@ anim.initSteps([
     },
     ()=>{
         anim.pause()
+        firstLoop.animate(500).attr({opacity:1})
 
 
         let x,y
@@ -150,9 +157,14 @@ gsap.to({},{
     onComplete:function(){
         indicator.animate(1000).attr({opacity:0}).after(function(){
             indicator.node.remove()
+            anim.play()
         })
     }
 })
+}
+,()=>{anim.addControl({name:'play again',type:'button',listener:()=>{
+    anim.playAgain(init)
+}})
 }
 ])
 return anim

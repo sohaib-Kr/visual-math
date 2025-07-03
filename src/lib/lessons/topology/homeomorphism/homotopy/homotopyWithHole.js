@@ -101,7 +101,7 @@ function linearDrag(){
     let pathA=plane.plane.path(`M ${Adata.a[0]} ${Adata.a[1]} L ${Bdata.a[0]} ${Bdata.a[1]}`)
     let pathB=plane.plane.path(`M ${Adata.b[0]} ${Adata.b[1]} L ${Bdata.b[0]} ${Bdata.b[1]}`)
     let x=firstPath.createShapeUpdater({a:pathA,b:pathB})
-    x.runUpdater(()=>x.kill())
+    x.runUpdater({callback:()=>x.kill(),duration:1})
 }
 function nonLinearDrag({a,b,aPrime,bPrime}){
     function scalar(point){
@@ -130,7 +130,7 @@ function nonLinearDrag({a,b,aPrime,bPrime}){
             L ${0.5*delta[0]} ${0.5*delta[1]} 
             L${bPrime[0]} ${bPrime[1]}`).attr({fill:'none'})
         let x=firstPath.createShapeUpdater({a:pathA,b:pathB})
-        x.runUpdater()
+        x.runUpdater({callback:()=>x.kill(),duration:1})
     }
     
 }
@@ -161,9 +161,8 @@ plane.append(firstPath.group)
 plane.append(secondPath.group)
 
 let textHolder
-let firstPathEmph
-let secondPathEmph
 anim.initSteps([
+    ()=>{},
     ()=>{
         anim.vivusRender({elem:firstPath.group.node,onReady:()=>{
             firstPath.shape.attr({opacity:1})
@@ -181,39 +180,46 @@ anim.initSteps([
         let bPath=plane.plane.path('M -50 -250 L 100 -100')
         
         let x=firstPath.createShapeUpdater({a:aPath,b:bPath})
-        x.runUpdater(()=>x.kill())
+        x.runUpdater({callback:()=>x.kill(),duration:0.5})
     },
     ()=>{},
     ()=>{
         let aPath=plane.plane.path('M -100 100 L 50 250')
         let bPath=plane.plane.path('M 100 -100 L 250 50')
         let x=firstPath.createShapeUpdater({a:aPath,b:bPath})
-        x.runUpdater(()=>x.kill())
+        x.runUpdater({callback:()=>x.kill(),duration:0.5})
     },
     ()=>{},
     ()=>{
         draw.animate(1000).transform({scale:1,origin:[0,0]})
+    },
+    ()=>{
         textHolder.update({newText:`drag the 2 orange circles to move the paths around`,fade:true})
         let aPath=plane.plane.path('M 50 250 L -250 -50')
         let bPath=plane.plane.path('M 250 50 L -50 -250')
         let x=firstPath.createShapeUpdater({a:aPath,b:bPath})
         x.runUpdater({
             callback:()=>{
-                firstPath.draggable(['a','b'],plane.center)
-                secondPath.draggable(['a','b'],plane.center)
                 restrictFromCenter(firstPath)
                 restrictFromCenter(secondPath)
                 x.kill()
-            }
+            },
+            duration:1
         })
     },
     ()=>{
-
+        
+        firstPath.draggable(['a','b'],plane.center)
+        secondPath.draggable(['a','b'],plane.center)
         playHomotopy=anim.addControl({name:'playHomotopy',type:'button',listener:()=>{
-            textHolder.update(`There is always a way to apply homotopy between the two paths correctly`,true)
+            textHolder.update({newText:`There is always a way to apply homotopy between the two paths correctly`,fade:true})
             generateHomotopy()
             playHomotopy.kill()
+            setTimeout(()=>anim.addControl({name:'play again',type:'button',listener:()=>{
+                anim.playAgain(init)
+            }}),2000)
         }})
+        
     }
 ])
 return anim
