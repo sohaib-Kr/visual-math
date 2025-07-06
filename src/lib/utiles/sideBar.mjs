@@ -8,7 +8,8 @@ export function sideBar(id){
                 .appendChild(document.createElement('div'));
             
             textSpace.className = 'textSpace font-[merriweather] text-gray-600 text-[18px] tracking-[1px] leading-[1.8] mb-7';
-    
+
+        
             const obj = {
                 textSpace,
                 update: function({ newText, fade = false, latex = false, callback = () => {} }) {

@@ -97,7 +97,7 @@ export function createElementsInstance(frame) {
             let indicator=frame.path('M -10 -10 L 0 0 L -10 10').attr({stroke:'#ffa31a','stroke-width':4,fill:'none'})
             return {
                 elem:indicator,
-                updateIndicator:function(shape,t){
+                update:function(shape,t){
                     const length = shape.length();
                     const epsilon = 0.001; // Small offset to calculate direction
                     

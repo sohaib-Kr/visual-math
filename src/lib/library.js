@@ -62,6 +62,7 @@ export class vMathAnimation {
         this.step = 0;
         this.delay = 1000;
         this.next = null;
+        this.#pause=false
         this.engine = [() => {
             this.step += 1;
             if (this.step < this.engine.length) {
@@ -114,7 +115,6 @@ export class vMathAnimation {
             this.wrapper.remove()
             this.frameInit()
             this.init()
-            this.step=0
             this.engine[0]()
         }})
     }
