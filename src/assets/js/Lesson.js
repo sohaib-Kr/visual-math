@@ -284,10 +284,10 @@ const barCurrent = draw.path(`
 
 
 async function loadAnimations(){
-    const {anim:pathDefinition} = await import("@/lib/lessons/topology/homeomorphism/homotopy/pathDefinition.js");
-    const {anim:homotopyWithHole} = await import("@/lib/lessons/topology/homeomorphism/homotopy/homotopyWithHole.js");
-    const {anim:homotopicalEqu} = await import("@/lib/lessons/topology/homeomorphism/homotopy/homotopicalEqu.js");
-    const {anim:concatenation} = await import("@/lib/lessons/topology/homeomorphism/homotopy/concatenation.js");
+    const pathDefinition = await import("@/lib/lessons/topology/homeomorphism/homotopy/pathDefinition.js");
+    const homotopyWithHole = await import("@/lib/lessons/topology/homeomorphism/homotopy/homotopyWithHole.js");
+    const homotopicalEqu = await import("@/lib/lessons/topology/homeomorphism/homotopy/homotopicalEqu.js");
+    const concatenation = await import("@/lib/lessons/topology/homeomorphism/homotopy/concatenation.js");
 let frames={
     pathDefinition:pathDefinition,
     homotopyWithHole:homotopyWithHole,
@@ -298,7 +298,7 @@ let frames={
 
 
 for (let key in frames) {
-  const targetSection = frames[key].vMath.node;
+  const targetSection = frames[key].default.frame.node;
   let visibilityTimer = null;
 
   const observer = new IntersectionObserver((entries) => {
@@ -306,7 +306,8 @@ for (let key in frames) {
       if (entry.isIntersecting) {
         // Element is visible - start a 1-second timer
         visibilityTimer = setTimeout(() => {
-          frames[key].init().engine[0]()
+          frames[key].default.init()
+          frames[key].default.engine[0]()
           observer.disconnect(); // Stop observing after triggering
         }, 1000); // 1000ms = 1 second
       } else {
@@ -329,20 +330,21 @@ for (let key in frames) {
 
 
 async function exosInitialization(){
-    const {exercices} = await import("@/lib/lessons/topology/homeomorphism/homotopy/exercices")
-    const observer = new MutationObserver(() => {
+    const observer = new MutationObserver(async () => {
         if (document.getElementById("exerciceSection")) {
-            observer.disconnect();
-            for (let key in exercices){
-                const targetAnim = exercices[key].question();
-                const targetSection = targetAnim.frame.node;
+          observer.disconnect();
+          const exercices = await import("@/lib/lessons/topology/homeomorphism/homotopy/exercices")
+            for (let key in exercices.default){
+                const targetAnim = exercices.default[key];
+                const targetSection = targetAnim.animation.frame.node;
                 let visibilityTimer = null;
                 const intersectionObserver = new IntersectionObserver((entries) => {
                   entries.forEach(entry => {
                     if (entry.isIntersecting) {
                       // Element is visible - start a 1-second timer
                       visibilityTimer = setTimeout(() => {
-                        targetAnim.engine[0]();
+                        targetAnim.animation.init()
+                        targetAnim.animation.engine[0]();
                         intersectionObserver.disconnect(); // Stop observing after triggering
                       }, 1000); // 1000ms = 1 second
                     } else {
@@ -572,10 +574,10 @@ function initCustomRadio(input) {
 
 document.addEventListener('DOMContentLoaded',
     function(){
-        fadingEffect()
-        initializeToolTips()
-        progressBar()
-        loadAnimations()
+        // fadingEffect()
+        // initializeToolTips()
+        // progressBar()
+        // loadAnimations()
         exosInitialization()
         setupRangeInputObserver()
         setupRadioInputObserver()
