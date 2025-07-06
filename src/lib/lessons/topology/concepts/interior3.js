@@ -1,5 +1,5 @@
 import { vMathAnimation} from '@/lib/library.js';
-import { createDynamicText } from '@/lib/utiles/text.mjs';
+import { createDynamicText } from '@/lib/utiles/elements.mjs';
 
 export const anim = new vMathAnimation(1200, 800, 'first', 'first');
 {

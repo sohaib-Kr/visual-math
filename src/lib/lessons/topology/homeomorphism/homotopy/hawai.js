@@ -2,7 +2,7 @@ import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
 import Vivus from 'vivus'
 import {animateWithRAF} from '@/lib/library'
-import {createIndicator,updateIndicator} from '@/lib/utiles/topoPath.js'
+import {createIndicator,updateIndicator} from '@/lib/utiles/dynamicPath.js'
 import gsap from 'gsap'
 import { animateMotion } from '@/lib/utiles/vector/animateMotion';
 

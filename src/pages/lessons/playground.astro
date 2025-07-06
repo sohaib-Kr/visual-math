@@ -15,7 +15,7 @@ draft: false
 <Lesson>
 <Part>
 <Title>Playground</Title>
-<AnimationFrame id="concatenation" style={{
+<AnimationFrame id="pathDefinition" style={{
     width: '120%',
     height: '400px',
     position: 'relative',
@@ -25,6 +25,7 @@ draft: false
 </Lesson>
 <script>
 
-import { anim as concatenation } from '@/lib/lessons/topology/homeomorphism/homotopy/concatenation';
-concatenation.vMath.engine[0]()
+import pathDefinition from '@/lib/lessons/topology/homeomorphism/homotopy/pathDefinition';
+pathDefinition.init()
+pathDefinition.engine[0]()
 </script>

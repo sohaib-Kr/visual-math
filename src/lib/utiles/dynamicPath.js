@@ -14,38 +14,6 @@ export function pathDecoder(path){
     return {commands,params}
 }
 
-export function createIndicator(plane){
-    let indicator=plane.plane.path('M -10 -10 L 0 0 L -10 10').attr({stroke:'#ffa31a','stroke-width':4,fill:'none'})
-    return indicator
-}
-export function updateIndicator(shape, t, indicator) {
-    const length = shape.length();
-    const epsilon = 0.001; // Small offset to calculate direction
-    
-    // Get current position and next position
-    let currentPoint,nextPoint
-    if(t<1){
-        currentPoint = shape.pointAt(t * length);
-        nextPoint = shape.pointAt(Math.min((t + epsilon) * length, length));
-    }
-    else if(t==1){
-        currentPoint = shape.pointAt( length-epsilon);
-        nextPoint = shape.pointAt(length);
-    }
-    
-    // Calculate the angle in radians
-    let angle = Math.atan2(nextPoint.y - currentPoint.y, nextPoint.x - currentPoint.x);
-    
-    // Convert to degrees and normalize (0-360)
-    angle = angle * 180 / Math.PI;
-    
-    // Apply transformation
-    indicator.transform({
-        translate: [currentPoint.x, currentPoint.y],
-        rotate: angle,
-        origin: [0, 0]
-    });
-}
 //The TopoPath element is a path element that can be animated 
 //by matching its points with a set of transformation paths
 //it is created by decoding a path string that contains the commands and parameters
@@ -58,7 +26,7 @@ export function updateIndicator(shape, t, indicator) {
 //the returned function can be used for example inside setInterval or as an event listener
 
 
-export class TopoPath{
+export class dynamicPath{
     #frame
     #draggablePoints
     #allowDragFunction
@@ -110,11 +78,6 @@ export class TopoPath{
         }).join('')
         this.shape.plot(newPath)
     }
-
-
-
-
-
 
     draggable(points,center,callbacks={onDragStart:()=>{},onDragEnd:()=>{},onReady:()=>{}}){
         //this function let us interact with the shape by draggins some of its points
@@ -181,12 +144,5 @@ export class TopoPath{
         this.decoded.params.forEach((param)=>{
             plane.plane.text(param).move(this.currentData[param][0],this.currentData[param][1]).fill('white')
         })
-    }
-    createIndicator(plane){
-        let indicator=createIndicator(plane)
-        return indicator
-    }
-    updateIndicator(t,indicator){
-        updateIndicator(this.shape,t,indicator)
     }
 }

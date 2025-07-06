@@ -8,8 +8,8 @@ const anim = new vMathAnimation('homotopicalEqu');
 const draw=anim.frame
 const plane=new CartPlane({draw, unit:{u:30,v:30}})
 const config=anim.config()
-let homotopyPathShadow
 
+let homotopyPathShadow
 
 function changeHomotopyType(type){
     switch(type){
@@ -22,10 +22,10 @@ function changeHomotopyType(type){
             shapeUpdaterHolder=homotopyPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})}
             break;
         case 2:
-            {let aPath=plane.plane.path('M -150 -300 L 200 50').attr({fill:'none'})
-            let bPath=plane.plane.path('M -150 -100 L 50 50').attr({fill:'none'})
-            let cPath=plane.plane.path('M 150 -100 L 50 250').attr({fill:'none'})
-            let dPath=plane.plane.path('M 150 -300 L -200 250').attr({fill:'none'})
+            {let aPath=plane.plane.path('M -150 -300 Q -302 -165 -200 250').attr({fill:'none'})
+            let bPath=plane.plane.path('M -150 -100 Q -450 0 50 250').attr({fill:'none'})
+            let cPath=plane.plane.path('M 150 -100 Q 200 -200 50 50').attr({fill:'none'})
+            let dPath=plane.plane.path('M 150 -300 Q 48 -125 200 50').attr({fill:'none'})
             homotopyPathShadow=[aPath,dPath]
             shapeUpdaterHolder=homotopyPath.createShapeUpdater({a:aPath,b:bPath,c:cPath,d:dPath})}
             break;
@@ -61,6 +61,10 @@ let homotopyPath=anim.createTopoPath({
     initialData:{a:[-150,-300],b:[-150,-100],c:[150,-100],d:[150,-300]},
     attr:{...config.path1}})
 plane.append(homotopyPath.group)
+
+
+
+
 
 let textHolder
 let lambdaHolder

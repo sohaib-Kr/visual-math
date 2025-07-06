@@ -1,6 +1,6 @@
 import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
-import { updateIndicator,createIndicator } from '@/lib/utiles/topoPath';
+import { updateIndicator,createIndicator } from '@/lib/utiles/dynamicPath';
 import {animateWithRAF} from '@/lib/utiles/raf'
 export const anim = new vMathAnimation('windingNumber');
 

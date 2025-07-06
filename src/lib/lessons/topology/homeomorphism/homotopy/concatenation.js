@@ -1,6 +1,6 @@
 import { CartPlane } from '@/lib/utiles/vector/index.js';
 import { vMathAnimation } from '@/lib/library.js';
-import {createIndicator,updateIndicator} from '@/lib/utiles/topoPath.js'
+import {createIndicator,updateIndicator} from '@/lib/utiles/dynamicPath.js'
 import gsap from 'gsap'
 
 function init(){

@@ -306,7 +306,7 @@ for (let key in frames) {
       if (entry.isIntersecting) {
         // Element is visible - start a 1-second timer
         visibilityTimer = setTimeout(() => {
-          frames[key].vMath.engine[0]();
+          frames[key].init().engine[0]()
           observer.disconnect(); // Stop observing after triggering
         }, 1000); // 1000ms = 1 second
       } else {
