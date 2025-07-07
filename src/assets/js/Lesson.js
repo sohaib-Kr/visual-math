@@ -574,10 +574,10 @@ function initCustomRadio(input) {
 
 document.addEventListener('DOMContentLoaded',
     function(){
-        // fadingEffect()
-        // initializeToolTips()
-        // progressBar()
-        // loadAnimations()
+        fadingEffect()
+        initializeToolTips()
+        progressBar()
+        loadAnimations()
         exosInitialization()
         setupRangeInputObserver()
         setupRadioInputObserver()

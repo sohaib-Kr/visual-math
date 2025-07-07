@@ -39,7 +39,7 @@ export function createElementsInstance(frame) {
             });
 
             let holder = frame.foreignObject(1000, 1000, '<div></div>');
-            Object.assign(result.style, textStyle);
+            Object.assign(result.style, textStyle)
             holder.node.appendChild(result);
             frame.node.appendChild(holder.node);
             return holder;

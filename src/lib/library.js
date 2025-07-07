@@ -101,10 +101,10 @@ export class vMathAnimation {
     }
     config(){
         return {
-            path1:{stroke:'#98FF98','stroke-width':3,fill:'none','stroke-linecap':'round',opacity:0},
+            path1:{stroke:'#00c9a7','stroke-width':3,fill:'none','stroke-linecap':'round',opacity:0},
             path2:{stroke:'white','stroke-width':3,fill:'none','stroke-linecap':'round',opacity:0},
             indicationLine:{stroke:'white','stroke-width':2,fill:'none',opacity:0},
-            indicationPoint:{fill:'#ff8000',r:9}
+            indicationPoint:{fill:'#d97154',r:7}
         }
     }
     playAgain(){
