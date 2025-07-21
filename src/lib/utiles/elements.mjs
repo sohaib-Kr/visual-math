@@ -37,7 +37,6 @@ export function createElementsInstance(frame) {
                     displayMode: false
                 });
             });
-
             let holder = frame.foreignObject(1000, 1000, '<div></div>');
             Object.assign(result.style, textStyle)
             holder.node.appendChild(result);
@@ -45,14 +44,27 @@ export function createElementsInstance(frame) {
             return holder;
         },
 
-        dynamicLatexText: function(inputString) {
+        dynamicLatexText: function({inputString,textStyle={}}) {
             let x = frame.group();
             inputString.forEach((elem) => {
                 let holder = x.nested();
-                let y=this.latexText(elem, holder.node)
+                let y=this.latexText({inputString:elem,textStyle})
                 y.addTo(holder)
             });
             return x;
+        },
+        dynamicInlineLatexText: function({inputString,textStyle={}}) {
+            let holder=frame.foreignObject(2000, 2000, '<div></div>')
+            
+            Object.assign(holder.node.style, textStyle)
+            inputString.forEach((elem) => {
+                let x=document.createElement('span')
+                katex.render(elem, x, {
+                    throwOnError: true,
+                });
+                holder.node.appendChild(x)
+            });
+            return holder;
         },
         dynamicPath:function(args){
             return new dynamicPath({frame,...args})

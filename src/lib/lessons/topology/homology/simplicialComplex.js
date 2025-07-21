@@ -1,5 +1,4 @@
 import { vMathAnimation } from "@/lib/library";
-import gsap from 'gsap';
 const anim = new vMathAnimation('simplicialComplex');
 
 anim.setInit(function(){
@@ -287,106 +286,106 @@ pathFIGH.animate({duration: 800, delay: 400}).attr({opacity: 1})
 
     main.transform({translate:[600,400]})
     anim.initSteps([
-        // ()=>{
-        // },
-        // ()=>{
-        //     verticesElems.forEach((elem)=>{
-        //         elem.vertex.animate(1000).attr({opacity:1})
-        //         setTimeout(()=>elem.txt.animate(1000).attr({opacity:1}),500)
-        //     })
+        ()=>{
+        },
+        ()=>{
+            verticesElems.forEach((elem)=>{
+                elem.vertex.animate(1000).attr({opacity:1})
+                setTimeout(()=>elem.txt.animate(1000).attr({opacity:1}),500)
+            })
 
             
-        //     const set=Object.keys(vertices).map(key=>`\\{${key}\\}`).join('\\allowbreak,')
-        //     textSpace2=anim.sideBar.createText()
-        //     .update({newText:` \\mathbb{K}=\\{\\emptyset,${set}`,latex:true,fade:true,callback:()=>{
-        //         rightBracket=textSpace2.appendText({text:'\\}',latex:true})
-        //     }})
+            const set=Object.keys(vertices).map(key=>`\\{${key}\\}`).join('\\allowbreak,')
+            textSpace2=anim.sideBar.createText()
+            .update({newText:` \\mathbb{K}=\\{\\emptyset,${set}`,latex:true,fade:true,callback:()=>{
+                rightBracket=textSpace2.appendText({text:'\\}',latex:true})
+            }})
 
-        //     textSpace=anim.sideBar.createText()
-        //     .update({newText:'Any arbitrary set of points form a 0-dimensional simplicial complex',fade:true})
-        // },
-        // ()=>{},
-        // ()=>{},
-        // ()=>{
-        //     textSpace.update({newText:'',fade:true})
-        //     verticesElems.forEach(elem=>elem.txt.animate(800).attr({opacity:0}))
-        // },
-        // ()=>{
-        //     edgesElems.forEach(elem=>elem.animate(800).attr({opacity:1}))
-        //     rightBracket.innerHTML=''
-        //     const set=edges.map(edge=>`\\{${edge}\\}`).join('\\allowbreak,')
-        //     textSpace2.appendText({text:','+set,latex:true,fade:true,callback:()=>{
-        //         rightBracket=textSpace2.appendText({text:'\\}',latex:true,fade:true})
-                
-        //     textSpace.update({newText:'Adding some arbitrary set of edges form a 1-dimensional simplicial complex',fade:true})
-        //     }})
-        // },
-        // ()=>{},
-        // ()=>{},
-        // ()=>{
-        //     textSpace.update({newText:'',fade:true})
-        // },
-        // ()=>{
-        //     trianglesElems.forEach(elem=>elem.animate(800).attr({opacity:1}))
-        //     rightBracket.innerHTML=''
-        //     const set=triangles.map(triangle=>`\\{${triangle}\\}`).join('\\allowbreak,')
-        //     textSpace2.appendText({text:','+set,latex:true,fade:true,callback:()=>{
-        //         rightBracket=textSpace2.appendText({text:'\\}',latex:true,fade:true})
-                
-        //     textSpace.update({newText:'Adding some arbitrary set of triangles form a 2-dimensional simplicial complex',fade:true})
-        //     }})
-        // },
-        // ()=>{},
-        // ()=>{},
-        // ()=>{
-        //     textSpace.update({newText:'',fade:true})
-        // },
-        // ()=>{
-        //     tetrahedronElem.animate(800).attr({opacity:0.3})
-        //     rightBracket.innerHTML=''
-        //     textSpace2.appendText({text:',\\{a,b,d,h\\}',latex:true,fade:true,callback:()=>{
-        //         rightBracket=textSpace2.appendText({text:'\\}',latex:true,fade:true})
-                
-        //     textSpace.update({newText:'Adding some arbitrary set of tetrahedrons form a 3-dimensional simplicial complex',fade:true})
-        //     }})
-        // },
+            textSpace=anim.sideBar.createText()
+            .update({newText:'Any arbitrary set of points form a 0-dimensional simplicial complex',fade:true})
+        },
         ()=>{},
-        // ()=>{
-        //     textSpace.update({newText:'',fade:true})
-        //     textSpace2.update({newText:'',fade:true})
-        //     clearComplex()
-        // },
-        // ()=>{
-        //     anim.pause()
-        //     textSpace2=anim.sideBar.createText()
-        //     textSpace=anim.sideBar.createText()
+        ()=>{},
+        ()=>{
+            textSpace.update({newText:'',fade:true})
+            verticesElems.forEach(elem=>elem.txt.animate(800).attr({opacity:0}))
+        },
+        ()=>{
+            edgesElems.forEach(elem=>elem.animate(800).attr({opacity:1}))
+            rightBracket.innerHTML=''
+            const set=edges.map(edge=>`\\{${edge}\\}`).join('\\allowbreak,')
+            textSpace2.appendText({text:','+set,latex:true,fade:true,callback:()=>{
+                rightBracket=textSpace2.appendText({text:'\\}',latex:true,fade:true})
+                
+            textSpace.update({newText:'Adding some arbitrary set of edges form a 1-dimensional simplicial complex',fade:true})
+            }})
+        },
+        ()=>{},
+        ()=>{},
+        ()=>{
+            textSpace.update({newText:'',fade:true})
+        },
+        ()=>{
+            trianglesElems.forEach(elem=>elem.animate(800).attr({opacity:1}))
+            rightBracket.innerHTML=''
+            const set=triangles.map(triangle=>`\\{${triangle}\\}`).join('\\allowbreak,')
+            textSpace2.appendText({text:','+set,latex:true,fade:true,callback:()=>{
+                rightBracket=textSpace2.appendText({text:'\\}',latex:true,fade:true})
+                
+            textSpace.update({newText:'Adding some arbitrary set of triangles form a 2-dimensional simplicial complex',fade:true})
+            }})
+        },
+        ()=>{},
+        ()=>{},
+        ()=>{
+            textSpace.update({newText:'',fade:true})
+        },
+        ()=>{
+            tetrahedronElem.animate(800).attr({opacity:0.3})
+            rightBracket.innerHTML=''
+            textSpace2.appendText({text:',\\{a,b,d,h\\}',latex:true,fade:true,callback:()=>{
+                rightBracket=textSpace2.appendText({text:'\\}',latex:true,fade:true})
+                
+            textSpace.update({newText:'Adding some arbitrary set of tetrahedrons form a 3-dimensional simplicial complex',fade:true})
+            }})
+        },
+        ()=>{},
+        ()=>{
+            textSpace.update({newText:'',fade:true})
+            textSpace2.update({newText:'',fade:true})
+            clearComplex()
+        },
+        ()=>{
+            anim.pause()
+            textSpace2=anim.sideBar.createText()
+            textSpace=anim.sideBar.createText()
 
-        //     textSpace2.appendText({text:'Simplicial complexes can be in different forms',latex:false,fade:true,callback:()=>{
-        //         // textSpace.update({newText:'Adding some arbitrary set of tetrahedrons form a 3-dimensional simplicial complex',fade:true})
-        //     }})
-        //     let buttons=anim.sideBar.createButtonGroup({
-        //         buttons:[
-        //             {name:'curved',value:'0'},
-        //             {name:'non connected',value:'1'},
-        //             {name:'multi dimensional',value:'2'},
-        //         ],
-        //         listener:(value)=>{
-        //             clearComplex({callback:()=>{
-        //                 changeComplex(1+parseInt(value))
-        //                 renderComplex()
-        //             }})
-        //         },
-        //         selectedValue:'0'
-        //     })
-        //     const next=anim.sideBar.createButton({
-        //         name:'next',
-        //         listener:()=>{
-        //             buttons.kill()
-        //             next.kill()
-        //             anim.play()
-        //         }
-        //     })
-        // },
+            textSpace2.appendText({text:'Simplicial complexes can be in different forms',latex:false,fade:true,callback:()=>{
+                // textSpace.update({newText:'Adding some arbitrary set of tetrahedrons form a 3-dimensional simplicial complex',fade:true})
+            }})
+            let buttons=anim.sideBar.createButtonGroup({
+                buttons:[
+                    {name:'curved',value:'0'},
+                    {name:'non connected',value:'1'},
+                    {name:'multi dimensional',value:'2'},
+                ],
+                listener:(value)=>{
+                    clearComplex({callback:()=>{
+                        changeComplex(1+parseInt(value))
+                        renderComplex()
+                    }})
+                },
+                selectedValue:'0'
+            })
+            const next=anim.sideBar.createButton({
+                name:'next',
+                listener:()=>{
+                    buttons.kill()
+                    next.kill()
+                    anim.play()
+                }
+            })
+        },
         ()=>{
             anim.pause()
             
