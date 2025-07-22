@@ -13,10 +13,10 @@ anim.setInit(function() {
         b: [-150, -200],   
         c: [200, 150],     
         d: [250, -50],     
-        e: [350, 250],     
+        e: [350, 50],     
         f: [50, -250],     
         g: [-100, 50],     
-        h: [-550, -250]
+        h: [-350, -250]
     };
 
     const edges = [
@@ -39,22 +39,9 @@ anim.setInit(function() {
     const triangleElements = {};
     let tetrahedronElement;
 
-    // Create vertices
-    Object.keys(vertices).forEach(key => {
-        vertexElements[key] = main.use(vertexSymbol)
-            .center(vertices[key][0], vertices[key][1])
-            .attr({ opacity: 0.3 });
-        main.text(key).move(vertices[key][0]+20,vertices[key][1]+20).font({size:'35px',fill:'#ffa64d'})
-    });
+    
 
-    // Create edges
-    edges.forEach(edge => {
-        const [v1, v2] = edge.split(',');
-        edgeElements[edge] = main.line(
-            vertices[v1][0], vertices[v1][1],
-            vertices[v2][0], vertices[v2][1]
-        ).attr({ ...anim.config().path1, opacity: 0.3 });
-    });
+    
 
     // Create triangles
     triangles.forEach(triangle => {
@@ -66,6 +53,18 @@ anim.setInit(function() {
         ]).attr({ fill: '#44335e', opacity: 0.3, stroke: 'none' });
     });
 
+    
+
+
+    // Create edges
+    edges.forEach(edge => {
+        const [v1, v2] = edge.split(',');
+        edgeElements[edge] = main.line(
+            vertices[v1][0], vertices[v1][1],
+            vertices[v2][0], vertices[v2][1]
+        ).attr({ ...anim.config().path1, opacity: 0.3 });
+    });
+
     // Create tetrahedron (will visualize as a triangle since we're in 2D)
     const [v1, v2, v3, v4] = tetrahedron.split(',');
     tetrahedronElement = main.polygon([
@@ -74,6 +73,15 @@ anim.setInit(function() {
         vertices[v3][0], vertices[v3][1]
     ]).attr({ fill: '#faeaff', opacity: 0.3, stroke: 'none' });
 
+    // Create vertices
+    Object.keys(vertices).forEach(key => {
+        vertexElements[key] = main.use(vertexSymbol)
+            .center(vertices[key][0], vertices[key][1])
+            .attr({ opacity: 0.3 });
+    });
+
+    
+
     // Position the complex
     main.transform({ translate: [600, 400] });
 
@@ -81,8 +89,16 @@ anim.setInit(function() {
     const examples = {
         delta1: [
             { input: 'a,b', boundary: 'a + b' },
-            { input: 'b,c', boundary: 'b + c' },
-            { input: 'a,c', boundary: 'a + c' }
+            { 
+                input: 'a,b + b,c', 
+                boundary: 'a + c',
+                sequentialInput: ['a,b', 'b,c']
+            },
+            { 
+                input: 'a,c + c,d + d,e', 
+                boundary: 'a + e',
+                sequentialInput: ['a,c', 'c,d', 'd,e']
+            }// Keep one single edge example
         ],
         delta2: [
             { input: 'a,c,g', boundary: 'a,g + a,c + g,c' },
@@ -90,7 +106,16 @@ anim.setInit(function() {
             { input: 'b,d,f', boundary: 'b,d + b,f + d,f' }
         ],
         delta3: [
-            { input: 'a,b,c,g', boundary: 'a,b,c + a,b,g + a,c,g + b,c,g' }
+            { 
+                input: 'a,b,c,g', 
+                boundary: 'a,b,c + a,b,g + a,c,g + b,c,g',
+                sequentialBoundary: [
+                    'a,b,g',
+                    'a,c,g',
+                    'b,c,g',
+                    'a,b,c'
+                ]
+            }
         ]
     };
 
@@ -104,19 +129,15 @@ anim.setInit(function() {
             name = name.trim();
             if (vertexElements[name]) {
                 vertexElements[name].animate(300).attr({ opacity });
-                if (color) vertexElements[name].animate(300).attr({ fill: color });
             }
             if (edgeElements[name]) {
                 edgeElements[name].animate(300).attr({ opacity });
-                if (color) edgeElements[name].animate(300).attr({ stroke: color });
             }
             if (triangleElements[name]) {
                 triangleElements[name].animate(300).attr({ opacity });
-                if (color) triangleElements[name].animate(300).attr({ fill: color });
             }
             if (name === tetrahedron) {
                 tetrahedronElement.animate(300).attr({ opacity });
-                if (color) tetrahedronElement.animate(300).attr({ fill: color });
             }
         });
     }
@@ -124,54 +145,79 @@ anim.setInit(function() {
     // Function to reset all highlights
     function resetHighlights() {
         Object.values(vertexElements).forEach(v => {
-            v.attr({fill: anim.config().indicationPoint.fill });
             v.animate(300).attr({ opacity: 0.3 });
         });
         Object.values(edgeElements).forEach(e => {
-            e.attr({stroke: anim.config().path1.stroke });
             e.animate(300).attr({ opacity: 0.3 });
         });
         Object.values(triangleElements).forEach(t => {
-            t.attr({fill: '#44335e' });
             t.animate(300).attr({ opacity: 0.3 });
         });
         if (tetrahedronElement) {
-            tetrahedronElement.animate(300).attr({ opacity: 0.3, fill: '#faeaff' });
+            tetrahedronElement.animate(300).attr({ opacity: 0.3 });
         }
     }
 
     // Function to animate boundary calculation
-    async function animateBoundaryExample(example) {
+     async function animateBoundaryExample(example) {
         // Reset all highlights first
-        
         resetHighlights();
-        // Show input with full opacity
+        
         boundaryText.update({ 
-            newText: `\\partial(${example.input}) = `,
+            newText: `\\partial(${example.input}) = \\ `.replace(/,/g, ''),
             fade: true,
             latex: true
         });
-        highlightSimplices(example.input, 1, '#ff99a7');
         
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        if (example.sequentialBoundary) {
+            // Tetrahedron case (unchanged)
+            for (const component of example.sequentialBoundary) {
+                resetHighlights()
+                if(currentOperator!='delta3') break;
+                boundaryText.appendText({
+                    text:(component + (component !== example.sequentialBoundary[example.sequentialBoundary.length-1] ? ' + ' : '').replace(/,/g, '')),
+                    fade: true,
+                    latex: true
+                });
+                highlightSimplices(component, 1);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+        } 
+        else if (example.sequentialInput) {
+            // Edge chain case
+            // Show input components sequentially
+            for (const component of example.sequentialInput) {
+                highlightSimplices(component, 1);
+            }
+            
+            // Show boundary
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            for (const component of example.sequentialInput) {
+                highlightSimplices(component, 0.5); // Fade but keep visible
+            }
+            boundaryText.appendText({
+                text: example.boundary.replace(/,/g, ''),
+                fade: true,
+                latex: true
+            });
+            highlightSimplices(example.boundary, 1);
+        }
+        else {
+            // Single edge/triangle case
+            highlightSimplices(example.input, 1);
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            boundaryText.appendText({ 
+                text: example.boundary.replace(/,/g, ''),
+                fade: true,
+                latex: true
+            });
+            highlightSimplices(example.input, 0.2);
+            highlightSimplices(example.boundary, 1);
+        }
         
-        // Show boundary while keeping input visible
-        boundaryText.update({ 
-            newText: `\\partial(${example.input}) = ${example.boundary}`,
-            fade: true,
-            latex: true
-        });
-        highlightSimplices(example.boundary, 1, '#00c9a7');
-        
-        // await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Fade out input simplex while keeping boundary visible
-        highlightSimplices(example.input, 0.2, '#ff99a7');
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Final reset
+        await new Promise(resolve => setTimeout(resolve, 2000));
     }
+
 
     // Function to run all examples for an operator
     async function runOperatorExamples(operator) {
@@ -187,7 +233,7 @@ anim.setInit(function() {
         
         // Repeat the demonstration
         if (operator === currentOperator) {
-            setTimeout(() => runOperatorExamples(operator), 1000);
+            setTimeout(() => runOperatorExamples(operator), 300);
         }
     }
 
@@ -209,7 +255,12 @@ anim.setInit(function() {
         selectedValue: null
     });
 
-    anim.initSteps([() => {}]);
+    anim.initSteps([
+        ()=>{},
+        () => {
+            anim.frame.animate(500).transform({scale:1.2,origin:[-150,-300]})
+        }
+    ]);
 });
 
 export default anim;
