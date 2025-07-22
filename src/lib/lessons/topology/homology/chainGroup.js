@@ -103,84 +103,130 @@ anim.setInit(function() {
         return result;
     }
     
-    // Function to display chains for a specific dimension
-    function displayDimensionChains(dimension) {
-        const allSimplices = [...vertexElements, ...edgeElements, ...triangleElements];
-        const chains = generateDimensionChains(allSimplices, dimension);
+// Function to display chains for a specific dimension with fade-in effect
+function displayDimensionChains(dimension) {
+    const allSimplices = [...vertexElements, ...edgeElements, ...triangleElements];
+    const chains = generateDimensionChains(allSimplices, dimension);
+    
+    // Group chains by length (number of simplices in combination)
+    const groupedChains = {};
+    chains.forEach(chain => {
+        const length = chain.length;
+        if (!groupedChains[length]) groupedChains[length] = [];
+        groupedChains[length].push(chain);
+    });
+    
+    // Display the chains with fade-in animation
+    Object.entries(groupedChains).forEach(([length, chains]) => {
+        let lineStrArray = [];
         
-        // Group chains by length (number of simplices in combination)
-        const groupedChains = {};
-        chains.forEach(chain => {
-            const length = chain.length;
-            if (!groupedChains[length]) groupedChains[length] = [];
-            groupedChains[length].push(chain);
-        });
-        
-        // Display the chains
-        Object.entries(groupedChains).forEach(([length, chains]) => {
-            let lineStrArray = [];
-            
-            chains.slice(0, 3).forEach((chain, j) => {
-                lineStrArray.push(chain.map(simplex => simplex.name).join('+'));
-                if (j < chains.length - 1 && j < 2) {
-                    lineStrArray.push('\\ , \\ ');
-                }
-            });
-            
-            if (chains.length > 3) {
-                lineStrArray.push('\\cdots');
+        chains.slice(0, 3).forEach((chain, j) => {
+            let str=chain.map(simplex => simplex.name).join('+')
+            str=str.replace(/,/g, '')
+            lineStrArray.push(str);
+            if (j < chains.length - 1 && j < 2) {
+                lineStrArray.push('\\ , \\ ');
             }
-            
-            const text = anim.elements.dynamicInlineLatexText({
-                inputString: lineStrArray,
-                textStyle: { fontSize: '30px', color: '#ff99a7' }
-            }).addTo(main)
-            .move(-550, parseInt(length) * 60 - 400);
-            
-            // Add hover effects
-            chains.slice(0, 3).forEach((chain, index) => {
-                const textIndex = index * 2; // Account for commas
-                if (text.node.children[textIndex]) {
-                    Object.assign(text.node.children[textIndex].style, {
-                        'background-color': 'rgba(255, 153, 153, 0.2)',
-                        'border-radius': '20px',
-                        'padding': '3px 12px',
-                        'cursor': 'pointer',
-                        'transition': 'all 0.3s ease-in-out'
+        });
+        
+        if (chains.length > 3) {
+            lineStrArray.push('\\cdots');
+        }
+        
+        const text = anim.elements.dynamicInlineLatexText({
+            inputString: lineStrArray,
+            textStyle: { 
+                fontSize: '30px', 
+                color: '#ff99a7',
+            }
+        }).addTo(main)
+        .addClass('chain-text-element')
+        .move(-550, parseInt(length) * 60 - 400);
+        
+        // Fade-in animation
+        text.attr({ opacity: 0 })
+        text.animate({ duration: 300 }).attr({ opacity: 1 });
+        
+        // Add hover effects
+        chains.slice(0, 3).forEach((chain, index) => {
+            const textIndex = index * 2;
+            if (text.node.children[textIndex]) {
+                Object.assign(text.node.children[textIndex].style, {
+                    'background-color': 'rgba(255, 153, 153, 0.2)',
+                    'border-radius': '20px',
+                    'padding': '3px 12px',
+                    'cursor': 'pointer',
+                    'transition': 'all 0.3s ease-in-out'
+                });
+                
+                const activeAnimations = new WeakMap();
+                
+                text.node.children[textIndex].addEventListener('mouseenter', () => {
+                    chain.forEach(simplex => {
+                        const existing = activeAnimations.get(simplex.elem);
+                        if (existing) existing.unschedule();
+                        
+                        const anim = simplex.elem.animate({ duration: 200 }).attr({ opacity: 1 });
+                        activeAnimations.set(simplex.elem, anim);
                     });
-                    
-                    const activeAnimations = new WeakMap();
-                    
-                    text.node.children[textIndex].addEventListener('mouseenter', () => {
-                        chain.forEach(simplex => {
-                            const existing = activeAnimations.get(simplex.elem);
-                            if (existing) existing.unschedule();
-                            
-                            const anim = simplex.elem.animate({ duration: 200 }).attr({ opacity: 1 });
-                            activeAnimations.set(simplex.elem, anim);
-                        });
+                });
+                
+                text.node.children[textIndex].addEventListener('mouseleave', () => {
+                    chain.forEach(simplex => {
+                        const existing = activeAnimations.get(simplex.elem);
+                        if (existing) existing.unschedule();
+                        
+                        const anim = simplex.elem.animate({ duration: 200 }).attr({ opacity: 0.5 });
+                        activeAnimations.set(simplex.elem, anim);
                     });
-                    
-                    text.node.children[textIndex].addEventListener('mouseleave', () => {
-                        chain.forEach(simplex => {
-                            const existing = activeAnimations.get(simplex.elem);
-                            if (existing) existing.unschedule();
-                            
-                            const anim = simplex.elem.animate({ duration: 200 }).attr({ opacity: 0.2 });
-                            activeAnimations.set(simplex.elem, anim);
-                        });
+                });
+            }
+        });
+    });
+}
+
+// Function to remove all chain text elements with fade-out effect
+function removeAllChainTexts() {
+    const textElements = main.find('.chain-text-element');
+    
+    if (textElements && textElements.length > 0) {
+        // Create a promise that resolves when all animations complete
+        const fadeOutPromises = Array.from(textElements).map(textElem => {
+            return new Promise(resolve => {
+                textElem.animate({ duration: 300 })
+                    .attr({ opacity: 0 })
+                    .after(() => {
+                        textElem.remove();
+                        resolve();
                     });
-                }
             });
         });
+        
+        return Promise.all(fadeOutPromises);
     }
+    return Promise.resolve();
+}
+
+async function refreshChains(dimension) {
+    await removeAllChainTexts();
+    displayDimensionChains(dimension);
+}
+
+displayDimensionChains(0)
     
     main.transform({translate: [600, 400]});
     
-    // Display chains for each dimension separately
-    displayDimensionChains(0);  // 0D (vertices)
-    // displayDimensionChains(1);  // 1D (edges)
-    // displayDimensionChains(2, 100);   // 2D (triangles)
+    let buttons=anim.sideBar.createButtonGroup({
+        buttons: [
+            {name: '0D', value: 0},
+            {name: '1D', value: 1},
+            {name: '2D', value: 2},
+        ],
+        listener: (value) => {
+            refreshChains(value)
+        },
+        selectedValue: '0'
+    })
     
     anim.initSteps([() => {}]);
 });
