@@ -38,7 +38,11 @@ anim.setInit(function() {
             ],
             mappedKernelChains:'x,y,x+y',
             mappedImChains:'x',
-            quotient:'y'
+            quotient:'y',
+            mappedChainsPos:{
+                x:[-150,-75],
+                y:[0,-75]
+            }
         },
         { // Complex 1 - case of 2 triangles
             vertices: {
@@ -61,7 +65,12 @@ anim.setInit(function() {
             ],
             mappedKernelChains:'x,y,z,x+y,y+z,x+z,x+y+z',
             mappedImChains:'x,z,x+z',
-            quotient:'y'
+            quotient:'y',
+            mappedChainsPos:{
+                x:[-150,-75],
+                y:[0,-75],
+                z:[125,-75]
+            }
         },
         { // Complex 2 - case of 2 triangles
             vertices: {
@@ -83,19 +92,65 @@ anim.setInit(function() {
                 'a,b+b,c+a,c+c,d+d,e+c,e',
                 'a,b+b,d+d,e+c,e+a,c'
             ],
-            mappedKernelChains:'x,y,z,x+y,y+z,x+z,x+y+z',
-            mappedImChains:'x,z,x+z',
-            quotient:'y'
+            mappedKernelChains:'l,m,n,l+m,m+n,l+n,l+m+n',
+            mappedImChains:'l,m,l+m',
+            quotient:'m',
+            mappedChainsPos:{
+                l:[-150,-75],
+                m:[0,-75],
+                n:[125,-75],
+                o:[0,-225]
+            }
         }
     ];
 
+
+    function zoom(type){
+        if(type==0){
+            anim.frame.animate(500).transform({scale:1.8,origin:[-100,-200]})
+        }else if(type==1){
+            anim.frame.animate(500).transform({scale:1.7,origin:[-70,-200]})
+        }
+    }
+    function createMappedChainTexts() {
+        if (!complexes[currentComplex].mappedChainsPos) return null;
+        
+        const textGroup = main.group();
+        
+        Object.entries(complexes[currentComplex].mappedChainsPos).forEach(([key, pos]) => {
+            const textElement = textGroup.text(key)
+                .move(pos[0], pos[1])
+                .font({
+                    family: 'Arial, sans-serif',  // More readable font
+                    size: 32,                    // Larger size
+                    fill: '#ffffff',
+                })
+                .attr({
+                    'text-anchor': 'middle',
+                    'dominant-baseline': 'middle',
+                    opacity: 0
+                });
+                
+            // Animate the text appearance
+            gsap.to(textElement.node, {
+                duration: 0.5,
+                delay: 1,
+                attr: { opacity: 1 }
+            });
+        });
+        
+        return textGroup;
+    }
+
     // Function to change the complex
-    function changeComplex(index) {
+    async function changeComplex(index) {
         currentComplex = index;
         const complex = complexes[index];
         
         // Clear existing elements
+        await gsap.to(main.node,{duration:0.5,opacity:0})
         main.clear();
+        zoom(index)
         vertexElements = {};
         edgeElements = {};
         triangleElements = {};
@@ -130,6 +185,7 @@ anim.setInit(function() {
 
         // Position the complex
         main.transform({ translate: [600, 400] });
+        await gsap.to(main.node,{duration:0.5,opacity:1})
     }
 
     // Function to highlight simplices
@@ -210,17 +266,22 @@ anim.setInit(function() {
         kernelContainer.style.borderRadius = '8px';
         
         // Add each kernel chain
+        let done=false
         complex.kernelChains.forEach((chain, i) => {
+            if(done){
+                return
+            }
             const chainElement = document.createElement('div');
             katex.render(chain.replace(/,/g, ''), chainElement, { throwOnError: true, displayMode: false });
             chainElement.style.padding = '6px 12px';
             chainElement.style.borderRadius = '6px';
+            chainElement.style.opacity=0
             chainElement.style.cursor = 'pointer';
             chainElement.style.transition = 'all 0.2s ease';
             chainElement.style.width = 'fit-content';
             chainElement.style.fontFamily = 'Latin Modern Math, serif';
             chainElement.style.fontSize = '18px';
-            
+            gsap.to(chainElement,{duration:0.5,delay:1,opacity:1})
             // Mouse interaction
             let isMouseInside = false;
             chainElement.addEventListener('mouseenter', () => {
@@ -240,6 +301,15 @@ anim.setInit(function() {
             });
             
             kernelContainer.appendChild(chainElement);
+            if(i==3){
+                let dots=document.createElement('div')
+                katex.render('\\cdots', dots, { throwOnError: true });
+                dots.style.transform='translate(12px,-15px)'
+                dots.style.opacity=0
+                gsap.to(dots,{duration:0.5,delay:1.4,opacity:1})
+                kernelContainer.appendChild(dots)
+                done=true
+            }
         });
         
         // Add closing brace
@@ -247,6 +317,8 @@ anim.setInit(function() {
         katex.render('\\}', closingBrace, { throwOnError: true });
         closingBrace.style.fontSize = '18px';
         closingBrace.style.paddingLeft = '12px';
+        closingBrace.style.opacity=0
+        gsap.to(closingBrace,{duration:0.5,delay:1,opacity:1})
         kernelContainer.appendChild(closingBrace);
         
         // Append to the latex space
@@ -259,55 +331,38 @@ anim.setInit(function() {
             // Initial complex setup
             anim.pause();
             changeComplex(0);
-            latexSpace.update({
-                newText: '\\text{ker}(\\partial_1) = \\{',
-                fade: true,
-                latex: true
-            });
             setTimeout(function(){
                 createKernelUI()
-                nextButton=anim.sideBar.createButton({
-                    name: 'Next',
-                    listener: () => anim.play()
-                });
+                setTimeout(function(){
+                    nextButton=anim.sideBar.createButton({
+                        name: 'Next',
+                        listener: () => anim.play()
+                    });
+                },2000)
             },2000);
         },
         ()=>{
-            anim.pause()
+            anim.sideBar.createButtonGroup({
+                buttons: [
+                    {name: 'example 1', value: 0},
+                    {name: 'example 2', value: 1},
+                ],
+                listener: (value) => {
+                    changeComplex(value)
+                    anim.step=3
+                    anim.play()
+                }
+            })
+        },
+        ()=>{
             mapKernelChainsToVariables()
+            createMappedChainTexts()
         },
         ()=>{
-            anim.pause()
             calculateQuotient()
-            anim.delay=5000
-        },
-        ()=>{
+            anim.pause()
             nextButton.kill()
-            changeComplex(1);
-        },
-        () => {
-            // Transition to second complex
-            createKernelUI()
-        },
-        () => {
-            mapKernelChainsToVariables()
-            anim.delay=2000
-        },
-        () => {
-            // Transition to second complex
-            anim.pause()
-            setTimeout(function(){
-                nextButton=anim.sideBar.createButton({
-                    name: 'Next',
-                    listener: () => {
-                        anim.step=4
-                        changeComplex(2)
-                        anim.play()
-                    }
-                });
-            },2000);
-            calculateQuotient()
-        },
+        }
     ]);
 });
 
