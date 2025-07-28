@@ -19,6 +19,7 @@ anim.setInit(function() {
     let currentComplex = 0;
     let txtToRemove=[]
     let nextButton
+    let mappedChainTexts
 
     // Different simplicial complex configurations
     const complexes = [
@@ -41,7 +42,7 @@ anim.setInit(function() {
             quotient:'y',
             mappedChainsPos:{
                 x:[-150,-75],
-                y:[0,-75]
+                y:[0,-100]
             }
         },
         { // Complex 1 - case of 2 triangles
@@ -68,18 +69,18 @@ anim.setInit(function() {
             quotient:'y',
             mappedChainsPos:{
                 x:[-150,-75],
-                y:[0,-75],
+                y:[0,-100],
                 z:[125,-75]
             }
         },
-        { // Complex 2 - case of 2 triangles
+        { 
             vertices: {
                 a: [-300, 0],
                 b: [-150, -150],
                 c: [0, 0],
                 d: [150, -150],
                 e:[250,0],
-                f:[0,-400]
+                f:[0,-300]
             },
             edges: ['a,b', 'b,c', 'c,d', 'a,c', 'b,d','c,e','d,e','b,f','d,f'],
             triangles: ['a,b,c','c,d,e'],
@@ -93,11 +94,11 @@ anim.setInit(function() {
                 'a,b+b,d+d,e+c,e+a,c'
             ],
             mappedKernelChains:'l,m,n,l+m,m+n,l+n,l+m+n',
-            mappedImChains:'l,m,l+m',
-            quotient:'m',
+            mappedImChains:'l,n,l+n',
+            quotient:'m,o,m+o',
             mappedChainsPos:{
                 l:[-150,-75],
-                m:[0,-75],
+                m:[0,-100],
                 n:[125,-75],
                 o:[0,-225]
             }
@@ -110,6 +111,8 @@ anim.setInit(function() {
             anim.frame.animate(500).transform({scale:1.8,origin:[-100,-200]})
         }else if(type==1){
             anim.frame.animate(500).transform({scale:1.7,origin:[-70,-200]})
+        }else if(type==2){
+            anim.frame.animate(500).transform({scale:1.7,origin:[-70,-300]})
         }
     }
     function createMappedChainTexts() {
@@ -188,6 +191,18 @@ anim.setInit(function() {
         await gsap.to(main.node,{duration:0.5,opacity:1})
     }
 
+    function fadeNonQuotientTexts(quotient, mappedChainTexts) {
+        const quotientVars = quotient.split(',').map(v => v.trim());
+        Array.from(mappedChainTexts.children()).forEach(txt => {
+            if (!quotientVars.includes(txt.text())) {
+                gsap.to(txt.node, {
+                    duration: 0.5,
+                    opacity: 0.2
+                });
+            }
+        });
+    }
+
     // Function to highlight simplices
     function highlightSimplices(names, opacity = 1) {
         names.split('+').forEach(name => {
@@ -243,13 +258,18 @@ anim.setInit(function() {
     }
 
     // Function to create kernel UI
-    function createKernelUI() {
+    async function createKernelUI() {
         const complex = complexes[currentComplex];
-        
         // Clear previous kernel UI
-        while (latexSpace.textSpace.firstChild) {
-            latexSpace.textSpace.removeChild(latexSpace.textSpace.firstChild);
-        }
+        gsap.to(secLatexSpace.textSpace,{duration:0.5,opacity:0,onComplete:function(){
+            secLatexSpace.textSpace.innerHTML=''
+            gsap.set(secLatexSpace.textSpace,{opacity:1})
+        }})
+        await gsap.to(latexSpace.textSpace,{duration:0.5,opacity:0,onComplete:function(){
+            latexSpace.textSpace.innerHTML=''
+            gsap.set(latexSpace.textSpace,{opacity:1})
+        }})
+        
         
         // Create kernel header
         latexSpace.appendText({text:'ker(\\partial_1)',latex:true,fade:true})
@@ -326,40 +346,49 @@ anim.setInit(function() {
     }
 
     // Animation steps
+    let timeout
     anim.initSteps([
-        () => {
-            // Initial complex setup
-            anim.pause();
+        ()=>{
             changeComplex(0);
-            setTimeout(function(){
-                createKernelUI()
-                setTimeout(function(){
-                    nextButton=anim.sideBar.createButton({
-                        name: 'Next',
-                        listener: () => anim.play()
-                    });
-                },2000)
-            },2000);
         },
         ()=>{
             anim.sideBar.createButtonGroup({
                 buttons: [
                     {name: 'example 1', value: 0},
                     {name: 'example 2', value: 1},
+                    {name: 'example 3', value: 2},
                 ],
                 listener: (value) => {
                     changeComplex(value)
-                    anim.step=3
+                    anim.step=2
                     anim.play()
+                    nextButton&&nextButton.kill()
+                    mappedChainTexts=null
                 }
             })
         },
+        () => {
+            // Initial complex setup
+            anim.pause();
+            createKernelUI()
+            timeout&&clearTimeout(timeout)
+            timeout=setTimeout(function(){
+                nextButton=anim.sideBar.createButton({
+                    name: 'Next',
+                    listener: () => anim.play()
+                });
+            },3000)
+        },
         ()=>{
+            anim.pause()
+            mappedChainTexts=createMappedChainTexts()
             mapKernelChainsToVariables()
-            createMappedChainTexts()
         },
         ()=>{
             calculateQuotient()
+            setTimeout(()=>{
+                fadeNonQuotientTexts(complexes[currentComplex].quotient, mappedChainTexts)
+            },1000)
             anim.pause()
             nextButton.kill()
         }
