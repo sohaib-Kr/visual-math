@@ -1,5 +1,5 @@
 import { vMathAnimation } from "@/lib/library";
-
+import gsap from 'gsap';
 const anim = new vMathAnimation('boundaryKernel');
 
 anim.setInit(function() {
@@ -33,8 +33,6 @@ anim.setInit(function() {
         vertexElements[key] = main.use(vertexSymbol)
             .center(vertices[key][0], vertices[key][1])
             .attr({ opacity: 0.3 });
-        main.text(key).move(vertices[key][0]+15, vertices[key][1]+15)
-            .font({ size: '20px', fill: '#ffa64d' });
     });
 
     // Create edges
@@ -89,33 +87,35 @@ anim.setInit(function() {
     anim.initSteps([
         // Step 0: Initial state
         () => {
+            anim.frame.animate(500).transform({scale:1.7,origin:[-100,0]})
             infoText.update({ 
                 newText: 'as you can see all chains of dimension 1 that ends at the same starting points get mapped to 0 (cycles)',
                 fade: true
             });
         },
         
-        // // Step 1: Highlight 4 cycles in the kernel
-        // async () => {
-        //     anim.pause()
-        //     const cycles = [
-        //         'a,b + b,c + a,c',
-        //         'a,b + b,c + c,e + a,e',
-        //         'a,b + b,d + c,d + a,c',
-        //         'a,b + b,d + c,d + c,e + a,e'
-        //     ];
-            
-        //     for (const cycle of cycles) {
-        //         resetHighlights();
-        //         highlightSimplices(cycle, 1);
-        //         await new Promise(resolve => setTimeout(resolve, 2000));
-        //     }
-        //     anim.play()
-        // },
+        // Step 1: Highlight 4 cycles in the kernel
+        async () => {
+            anim.pause()
+            const cycles = [
+                'a,b + b,c + a,c',
+                'a,b + b,c + c,e + a,e',
+                'a,b + b,d + c,d + a,c',
+                'a,b + b,d + c,d + c,e + a,e'
+            ];
+            resetHighlights();
+            for (const cycle of cycles) {
+                highlightSimplices(cycle, 1);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                resetHighlights();
+            }
+            anim.play()
+        },
         
         // Step 2: Show boundary of triangles maps to 0
         async () => {
             anim.pause()
+            await gsap.to(infoText.textSpace,{duration:0.5,opacity:0})
             infoText.update({
                 newText: 'Triangle boundaries are always cycles',
                 fade: true
@@ -142,21 +142,15 @@ anim.setInit(function() {
                  i++
             },2000)
             
-            infoText.appendText({
-                text: '\n\n∂(abc) = ab + bc + ca \\\ ∂(bcd) = bc + cd + db \\\ ∂(abc+bcd) = ab + cd + ac + bd',
-                fade: true,
-                latex: true
-            });
-            
         },
         async () => {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 500));
 
             infoText.update({
                 newText: 'Out main focus in this particular cycle which represents (a hole). Next we will use algebraic tools to capture this chain abstractly',
                 fade: true
             });
-            
+            await new Promise(resolve => setTimeout(resolve, 500));
             highlightSimplices('a,e + c,e + a,c',1)
         }
     ]);

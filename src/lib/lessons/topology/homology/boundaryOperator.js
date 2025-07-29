@@ -6,7 +6,7 @@ anim.setInit(function() {
     const draw = anim.frame;
     const main = draw.group();
     const vertexSymbol = draw.symbol().circle(10).attr(anim.config().indicationPoint);
-    
+    let animationIndicator=false
     // Define our simplicial complex
     const vertices = {
         a: [-400, 200],    
@@ -162,7 +162,7 @@ anim.setInit(function() {
      async function animateBoundaryExample(example) {
         // Reset all highlights first
         resetHighlights();
-        
+        animationIndicator=true
         boundaryText.update({ 
             newText: `\\partial(${example.input}) = \\ `.replace(/,/g, ''),
             fade: true,
@@ -171,6 +171,7 @@ anim.setInit(function() {
         
         if (example.sequentialBoundary) {
             // Tetrahedron case (unchanged)
+            await new Promise(resolve => setTimeout(resolve, 1000));
             for (const component of example.sequentialBoundary) {
                 resetHighlights()
                 if(currentOperator!='delta3') break;
@@ -226,7 +227,12 @@ anim.setInit(function() {
         
         for (let i = 0; i < opExamples.length; i++) {
             
-            if (currentOperator!=operator) break;
+            if (currentOperator!=operator) {
+                await gsap.to(boundaryText.textSpace,{duration:0.5,opacity:0,onComplete:function(){
+                    boundaryText.textSpace.innerHTML=''
+                }})
+                break;
+            }
             await animateBoundaryExample(opExamples[i]);
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
@@ -252,7 +258,8 @@ anim.setInit(function() {
             resetHighlights();
             runOperatorExamples(value);
         },
-        selectedValue: null
+        selectedValue: null,
+        cooldown: 4000
     });
 
     anim.initSteps([

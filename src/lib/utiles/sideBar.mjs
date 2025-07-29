@@ -209,114 +209,184 @@ export function sideBar(id){
             gsap.to(input, { duration: 0.5, y: 10, opacity: 1 });
             return control
         },
-        createButton({name,listener}){
-            const control = { node: null, listener, kill: null };
-            let input = document.createElement('button');
-            input.className = 'font-[poppins] my-[15px] p-[13px] opacity-[0] leading-none px-[9px] text-[21px] cursor-pointer w-fit rounded-md bg-[#b6638b] text-white';
-            input.textContent = name;
+        
+        
 
-            input.addEventListener('mouseover', () => {
-                gsap.to(input, { duration: 0.3, backgroundColor: '#9c4971' });
-            });
-
-            input.addEventListener('mouseleave', () => {
-                gsap.to(input, { duration: 0.3, backgroundColor: '#b6638b' });
-            });
-
-            input.addEventListener('click', control.listener);
-            control.kill = () => {
-                input.removeEventListener('click', control.listener);
-                gsap.to(input, { duration: 0.5, y: -10, opacity: 0, onComplete: () => input.remove() });
-            };
-            control.node = input;
-            const container = document.getElementById(id).parentElement.querySelector('.control').children[1]
-            container.appendChild(input);
-            gsap.to(input, { duration: 0.5, y: 10, opacity: 1 });
-            return control
-        },
-        createButtonGroup({ buttons, listener }) {
-            const controls = [];
+        createButtonGroup({ buttons, listener, cooldown = false }) {
+          const controls = [];
           
-            // Create container for the button group
-            const container = document.getElementById(id).parentElement.querySelector('.control').children[1]
+          // Create container for the button group
+          const container = document.getElementById(id).parentElement.querySelector('.control').children[1]
           
-            const buttonGroup = document.createElement('div');
-            buttonGroup.className = 'button-group flex gap-2'; // Tailwind-like classes for inline layout
-            let currentSelected=null
-            buttons.forEach(({ name, value }) => {
+          const buttonGroup = document.createElement('div');
+          buttonGroup.className = 'button-group flex gap-2';
+          let currentSelected = null;
+          let isCooldown = false;
+      
+          // Function to enable/disable all buttons
+          const setButtonsDisabled = (disabled) => {
+              buttonGroup.querySelectorAll('button').forEach(btn => {
+                  btn.style.cursor = disabled ? 'not-allowed' : 'pointer';
+                  btn.style.opacity = disabled ? '0.7' : '1';
+                  btn.disabled = disabled;
+              });
+          };
+      
+          buttons.forEach(({ name, value }) => {
               const button = document.createElement('button');
               button.className = 'font-[poppins] py-[13px] px-[20px] leading-none text-[16px] cursor-pointer rounded-md bg-[#b6638b] text-white transition-all duration-300';
               button.textContent = name;
               button.dataset.value = value;
-          
               
-          
               // Hover effects
               button.addEventListener('mouseover', () => {
-                if (value !== currentSelected) {
-                  gsap.to(button, { backgroundColor: '#9c4971', duration: 0.3 });
-                }
+                  if (value !== currentSelected && !isCooldown) {
+                      gsap.to(button, { backgroundColor: '#9c4971', duration: 0.3 });
+                  }
               });
-          
+              
               button.addEventListener('mouseleave', () => {
-                if (value !== currentSelected) {
-                  gsap.to(button, { backgroundColor: '#b6638b', duration: 0.3 });
-                }
+                  if (value !== currentSelected && !isCooldown) {
+                      gsap.to(button, { backgroundColor: '#b6638b', duration: 0.3 });
+                  }
               });
-          
+              
               // Click handler
               button.addEventListener('click', () => {
-                if (value === currentSelected) return; // Already selected
-          
-                // Update visual selection
-                buttonGroup.querySelectorAll('button').forEach(btn => {
-                  gsap.to(btn, { 
-                    backgroundColor: '#b6638b',
-                    scale: 1,
-                    duration: 0.3
+                  if (isCooldown || value === currentSelected) return;
+                  
+                  isCooldown = true;
+                  if (cooldown) setButtonsDisabled(true);
+                  
+                  // Update visual selection
+                  buttonGroup.querySelectorAll('button').forEach(btn => {
+                      gsap.to(btn, { 
+                          backgroundColor: '#b6638b',
+                          scale: 1,
+                          duration: 0.3
+                      });
                   });
-                });
-          
-                gsap.to(button, { 
-                  backgroundColor: '#9c4971',
-                  scale: 0.95,
-                  duration: 0.3
-                });
-          
-                currentSelected = value;
-                listener(value); // Call the listener with the selected value
+                  
+                  gsap.to(button, { 
+                      backgroundColor: '#9c4971',
+                      scale: 0.95,
+                      duration: 0.3
+                  });
+                  
+                  currentSelected = value;
+                  listener(value); // Call the listener with the selected value
+                  
+                  if (cooldown) {
+                      setTimeout(() => {
+                          isCooldown = false;
+                          setButtonsDisabled(false);
+                          
+                          // Restore hover state for currently selected button
+                          if (currentSelected === value) {
+                              gsap.to(button, { 
+                                  backgroundColor: '#9c4971',
+                                  duration: 0.3
+                              });
+                          }
+                      }, cooldown);
+                  } else {
+                      isCooldown = false;
+                  }
               });
-          
+              
               buttonGroup.appendChild(button);
               controls.push({
-                node: button,
-                value,
-                kill: () => {
-                  button.removeEventListener('click', listener);
-                  gsap.to(button, { 
-                    duration: 0.5, 
-                    y: -10, 
-                    opacity: 0, 
-                    onComplete: () => button.remove() 
-                  });
-                }
+                  node: button,
+                  value,
+                  kill: () => {
+                      button.removeEventListener('click', listener);
+                      gsap.to(button, { 
+                          duration: 0.5, 
+                          y: -10, 
+                          opacity: 0, 
+                          onComplete: () => button.remove() 
+                      });
+                  }
               });
-            });
+          });
           
-            container.appendChild(buttonGroup);
+          container.appendChild(buttonGroup);
           
-            return {
+          return {
               nodes: controls,
               getSelected: () => currentSelected,
               setSelected: (value) => {
-                const button = buttonGroup.querySelector(`[data-value="${value}"]`);
-                if (button) button.click(); // Trigger the click handler to update state
+                  const button = buttonGroup.querySelector(`[data-value="${value}"]`);
+                  if (button && !isCooldown) button.click();
               },
               kill: () => {
-                controls.forEach(control => control.kill());
-                buttonGroup.remove();
+                  controls.forEach(control => control.kill());
+                  buttonGroup.remove();
               }
-            };
-          }
+          };
+      },
+      
+
+
+
+
+
+
+      createButton({ name, listener, cooldown = false }) {
+          const control = { node: null, listener, kill: null };
+          let input = document.createElement('button');
+          input.className = 'font-[poppins] my-[15px] p-[13px] opacity-[0] leading-none px-[9px] text-[21px] cursor-pointer w-fit rounded-md bg-[#b6638b] text-white';
+          input.textContent = name;
+          let isCooldown = false;
+      
+          input.addEventListener('mouseover', () => {
+              if (!isCooldown) {
+                  gsap.to(input, { duration: 0.3, backgroundColor: '#9c4971' });
+              }
+          });
+      
+          input.addEventListener('mouseleave', () => {
+              if (!isCooldown) {
+                  gsap.to(input, { duration: 0.3, backgroundColor: '#b6638b' });
+              }
+          });
+      
+          const clickHandler = () => {
+              if (isCooldown) return;
+              
+              isCooldown = true;
+              control.listener();
+              
+              if (cooldown) {
+                  // Apply cooldown effect
+                  const originalText = input.textContent;
+                  input.textContent = '...';
+                  input.style.cursor = 'not-allowed';
+                  
+                  setTimeout(() => {
+                      isCooldown = false;
+                      input.textContent = originalText;
+                      input.style.cursor = 'pointer';
+                      gsap.to(input, { duration: 0.3, backgroundColor: '#b6638b' });
+                  }, cooldown);
+              } else {
+                  isCooldown = false;
+              }
+          };
+          
+          input.addEventListener('click', clickHandler);
+          
+          control.kill = () => {
+              input.removeEventListener('click', clickHandler);
+              gsap.to(input, { duration: 0.5, y: -10, opacity: 0, onComplete: () => input.remove() });
+          };
+          
+          control.node = input;
+          const container = document.getElementById(id).parentElement.querySelector('.control').children[1]
+          container.appendChild(input);
+          gsap.to(input, { duration: 0.5, y: 10, opacity: 1 });
+          
+          return control
+      },
     }
 }    

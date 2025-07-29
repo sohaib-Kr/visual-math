@@ -163,8 +163,6 @@ anim.setInit(function() {
             vertexElements[key] = main.use(vertexSymbol)
                 .center(complex.vertices[key][0], complex.vertices[key][1])
                 .attr({ opacity: 0.3 });
-            main.text(key).move(complex.vertices[key][0]+15, complex.vertices[key][1]+15)
-                .font({ size: '20px', fill: '#ffa64d' });
         });
 
         // Create edges
@@ -323,7 +321,7 @@ anim.setInit(function() {
             kernelContainer.appendChild(chainElement);
             if(i==3){
                 let dots=document.createElement('div')
-                katex.render('\\cdots', dots, { throwOnError: true });
+                katex.render('\\cdots \\} ', dots, { throwOnError: true });
                 dots.style.transform='translate(12px,-15px)'
                 dots.style.opacity=0
                 gsap.to(dots,{duration:0.5,delay:1.4,opacity:1})
@@ -333,14 +331,15 @@ anim.setInit(function() {
         });
         
         // Add closing brace
-        const closingBrace = document.createElement('div');
-        katex.render('\\}', closingBrace, { throwOnError: true });
-        closingBrace.style.fontSize = '18px';
-        closingBrace.style.paddingLeft = '12px';
-        closingBrace.style.opacity=0
-        gsap.to(closingBrace,{duration:0.5,delay:1,opacity:1})
-        kernelContainer.appendChild(closingBrace);
-        
+        if(!done){
+            const closingBrace = document.createElement('div');
+            katex.render('\\}', closingBrace, { throwOnError: true });
+            closingBrace.style.fontSize = '18px';
+            closingBrace.style.paddingLeft = '12px';
+            closingBrace.style.opacity=0
+            gsap.to(closingBrace,{duration:0.5,delay:1,opacity:1})
+            kernelContainer.appendChild(closingBrace);
+        }
         // Append to the latex space
         latexSpace.textSpace.appendChild(kernelContainer);
     }
