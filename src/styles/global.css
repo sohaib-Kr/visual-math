@@ -16,12 +16,12 @@
     opacity: 0;
     transform: translateY(20px);
 }
-.rangeInput{
+/* .rangeInput{
     position:absolute;
     opacity:0;
     width:1px;
     height:1px;
-}
+} */
 .radioInput{
     position:absolute;
     opacity:0;

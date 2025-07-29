@@ -551,7 +551,6 @@ function initCustomRadio(input) {
     observer.observe(document.body, { childList: true, subtree: true });
   
     // Initialize existing inputs
-    document.querySelectorAll('.rangeInput').forEach(initCustomSlider);
     document.querySelectorAll('.radioInput').forEach(initCustomRadio);
 
   }
@@ -579,7 +578,7 @@ document.addEventListener('DOMContentLoaded',
         progressBar()
         loadAnimations()
         exosInitialization()
-        setupRangeInputObserver()
+        // setupRangeInputObserver()
         setupRadioInputObserver()
     }
 )
