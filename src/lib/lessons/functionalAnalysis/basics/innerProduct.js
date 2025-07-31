@@ -1,10 +1,11 @@
 import { vMathAnimation } from "@/lib/library";
+import {Vector} from './utils';
 const anim = new vMathAnimation('innerProduct');
 anim.setInit(function() {
     const draw = anim.frame;
     const main = draw.group();
-    const scale = 70;
     let dragCircle = null;
+    const scale=70
     let isDragMode = false;
     let vectors = [];
     let toggleButton = null;
@@ -12,8 +13,8 @@ anim.setInit(function() {
     let dragModeController = null;
     let innerProductDisplay = null;
     let projectionArrow = null;
-    let innerProductBar = null; // New bar for inner product visualization
-    const barYPosition = 200; // Y position for the inner product bar
+    let innerProductBar = null; 
+    const barYPosition = 200; 
 
     const arrowSymbol = draw.symbol()
         .path('M -20 -2 L 0 -2 V -10 L 20 0 V 0 L 0 10 V 2 L -20 2 Z')
@@ -23,15 +24,15 @@ anim.setInit(function() {
         .path('M -20 -2 L 0 -2 V -10 L 20 0 V 0 L 0 10 V 2 L -20 2 Z')
         .attr({ fill: '#4CAF50', 'fill-opacity': 0.7 });
 
-        function initInnerProductBar() {
-            innerProductBar = draw.rect(0, 20)
-                .move(400, barYPosition)  // Centered at x=400
-                .attr({ fill: '#FF5722', opacity: 0.7 });
-            
-            // Add x-axis line for reference
-            draw.line(-400, barYPosition + 30, 400, barYPosition + 30)
-                .stroke({ width: 1, color: '#999', dasharray: '2,2' });
-        }
+    function initInnerProductBar() {
+        innerProductBar = draw.rect(0, 20)
+            .move(400, barYPosition)  // Centered at x=400
+            .attr({ fill: '#FF5722', opacity: 0.7 });
+        
+        // Add x-axis line for reference
+        draw.line(-400, barYPosition + 30, 400, barYPosition + 30)
+            .stroke({ width: 1, color: '#999', dasharray: '2,2' });
+    }
 
     function updateInnerProductBar(value) {
         const width = Math.abs(value) * scale;
@@ -42,43 +43,15 @@ anim.setInit(function() {
     }
 
     function scaleVector(vector1, vector2) {
-        // Calculate lengths (magnitudes) of both vectors
-        const L1 = Math.sqrt(
-            vector1.originalCoords.x * vector1.originalCoords.x + 
-            vector1.originalCoords.y * vector1.originalCoords.y
-        );
         
         const L2 = Math.sqrt(
-            vector2.originalCoords.x * vector2.originalCoords.x + 
-            vector2.originalCoords.y * vector2.originalCoords.y
+            vector2.coords.x * vector2.coords.x + 
+            vector2.coords.y * vector2.coords.y
         );
-        
-        // Calculate new length
-        const newLength = L1 * L2;
-        
-        
         // Calculate new coordinates
-        const newX = vector1.originalCoords.x * L2;
-        const newY = vector1.originalCoords.y * L2;
-        const angle = Math.atan2(newY, newX) * 180 / Math.PI;
-        
-        // Animate the vector to new length
-        vector1.elem.animate(500)
-            .transform({
-                translate: [newX * scale, newY * scale],
-                rotate: angle,
-                origin: [0, 0]
-            });
-            
-        vector1.line.animate(500)
-            .plot(0, 0, newX * scale, newY * scale);
-        
-        // Update vector's stored positions
-        vector1.originalCoords = { x: newX, y: newY };
-        vector1.headPosition = { x: newX * scale, y: newY * scale };
-        
-        // Return the new length
-        return newLength;
+        const newX = vector1.coords.x * L2;
+        const newY = vector1.coords.y * L2;
+        vector1.updateCoords({x:newX,y:newY})
     }
 
     function disableVectorDragging() {
@@ -95,23 +68,13 @@ anim.setInit(function() {
         });
     }
 
-    function createVector(x, y) {
-        const angle = Math.atan2(y, x) * 180 / Math.PI;
-        const vector = {
-            elem: main.use(arrowSymbol)
-                .transform({
-                    translate: [x * scale, y * scale],
-                    rotate: angle,
-                    origin: [0, 0]
-                }),
-            line: main.line(0, 0, x * scale, y * scale)
-                .stroke({ width: 2, color: '#4285F4' })
-                .back(),
-            originalCoords: { x, y },
-            isDragging: false,
-            headPosition: { x: x * scale, y: y * scale },
-            savedPosition: { x, y }
-        };
+    function createVector(x, y,symbol=arrowSymbol) {
+        const vector = new Vector({
+            coords: { x, y },
+            symbol,
+            parent: main,
+        });
+        vector.isDragging=false
 
         vector.elem.on('mousedown', () => vector.isDragging = true);
         vector.line.on('mousedown', () => vector.isDragging = true);
@@ -122,8 +85,8 @@ anim.setInit(function() {
     function calculateProjection() {
         if (vectors.length < 2) return null;
         
-        const v1 = vectors[0].originalCoords;
-        const v2 = vectors[1].originalCoords;
+        const v1 = vectors[0].coords;
+        const v2 = vectors[1].coords;
         
         const dotProduct = v1.x * v2.x + v1.y * v2.y;
         const v2MagnitudeSquared = v2.x * v2.x + v2.y * v2.y;
@@ -142,33 +105,17 @@ anim.setInit(function() {
         const proj = calculateProjection();
         if (!proj) return;
         
-        const angle = Math.atan2(proj.y, proj.x) * 180 / Math.PI;
-        
         // Create the projected vector and add it to vectors array
-        const projectedVector = createVector(proj.x, proj.y);
+        const projectedVector = createVector(proj.x, proj.y,projectionSymbol);
         projectedVector.isProjection = true;
         vectors.push(projectedVector);
-        
-        // Remove old projection visualization if it exists
-        if (projectionArrow) {
-            projectionArrow.elem.remove();
-            projectionArrow.line.remove();
-            projectionArrow = null;
-        }
         
         // Style the projected vector differently
         projectedVector.elem.attr({ fill: '#4CAF50', 'fill-opacity': 0.7 });
         projectedVector.line.stroke({ color: '#4CAF50', dasharray: '5,3' });
         
         // Animate the first vector to show projection
-        vectors[0].elem.animate(500)
-            .transform({
-                translate: [proj.x * scale, proj.y * scale],
-                rotate: angle
-            });
-            
-        vectors[0].line.animate(500)
-            .plot(0, 0, proj.x * scale, proj.y * scale);
+        vectors[0].animateTo(proj)
         
         // Update the bar to show the scaled projection
         updateInnerProductBar(proj.dotProduct / proj.v2Magnitude);
@@ -178,37 +125,16 @@ anim.setInit(function() {
 
     function resetVectors() {
         if (vectors.length < 2) return;
-        
-        const v = vectors[0];
-        const angle = Math.atan2(v.savedPosition.y, v.savedPosition.x) * 180 / Math.PI;
-        
-        // Animate the first vector back to its original position
-        v.elem.animate(500)
-            .transform({
-                translate: [v.savedPosition.x * scale, v.savedPosition.y * scale],
-                rotate: angle
-            });
-            
-        v.line.animate(500)
-            .plot(0, 0, v.savedPosition.x * scale, v.savedPosition.y * scale);
-        
-        // If we have a projected vector (vectors[2])
-        if (vectors.length > 2 && vectors[2].isProjection) {
-            const projVector = vectors[2];
-
-                    projVector.elem.remove();
-                    projVector.line.remove();
-                    vectors.pop();
-        }
+        vectors[0].reset()
+        vectors[2].elem.remove()
         enableVectorDragging();
-        
     }
 
     function translateProjection() {
         const projVector = vectors[2];
         const proj = calculateProjection();
         const barX = (proj.dotProduct > 0 ? 1 : -1) * Math.abs(proj.dotProduct/proj.v2Magnitude) * scale + 400;
-        projVector.elem.animate(500)
+        projVector.updateCoords({x:barX,y:barYPosition + 30})
         .transform({
             translate: [barX-600, barYPosition + 30-400],
             rotate: 0  // Make it parallel to x-axis
@@ -224,18 +150,8 @@ anim.setInit(function() {
     }
     function updateVectorPosition(vector, mouseX, mouseY) {
         const x = (mouseX - 600) / scale;
-        const y = (mouseY - 400) / scale;
-        const angle = Math.atan2(y, x) * 180 / Math.PI;
-        
-        vector.originalCoords = { x, y };
-        vector.savedPosition = { x, y };
-        vector.headPosition = { x: mouseX - 600, y: mouseY - 400 };
-        
-        vector.elem.transform({
-            translate: [x * scale, y * scale],
-            rotate: angle
-        });
-        vector.line.plot(0, 0, x * scale, y * scale);
+        const y = ( 400 -mouseY) / scale;
+        vector.updateCoords({x,y},false)
         
         updateInnerProduct();
     }
@@ -245,8 +161,8 @@ anim.setInit(function() {
         
         const v1 = vectors[0];
         const v2 = vectors[1];
-        const dotProduct = v1.originalCoords.x * v2.originalCoords.x + 
-                         v1.originalCoords.y * v2.originalCoords.y;
+        const dotProduct = v1.coords.x * v2.coords.x + 
+                         v1.coords.y * v2.coords.y;
         
         // Update the text display
         if (!innerProductDisplay) {
@@ -259,107 +175,44 @@ anim.setInit(function() {
         }
         
         // Update the bar visualization
-        updateInnerProductBar(dotProduct);
+        // updateInnerProductBar(dotProduct);
     }
-
-    function dragModeOn() {
-        if (isDragMode) return;
-        isDragMode = true;
         
-        dragCircle = draw.circle(20)
-            .attr({ 
-                fill: '#4285F4',
-                opacity: 0,
-                'fill-opacity': 0.7
-            })
-            .center(0, 0);
-            
-        dragCircle.animate(300).attr({ opacity: 1 });
-        
-        function moveCircle(e) {
-            const mousePos = draw.point(e.clientX, e.clientY);
-            dragCircle.center(mousePos.x, mousePos.y);
-        }
-        
-        function handleClick(e) {
-            const mousePos = draw.point(e.clientX, e.clientY);
-            const x = (mousePos.x - 600) / scale;
-            const y = (mousePos.y - 400) / scale;
-            
-            vectors.push(createVector(x, y));
-            
-            if (vectors.length === 2) {
-                draw.on('mousemove', (e) => {
-                    const mousePos = draw.point(e.clientX, e.clientY);
-                    vectors.forEach(vector => {
-                        if (vector.isDragging) {
-                            updateVectorPosition(vector, mousePos.x, mousePos.y);
-                        }
-                    });
-                });
-                
-                draw.on('mouseup', () => {
-                    vectors.forEach(vector => {
-                        vector.isDragging = false;
-                    });
-                });
-                
-                if (toggleButton) toggleButton.node.disabled = true;
-                if (dragModeController) {
-                    dragModeController.off();
-                    dragModeController = null;
-                }
-                
-                showOperationButton.node.disabled = false;
-                updateInnerProduct();
-            }
-        }
-        
-        draw.on('mousemove', moveCircle);
-        draw.on('click', handleClick);
-        
-        return {
-            off: () => {
-                isDragMode = false;
-                draw.off('mousemove', moveCircle);
-                draw.off('click', handleClick);
-                dragCircle.animate(300).attr({ opacity: 0 }).after(() => {
-                    dragCircle.remove();
-                    dragCircle = null;
-                });
-            }
-        };
-    }
 
     main.transform({ translate: [600, 400] });
 
+    [[1,0],[0,1]].forEach(([x,y])=>{
+        vectors.push(createVector(x, y));
+    });
+    draw.on('mousemove', (e) => {
+        const mousePos = draw.point(e.clientX, e.clientY);
+        vectors.forEach(vector => {
+            if (vector.isDragging) {
+                updateVectorPosition(vector, mousePos.x, mousePos.y);
+            }
+        });
+    });
+    
+    draw.on('mouseup', () => {
+        vectors.forEach(vector => {
+            vector.isDragging = false;
+        });
+    });
+    updateInnerProduct();
     anim.initSteps([
         () => {
             // Initialize the inner product bar
             initInnerProductBar();
-            
-            toggleButton = anim.sideBar.createButton({
-                name: 'Place Vectors',
-                listener: () => {
-                    if (dragModeController) {
-                        dragModeController.off();
-                        dragModeController = null;
-                    } else {
-                        dragModeController = dragModeOn();
-                    }
-                }
-            });
-            
             showOperationButton = anim.sideBar.createButton({
                 name: 'Show Operation',
                 listener: async () => {
                     if (showOperationButton.node.textContent === 'Show Operation') {
                         animateProjection();
                         await new Promise(resolve => setTimeout(resolve, 2000));
-                        scaleVector(vectors[1],vectors[2]);
+                        scaleVector(vectors[2],vectors[1]);
                         await new Promise(resolve => setTimeout(resolve, 1000));
-                        translateProjection()
-                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        // translateProjection()
+                        // await new Promise(resolve => setTimeout(resolve, 1000));
                         showOperationButton.node.textContent = 'Reset';
                     } else {
                         resetVectors();
@@ -367,7 +220,6 @@ anim.setInit(function() {
                     }
                 }
             });
-            showOperationButton.node.disabled = true;
         }
     ]);
 });

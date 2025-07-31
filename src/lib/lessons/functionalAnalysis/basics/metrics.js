@@ -1,19 +1,21 @@
 import { vMathAnimation } from "@/lib/library";
+import {Point} from './utils';  // Import the Vector class
 const anim = new vMathAnimation('metrics');
 anim.setInit(function() {
     const draw = anim.frame;
     const main = draw.group();
     const scale = 70;
-    let dragCircle = null;
-    let isDragMode = false;
-    let placedPoints = [];
-    let toggleButton = null;
-    let dragModeController = null;
+    let placedVectors = [];  // Changed from placedPoints to placedVectors
     let euclideanBar = null;
     let metricBar = null;
     const fixedBarX = 0;
     const barYEuclidean = 400;
     const barYMetric = 430;
+
+    // Vector symbol definition (like in previous scripts)
+    const arrowSymbol = draw.symbol()
+        .path('M -20 -2 L 0 -2 V -10 L 20 0 V 0 L 0 10 V 2 L -20 2 Z')
+        .attr({ fill: '#4285F4', 'fill-opacity': 0.7 });
 
     // Norm system
     let currentNorm = 'manhattan';
@@ -23,7 +25,6 @@ anim.setInit(function() {
 
     // Metric circles
     let metricCircleGroup = null;
-    const circleOpacity = 0.15;
     const circleColors = ['#FFB3B3', '#FFB3D1', '#F0A6FF', '#C0AAFF', '#A9B5FF'];
 
     function initDistanceBars() {
@@ -109,18 +110,15 @@ anim.setInit(function() {
         }
     }
 
-    function updateDistanceBars() {
-        if (placedPoints.length < 2) return;
+    function initDistanceBars() {
+        euclideanBar = draw.rect(0, 20)
+            .move(fixedBarX, barYEuclidean)
+            .attr({ fill: '#3A86FF'});
         
-        const p1 = placedPoints[0];
-        const p2 = placedPoints[1];
-        const dx = p2.elem.x() - p1.elem.x();
-        const dy = p2.elem.y() - p1.elem.y();
-        
-        euclideanBar.width(Math.sqrt(dx*dx + dy*dy));
-        metricBar.width(calculateNormDistance(dx, dy));
+        metricBar = draw.rect(0, 20)
+            .move(fixedBarX, barYMetric)
+            .attr({ fill: '#FF7B3D'});
     }
-
     function switchNorm(normType) {
         currentNorm = normType;
         
@@ -134,92 +132,40 @@ anim.setInit(function() {
         updateDistanceBars();
     }
 
-    function createPoint(x, y) {
-        const point = draw.circle(10)
-            .center(x, y)
-            .attr({ 
-                fill: '#4285F4',
-                'fill-opacity': 0.7,
-                cursor: 'move'
-            });
-        
-        let isDragging = false;
-        point.on('mousedown', () => {
-            isDragging = true;
+    function createVector(x, y) {
+        const vector = new Point({
+            coords: { x: (x - 600) / scale, y: (y - 400) / scale },
+            symbol: arrowSymbol,
+            parent: main,
+            scale,
+            lineConfig: { width: 3, color: '#4285F4' }
         });
-        
-        draw.on('mousemove', (e) => {
-            if (!isDragging) return;
-            const mousePos = draw.point(e.clientX, e.clientY);
-            point.center(mousePos.x, mousePos.y);
-            updateDistanceBars();
-        });
-        
-        draw.on('mouseup', () => {
-            isDragging = false;
-        });
-        
-        return {
-            elem: point,
-            x: (x - 600) / scale,
-            y: (y - 400) / scale
-        };
+
+        return vector;
     }
 
-    function dragModeOn() {
-        if (isDragMode) return;
-        isDragMode = true;
+    function updateDistanceBars() {
+        if (placedVectors.length < 2) return;
         
-        dragCircle = draw.circle(20)
-            .attr({ 
-                fill: '#4285F4',
-                opacity: 0,
-                'fill-opacity': 0.7
-            })
-            .center(0, 0);
-            
-        dragCircle.animate(300).attr({ opacity: 1 });
+        const v1 = placedVectors[0];
+        const v2 = placedVectors[1];
+        const dx = v2.coords.x - v1.coords.x;
+        const dy = v2.coords.y - v1.coords.y;
         
-        function moveCircle(e) {
-            const mousePos = draw.point(e.clientX, e.clientY);
-            dragCircle.center(mousePos.x, mousePos.y);
-        }
-        
-        function handleClick(e) {
-            const mousePos = draw.point(e.clientX, e.clientY);
-            placedPoints.push(createPoint(mousePos.x, mousePos.y));
-            
-            if (placedPoints.length === 2) {
-                initDistanceBars();
-                updateDistanceBars();
-                if (toggleButton) {
-                    toggleButton.node.disabled = true;
-                }
-                if (dragModeController) {
-                    dragModeController.off();
-                    dragModeController = null;
-                }
-            }
-        }
-        
-        draw.on('mousemove', moveCircle);
-        draw.on('click', handleClick);
-        
-        return {
-            off: () => {
-                isDragMode = false;
-                draw.off('mousemove', moveCircle);
-                draw.off('click', handleClick);
-                dragCircle.animate(300).attr({ opacity: 0 }).after(() => {
-                    dragCircle.remove();
-                    dragCircle = null;
-                });
-            }
-        };
+        euclideanBar.width(Math.sqrt(dx*dx + dy*dy) * scale);
+        metricBar.width(calculateNormDistance(dx, dy) * scale);
     }
 
+
+
+    // Initialize with vectors instead of points
+    [[1,0], [0,1]].forEach(([x,y]) => {
+        placedVectors.push(createVector(600 + x * scale, 400 + y * scale).allowDrag(draw,updateDistanceBars));
+    });
+
+    initDistanceBars();
+    updateDistanceBars();
     main.transform({ translate: [600, 400] });
-
     anim.initSteps([
         () => {
             drawMetricCircles();
@@ -307,18 +253,6 @@ anim.setInit(function() {
             });
             pValueInput.node.value = "1.0";
             pValueInput.node.style.display = 'none';
-
-            toggleButton = anim.sideBar.createButton({
-                name: 'Place Points',
-                listener: () => {
-                    if (dragModeController) {
-                        dragModeController.off();
-                        dragModeController = null;
-                    } else {
-                        dragModeController = dragModeOn();
-                    }
-                }
-            });
         }
     ]);
 });
