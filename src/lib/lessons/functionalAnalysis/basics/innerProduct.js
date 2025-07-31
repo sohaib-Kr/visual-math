@@ -4,15 +4,10 @@ const anim = new vMathAnimation('innerProduct');
 anim.setInit(function() {
     const draw = anim.frame;
     const main = draw.group();
-    let dragCircle = null;
     const scale=70
-    let isDragMode = false;
     let vectors = [];
-    let toggleButton = null;
     let showOperationButton = null;
-    let dragModeController = null;
     let innerProductDisplay = null;
-    let projectionArrow = null;
     let innerProductBar = null; 
     const barYPosition = 200; 
 

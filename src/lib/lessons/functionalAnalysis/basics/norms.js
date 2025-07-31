@@ -1,4 +1,5 @@
 import { vMathAnimation } from "@/lib/library";
+import {createFloatInput} from './utils';
 const anim = new vMathAnimation('norms');
 anim.setInit(function() {
 
@@ -9,7 +10,6 @@ anim.setInit(function() {
     let currentNorm = 'euclidean';
     let unitCircle, diamond, square, ellipse, lpShape;
     let weightX = 1.0, weightY = 2.0, pValue = 2.0;
-    let lastValidX = '1.0', lastValidY = '2.0', lastValidP = '2.0';
     let radiusSlider;
     let weightXInput, weightYInput, pValueInput;
     
@@ -17,12 +17,12 @@ anim.setInit(function() {
 
     function switchNorm(drawFunction, normType) {
         currentNorm = normType;
-        
-        // Show/hide inputs based on active norm
-        if (weightXInput && weightYInput && pValueInput) {
-            weightXInput.node.style.display = normType === 'weighted' ? 'block' : 'none';
-            weightYInput.node.style.display = normType === 'weighted' ? 'block' : 'none';
-            pValueInput.node.style.display = normType === 'lp' ? 'block' : 'none';
+        [weightXInput,weightYInput,pValueInput].forEach(input=>input.node.style.display='none')
+        if(normType==='weighted'){
+            [weightXInput,weightYInput].forEach(input=>input.node.style.display='block')
+        }
+        else if(normType==='lp'){
+            pValueInput.node.style.display='block'
         }
         
         main.animate(300).opacity(0).after(() => {
@@ -71,35 +71,6 @@ anim.setInit(function() {
         ].join(' ');
         
         ellipse.plot(pathCommands);
-    }
-
-    function createFloatInput(name, initialValue, onChange, isP = false) {
-        const input = anim.sideBar.createTextInput({
-            name: name,
-            listener: (event) => {
-                const value = event.target.value;
-                if (/^[+]?\d*\.?\d*$/.test(value) && value !== '') {
-                    const num = parseFloat(value);
-                    if (!isNaN(num) && num > 0) {
-                        if (name === "Weight X") lastValidX = value;
-                        else if (name === "Weight Y") lastValidY = value;
-                        else if (isP) lastValidP = value;
-                        onChange(num);
-                        if (currentNorm === 'weighted') updateEllipse();
-                        else if (currentNorm === 'lp') drawLpNorm(radiusSlider.value * scale);
-                    } else {
-                        event.target.value = isP ? lastValidP : 
-                                          (name === "Weight X" ? lastValidX : lastValidY);
-                    }
-                } else {
-                    event.target.value = isP ? lastValidP : 
-                                      (name === "Weight X" ? lastValidX : lastValidY);
-                }
-            }
-        });
-        input.node.value = initialValue;
-        input.node.style.display = 'none'; // Hidden by default
-        return input;
     }
 
     function drawEuclidean() {
@@ -169,7 +140,7 @@ anim.setInit(function() {
             { name: 'Euclidean', value: 'euclidean' },
             // { name: 'Manhattan', value: 'manhattan' },
             // { name: 'Maximum', value: 'maximum' },
-            // { name: 'Weighted', value: 'weighted' },
+            { name: 'Weighted', value: 'weighted' },
             { name: 'Lp Norm', value: 'lp' }
         ],
         listener: function(value) {
@@ -191,9 +162,14 @@ anim.setInit(function() {
 
     radiusSlider.value = 10;
     // Create inputs (hidden by default)
-    weightXInput = createFloatInput("Weight X", "1.0", (value) => { weightX = value; });
-    weightYInput = createFloatInput("Weight Y", "2.0", (value) => { weightY = value; });
-    pValueInput = createFloatInput("p-value", "2.0", (value) => { pValue = value; }, true);
+    weightXInput = createFloatInput({name:"Weight X", initialValue:"1.0",
+        onChange:(value) => { 
+            weightX = value; 
+            updateEllipse();
+        },anim});
+    weightYInput = createFloatInput({name:"Weight Y", initialValue:"2.0", onChange:(value) => { weightY = value; updateEllipse(); },anim});
+    pValueInput = createFloatInput({name:"p-value", initialValue:"2.0", onChange:(value) => { pValue = value; drawLpNorm(radiusSlider.value * scale); },anim});
+    [weightXInput,weightYInput,pValueInput].forEach(input=>input.node.style.display='none')
 
     anim.initSteps([
         () => {

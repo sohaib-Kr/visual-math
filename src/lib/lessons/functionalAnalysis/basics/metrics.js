@@ -1,5 +1,5 @@
 import { vMathAnimation } from "@/lib/library";
-import {Point} from './utils';  // Import the Vector class
+import {Point, createFloatInput} from './utils';  // Import the Vector class
 const anim = new vMathAnimation('metrics');
 anim.setInit(function() {
     const draw = anim.frame;
@@ -172,86 +172,41 @@ anim.setInit(function() {
             
             anim.sideBar.createButtonGroup({
                 buttons: [
-                    { name: 'Euclidean', value: 'euclidean' },
-                    // { name: 'Manhattan', value: 'manhattan' },
-                    // { name: 'Maximum', value: 'maximum' },
-                    // { name: 'Weighted', value: 'weighted' },
+                    // { name: 'Euclidean', value: 'euclidean' },
+                    { name: 'Manhattan', value: 'manhattan' },
+                    { name: 'Maximum', value: 'maximum' },
+                    { name: 'Weighted', value: 'weighted' },
                     { name: 'Lp Norm', value: 'lp' }
                 ],
                 listener: switchNorm
             });
 
             // Create inputs exactly as in norms animation
-            weightXInput = anim.sideBar.createTextInput({
-                name: "Weight X",
-                listener: (event) => {
-                    const value = event.target.value;
-                    if (/^[+]?\d*\.?\d*$/.test(value) && value !== '') {
-                        const num = parseFloat(value);
-                        if (!isNaN(num) && num > 0) {
-                            lastValidX = value;
-                            weightX = num;
-                            if (currentNorm === 'weighted') {
-                                drawMetricCircles();
-                                updateDistanceBars();
-                            }
-                        } else {
-                            event.target.value = lastValidX;
-                        }
-                    } else {
-                        event.target.value = lastValidX;
-                    }
+            weightXInput =  createFloatInput({name:"Weight X", initialValue:"1.0", onChange:(value) => {
+                weightX = value;
+                if (currentNorm === 'weighted') {
+                    drawMetricCircles();
+                    updateDistanceBars();
                 }
-            });
-            weightXInput.node.value = "1.0";
+            },anim});
             weightXInput.node.style.display = 'none';
 
-            weightYInput = anim.sideBar.createTextInput({
-                name: "Weight Y",
-                listener: (event) => {
-                    const value = event.target.value;
-                    if (/^[+]?\d*\.?\d*$/.test(value) && value !== '') {
-                        const num = parseFloat(value);
-                        if (!isNaN(num) && num > 0) {
-                            lastValidY = value;
-                            weightY = num;
-                            if (currentNorm === 'weighted') {
-                                drawMetricCircles();
-                                updateDistanceBars();
-                            }
-                        } else {
-                            event.target.value = lastValidY;
-                        }
-                    } else {
-                        event.target.value = lastValidY;
-                    }
+            weightYInput = pValueInput = createFloatInput({name:"Weight Y", initialValue:"1.0", onChange:(value) => {
+                weightY = value;
+                if (currentNorm === 'weighted') {
+                    drawMetricCircles();
+                    updateDistanceBars();
                 }
-            });
-            weightYInput.node.value = "1.0";
+            },anim});
             weightYInput.node.style.display = 'none';
 
-            pValueInput = anim.sideBar.createTextInput({
-                name: "p-value",
-                listener: (event) => {
-                    const value = event.target.value;
-                    if (/^[+]?\d*\.?\d*$/.test(value) && value !== '') {
-                        const num = parseFloat(value);
-                        if (!isNaN(num) && num > 0) {
-                            lastValidP = value;
-                            pValue = num;
-                            if (currentNorm === 'lp') {
-                                drawMetricCircles();
-                                updateDistanceBars();
-                            }
-                        } else {
-                            event.target.value = lastValidP;
-                        }
-                    } else {
-                        event.target.value = lastValidP;
-                    }
+            pValueInput = createFloatInput({name:"p-value", initialValue:"1.0", onChange:(value) => {
+                pValue = value;
+                if (currentNorm === 'lp') {
+                    drawMetricCircles();
+                    updateDistanceBars();
                 }
-            });
-            pValueInput.node.value = "1.0";
+            },anim});
             pValueInput.node.style.display = 'none';
         }
     ]);

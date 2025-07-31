@@ -1,6 +1,6 @@
 import { vMathAnimation } from "@/lib/library";
 const anim = new vMathAnimation('vectorSpace');
-import {Vector} from './utils';
+import {Vector,createFloatInput} from './utils';
 anim.setInit(function(){
     const draw = anim.frame;
     const arrowSymbol = draw.symbol()
@@ -37,27 +37,15 @@ anim.setInit(function(){
         }
     }
 
-    function createScalarInput(arrow, index) {
-        const input = anim.sideBar.createTextInput({
-            name: `Scalar ${index + 1}`,
-            listener: (event) => {
-                const value = event.target.value;
-                if (/^[-+]?\d*\.?\d*$/.test(value)) {
-                    const num = parseFloat(value);
-                    if (!isNaN(num)) {
-                        arrow.lastValidValue = value;
-                        const newCoords = {
-                            x: arrow.originalCoords.x * num,
-                            y: arrow.originalCoords.y * num
-                        };
-                        arrow.updateCoords(newCoords);
-                        updateResultantVector(); // Update sum when scalar changes
-                    }
-                } else {
-                    event.target.value = arrow.lastValidValue || '';
-                }
-            }
-        });
+    function createScalarInput(arrow) {
+        const input =  createFloatInput({name:"Weight X", initialValue:"1.0", onChange:(value) => {
+            const newCoords = {
+                x: arrow.originalCoords.x * value,
+                y: arrow.originalCoords.y * value
+            };
+            arrow.updateCoords(newCoords);
+            updateResultantVector(); 
+                    },anim});
         arrow.input = input;
         scalarInputs.push(input);
         return input;
