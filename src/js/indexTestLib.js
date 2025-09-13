@@ -3,16 +3,28 @@ import Vivus from 'vivus';
 export function createPathConnectAnimation(svg){
         
     let shape = svg.group();
+        
+    let coverCircles=[shape.circle(100).center(40,40).fill('red')
+    ,shape.circle(100).center(50,80).fill('red')
+    ,shape.circle(100).center(90,120).fill('blue')
+    ,shape.circle(100).center(170,140).fill('orange')
+    ,shape.circle(100).center(200,60).fill('green')
+    ,shape.circle(100).center(170,0).fill('gray')
+    ,shape.circle(100).center(80,0).fill('black')
+    ,shape.circle(100).center(120,70).fill('pink')]
+    coverCircles.forEach((circle)=>{
+        circle.attr({opacity:0}).stroke({color:'black',width:2,dasharray:'2,2'})
+    })
     
-    // Initial path
     let path = shape.path(`M 0 0
-        C 0 100 30 150 70 150
+        C 0 100 40 130 70 150
         S 200 150 200 100
         S 100 0 180 -80
-        `).stroke({ color: 'red', width: 2 }).fill('none');
-        
-    shape.transform({translate: [100, 100]});
-    
+        `).stroke({ color: '#00c9a7', width: 6 }).fill('none');
+
+    let point1=shape.circle(15).center(0,0).fill('#ffa64d')
+    let point2=shape.circle(15).center(180,-80).fill('#ffa64d')
+    shape.transform({translate: [100, 100],scale:0.7});
     let startObj = {
         a: [0, 0],
         b: [0, 100],
@@ -27,42 +39,73 @@ export function createPathConnectAnimation(svg){
         d: [60, -20]
     };
     let currentObj={...startObj};
-    
-    return gsap.to({},{
-        duration:2,
+    gsap.set(shape.node,{transformOrigin:'center'})
+    let transitionTween=gsap.to(shape.node,{x:"+=20",
+        y:"-=10",
+        duration:3,
+        paused:true,
         yoyo:true,
         repeat:-1,
+        delay:1,
+        ease:'power2.inOut'})
+    let rotationTween=gsap.to(shape.node,{rotate:10,
+        duration:3,
         paused:true,
-        ease:'power1.inOut',
-        onUpdate:function(progress){
-            for (let key in startObj) {
-                currentObj[key] = [
-                    startObj[key][0] + (endObj[key][0] - startObj[key][0]) * this.progress(),
-                    startObj[key][1] + (endObj[key][1] - startObj[key][1]) * this.progress()
-                ];
+        yoyo:true,
+        repeat:-1,
+        delay:1,
+        ease:'power2.inOut'})
+
+    return gsap.timeline({
+            yoyo:true,
+            repeat:-1,
+            paused:true,
+            onStart:function(){
+                transitionTween.play()
+                rotationTween.play()
+            },
+            repeatDelay:3
+        })
+        .to({},{
+            ease:'power1.inOut',
+            duration:1.5,
+            onUpdate:function(){
+                for (let key in startObj) {
+                    currentObj[key] = [
+                        startObj[key][0] + (endObj[key][0] - startObj[key][0]) * this.progress(),
+                        startObj[key][1] + (endObj[key][1] - startObj[key][1]) * this.progress()
+                    ];
+                }
+                
+                point1.center(currentObj.a[0],currentObj.a[1])
+                point2.center(currentObj.d[0],currentObj.d[1])
+                path.plot(`M ${currentObj.a.join(' ')}
+                    C ${currentObj.b.join(' ')} 40 130 70 150
+                    S 200 150 200 100
+                    S ${currentObj.c.join(' ')} ${currentObj.d.join(' ')}`);
             }
-            
-            // Update path with interpolated values
-            path.plot(`M ${currentObj.a.join(' ')}
-                C ${currentObj.b.join(' ')} 30 150 70 150
-                S 200 150 200 100
-                S ${currentObj.c.join(' ')} ${currentObj.d.join(' ')}`);
-        }
-    })
+        }).to([point1.node,point2.node],{
+            opacity:0,
+            duration:1
+        }).to(coverCircles,{
+            opacity:0.4,
+            duration:0.3,
+            stagger:0.1,
+        })
+
     }
     export function createTorusAnimation(svg){
         let shape=svg.group()
-        let torus=shape.path(' M122 0C98-30 22-26 0 0M-72 0C-72-72 190-84 196 0S-66 72-72 0M0 0C24 14 82 18 122 0').fill('blue')
+        let torus=shape.path(' M122 0C98-30 22-26 0 0M-72 0C-72-72 190-84 196 0S-66 72-72 0M0 0C24 14 82 18 122 0').fill('#ffbf00')
         shape.transform({translate:[120,400]})
         gsap.set(torus.node,{transformOrigin:'center'})
-        let rotationTween=gsap.to(torus.node,{rotate:-15,paused:true,
-            repeatDelay:2,
-            duration:5,
+        let rotationTween=gsap.fromTo(torus.node,{rotate:-5},{rotate:5,paused:true,
+            duration:3,
             yoyo:true,
             repeat:-1,
             ease:'power2.inOut'})
-        let transitionTween= gsap.to(shape.node,{x:"+=20",
-            y:"+=10",
+        let transitionTween= gsap.to(shape.node,{x:"+=30",
+            y:"+=20",
             duration:3,
             paused:true,
             yoyo:true,
@@ -82,20 +125,22 @@ export function createPathConnectAnimation(svg){
         let shapeHolder=svg.group().transform({translate:[500,200]})
         let shape=shapeHolder.group()
         let pathParent=shape.group().attr('id','pathParent')
-        let path=pathParent
+        
+    
+        let firstTriangle=shape.polygon('0 -50 0 0 80 -30').attr({opacity:0}).fill('#44335e')
+        let secondTriangle=shape.polygon('80 -30 150 -50 100 50').attr({opacity:0}).fill('#44335e')
+    
+        let missingTriangle=shape.polygon('0 0 100 50 0 90').attr({opacity:0}).fill('#44335e')
+    let path=pathParent
         .path('M 0 0 V -50 L 80 -30 L 0 0 L 100 50 L 80 -30 L 150 -50 L 100 50')
-        .stroke({color:'red',width:2})
+        .stroke({color:'#00c9a7',width:3})
         .fill('none');
-    
-        let movingPart=pathParent.path('M 100 50 L 50 100').stroke({color:'red',width:2}).fill('none')
-        let firstTriangle=shape.polygon('0 -50 0 0 80 -30').attr({opacity:0})
-        let secondTriangle=shape.polygon('80 -30 150 -50 100 50').attr({opacity:0})
-    
-        let missingTriangle=shape.polygon('0 0 100 50 0 90').fill('blue').attr({opacity:0})
-        let missingLine=shape.path('M 0 0  L 0 90').stroke({color:'red',width:2}).fill('none').attr({opacity:0})
-    
+        let movingPart=pathParent.path('M 100 50 L 50 100').stroke({color:'#00c9a7',width:3}).fill('none')
+
+        let missingLine=shape.path('M 0 0  L 0 90').stroke({color:'#00c9a7',width:3}).fill('none').attr({opacity:0})
+
         let dots=[[0,0],[0,-50],[80,-30],[100,50],[80,-30],[150,-50],[100,50],[50,100]].map(
-            (dot)=>shape.circle(0).center(dot[0],dot[1])
+            (dot)=>shape.circle(0).center(dot[0],dot[1]).fill('#ffa64d')
         )
     
         
@@ -134,8 +179,7 @@ export function createPathConnectAnimation(svg){
             movingPart.attr('style','')
             let i=0
             let I=setInterval(()=>{
-                dots[i].animate(500).attr('r',6)
-                console.log()
+                dots[i].animate(500).attr('r',5)
                 i++
                 if(i==dots.length){
                     clearInterval(I)
@@ -147,3 +191,4 @@ export function createPathConnectAnimation(svg){
             },100)
         });
        }
+
