@@ -1,0 +1,23 @@
+---
+// src/components/GridMenu.astro
+const menuItems = [
+  { id: 0, title: "Topology"},
+  { id: 1, title: "Functional Analysis" },
+];
+---
+<div class="bg-[yellow] overlap opacity-[0]" id="branches">
+    <div class="max-w-6xl mx-auto p-6">
+        <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Navigation Menu</h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          {menuItems.map((item) => (
+            <div
+            data-id={item.id}
+              class="branch block bg-white rounded-xl shadow-md p-6 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-gray-100"
+            >
+              <h3 class="text-xl font-semibold text-gray-800">{item.title}</h3>
+            </div>
+          ))}
+        </div>
+      </div>
+</div>

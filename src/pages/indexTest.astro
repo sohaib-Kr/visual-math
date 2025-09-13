@@ -1,0 +1,34 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Branches from '../components/Branches.astro';
+---
+<Layout>
+    <main>
+        <div class="w-full h-[600px] grid grid-cols-[50%_50%] grid-rows-1 mt-[50px]">
+            <div class="bg-green-500 grid grid-cols-[70%_30%] grid-rows-1">
+                <div class="grid">
+                    <div class="m-[50px] overlap">
+                         <h2 id="title">Topology</h2>
+                         <p id="description">
+                            Topology is a branch of mathematics that studies the properties of 
+                             space that are preserved under continuous deformations, 
+                             such as stretching or bending, but not tearing or gluing. 
+                             It focuses on concepts like continuity, compactness, and connectedness, 
+                             and plays a key role in fields like geometry, analysis, and physics
+                            </p>
+                    </div>
+                    <Branches/>
+
+                </div>
+                <div class="bg-red-500">
+                    <div class="h-[70px] w-[70px] bg-blue-500 justify-self-center relative top-[50px]">
+                        <svg id="hamburgerLogo" width="100%" height="100%"></svg>
+                    </div>
+                </div>
+            </div>
+            <div id="svgContainer">
+            </div>
+        </div>
+    </main>
+    <script src="../js/indexTestScript.js"></script>
+</Layout>

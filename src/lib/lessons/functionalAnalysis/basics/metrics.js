@@ -20,7 +20,6 @@ anim.setInit(function() {
     // Norm system
     let currentNorm = 'manhattan';
     let weightX = 1.0, weightY = 1.0, pValue = 1.0;
-    let lastValidX = '1.0', lastValidY = '1.0', lastValidP = '1.0';
     let weightXInput, weightYInput, pValueInput;
 
     // Metric circles
