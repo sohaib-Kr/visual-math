@@ -1,15 +1,17 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Branches from '../components/Branches.astro';
+import Hero from '../components/Hero.astro';
 ---
 <Layout>
     <main>
-        <div class="w-full h-[600px] grid grid-cols-[50%_50%] grid-rows-1 mt-[50px]">
+            <Hero/>
+        <div class="w-full h-[600px] grid grid-cols-[50%_50%] grid-rows-1">
             <div class="bg-[#d6d2f9] grid grid-cols-[70%_30%] grid-rows-1">
                 <div class="grid">
-                    <div class="m-[50px] overlap">
-                         <h2 id="title">Topology</h2>
-                         <p id="description">
+                    <div class="m-[50px] overlap font-[poppins]">
+                         <h2 id="title" class='text-[44px] mb-[50px]'>Topology</h2>
+                         <p id="description" class='text-[22px] leading-[35px]'>
                             Topology is a branch of mathematics that studies the properties of 
                              space that are preserved under continuous deformations, 
                              such as stretching or bending, but not tearing or gluing. 

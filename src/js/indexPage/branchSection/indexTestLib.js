@@ -459,6 +459,8 @@ export function createUnderCurveSpaceAnimation(svg){
         yoyo:true,
         paused:true // Initially paused
     })
+    let shrinkTween=gsap.to(shapeContainer.node, {scale: 0, duration: 0.4});
+
     
     return {
         open:false,
@@ -466,6 +468,7 @@ export function createUnderCurveSpaceAnimation(svg){
             if(this.open==false){
                 shaderAnimation.play();
                 shapeAnimation.play();
+                shrinkTween.reverse()
             }
             this.open=true
         },
@@ -473,7 +476,7 @@ export function createUnderCurveSpaceAnimation(svg){
             if(this.open==true){
                 shaderAnimation.pause();
                 shapeAnimation.pause();
-                gsap.to(shapeContainer.node, {scale: 0, duration: 0.4});
+                shrinkTween.play()
             }
             this.open=false
         }
