@@ -1,4 +1,10 @@
 import {newtonsDemo} from './newtonsDemo.js'
 import {background} from './heroBackground.js'
-background()
+import {heroFrame} from './herFrame.js'
+
+
+window.onload=()=>{
+    background()
 // newtonsDemo()
+heroFrame()
+}

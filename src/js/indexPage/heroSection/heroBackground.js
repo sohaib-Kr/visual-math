@@ -21,7 +21,7 @@ export function background(){
     .fill('none')
 
     let backgroundColor='#fcfae9'
-    let cover=frame.rect('100%','100%').fill(backgroundColor).attr({opacity:0.6})
+    let cover=frame.rect('100%','100%').fill(backgroundColor).attr({opacity:0.5})
     const gradient1 = frame.gradient('radial', function(add) {
         add.stop(0, '#f6d4bc') 
         add.stop(1, '#f6d4bc00')   
