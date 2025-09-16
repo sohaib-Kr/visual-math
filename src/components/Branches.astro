@@ -1,23 +1,46 @@
 ---
-// src/components/GridMenu.astro
-const menuItems = [
-  { id: 0, title: "Topology"},
-  { id: 1, title: "Functional Analysis" },
-];
+import BranchesNav from './BranchesNav.astro';
 ---
-<div class="overlap opacity-[0]" id="branches">
-    <div class="max-w-6xl mx-auto p-6">
-        <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Navigation Menu</h2>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-          {menuItems.map((item) => (
-            <div
-            data-id={item.id}
-              class="branch block bg-white rounded-xl shadow-md p-6 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-gray-100"
-            >
-              <h3 class="text-xl font-semibold text-gray-800">{item.title}</h3>
-            </div>
-          ))}
+<div class="w-full h-fit grid grid-rows-1 bg-[#310f70] relative z-[1]">
+            
+    <div class="grid overlap">
+        <div id="svgContainer" class="overlap pt-[200px]">
         </div>
-      </div>
+        <div class="overlap bg-[#310f70]" id="svgContainerMask"></div>
+        <div class="bg-[#1e0943] overlap opacity-[0.4] grid">
+        </div>
+        <div class="overlap grid">
+            <div class="justify-self-end self-end relative bottom-[200px] w-fit right-[150px] grid h-fit bg-white rounded-[40px]">
+                <svg class="w-full h-[50px] overlap" id="arrowIcon">
+                    <path fill='none' d="M 0 39 L 55 39 L 38 25 M 55 39 L 39 52" />
+                </svg>
+                <a href="#" id='seeLessonsButton' class="overlap text-[#1e0943] w-fit font-bold text-[25px] px-[40px] py-[10px] ">
+                    See Lessons
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-[50%] grid overlap grid-cols-[70%_30%] grid-rows-1 pt-[200px] relative">
+        <div class="grid">
+            <div class="m-[50px] overlap font-[poppins] text-[white]">
+                 <h2 id="title" class='text-[44px] mb-[50px]'>Topology</h2>
+                 <p id="description" class='text-[22px] leading-[35px]'>
+                    Topology is a branch of mathematics that studies the properties of 
+                     space that are preserved under continuous deformations, 
+                     such as stretching or bending, but not tearing or gluing. 
+                     It focuses on concepts like continuity, compactness, and connectedness, 
+                     and plays a key role in fields like geometry, analysis, and physics
+                    </p>
+            </div>
+            <BranchesNav/>
+
+        </div>
+        <div>
+            <div class="h-[70px] w-[70px] bg-blue-500 justify-self-center relative top-[50px]">
+                <svg id="hamburgerLogo" width="100%" height="100%"></svg>
+            </div>
+        </div>
+    </div>
+    
 </div>

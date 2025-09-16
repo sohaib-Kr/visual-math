@@ -1,7 +1,8 @@
 import {SVG} from '@svgdotjs/svg.js'
 import gsap from 'gsap'
 export function background(){
-    const frame=SVG().addTo('#heroBackground').size('100%','100%');
+    const frame=SVG().addTo('#heroBackground').size('1550','900');
+    const mainBackground=frame.path('M 1550 785 V 1 H 0 V 702 C 189 689 869 863 1112 861 S 1475 803 1550 784 Z').fill('white')
     let circle1=frame.circle(200).center(100,100).attr({opacity:0})
     let circle2=frame.circle(100).center(462,57).attr({opacity:0})
     let circle3=frame.circle(100).center(83,89).attr({opacity:0})
@@ -21,7 +22,7 @@ export function background(){
     .fill('none')
 
     let backgroundColor='#fcfae9'
-    let cover=frame.rect('100%','100%').fill(backgroundColor).attr({opacity:0.5})
+    let cover=frame.path('M 1550 785 V 1 H 0 V 702 C 189 689 869 863 1112 861 S 1475 803 1550 784 Z').fill(backgroundColor).attr({opacity:0.5})
     const gradient1 = frame.gradient('radial', function(add) {
         add.stop(0, '#f6d4bc') 
         add.stop(1, '#f6d4bc00')   

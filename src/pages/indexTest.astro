@@ -6,47 +6,7 @@ import Hero from '../components/Hero.astro';
 <Layout>
     <main>
             <Hero/>
-        <div class="w-full h-[600px] grid grid-cols-[50%_50%] grid-rows-1">
-            <div class="bg-[#d6d2f9] grid grid-cols-[70%_30%] grid-rows-1">
-                <div class="grid">
-                    <div class="m-[50px] overlap font-[poppins]">
-                         <h2 id="title" class='text-[44px] mb-[50px]'>Topology</h2>
-                         <p id="description" class='text-[22px] leading-[35px]'>
-                            Topology is a branch of mathematics that studies the properties of 
-                             space that are preserved under continuous deformations, 
-                             such as stretching or bending, but not tearing or gluing. 
-                             It focuses on concepts like continuity, compactness, and connectedness, 
-                             and plays a key role in fields like geometry, analysis, and physics
-                            </p>
-                    </div>
-                    <Branches/>
-
-                </div>
-                <div class=>
-                    <div class="h-[70px] w-[70px] bg-blue-500 justify-self-center relative top-[50px]">
-                        <svg id="hamburgerLogo" width="100%" height="100%"></svg>
-                    </div>
-                </div>
-            </div>
-            <div class="grid">
-                <div id="svgContainer" class="bg-[#310f70] overlap">
-                </div>
-                <div class="overlap bg-[#310f70]" id="svgContainerMask"></div>
-                <div class="bg-[#1e0943] overlap opacity-[0.4] grid">
-                </div>
-                <div class="overlap grid">
-                    <div class="justify-self-end self-end relative bottom-[100px] w-fit right-[150px] grid h-fit bg-white rounded-[40px]">
-                        <svg class="w-full h-[50px] overlap" id="arrowIcon">
-                            <path fill='none' d="M 0 39 L 55 39 L 38 25 M 55 39 L 39 52" />
-                        </svg>
-                        <a href="#" id='seeLessonsButton' class="overlap text-[#1e0943] w-fit font-bold text-[25px] px-[40px] py-[10px] ">
-                            See Lessons
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
+            <Branches/>
     </main>
     <script src="../js/indexPage"></script>
 </Layout>

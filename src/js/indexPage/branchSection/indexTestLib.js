@@ -126,7 +126,7 @@ export function createPathConnectAnimation(svg){
 export function createTorusAnimation(svg){
     let shape=svg.group()
     let torus=shape.path(' M122 0C98-30 22-26 0 0M-72 0C-72-72 190-84 196 0S-66 72-72 0M0 0C24 14 82 18 122 0').fill('#ffbf00')
-    shape.transform({translate:[120,400]})
+    shape.transform({translate:[20,400]})
     gsap.set(torus.node,{transformOrigin:'center'})
     
     // Initially paused tweens

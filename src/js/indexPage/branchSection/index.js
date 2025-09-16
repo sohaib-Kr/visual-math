@@ -2,7 +2,7 @@ import {createPathConnectAnimation,createGraphAnimation,createTorusAnimation,cre
 import {lessonsButton,hamburgerMenu} from './buttons.js'
 import gsap from 'gsap'
 import { SVG } from '@svgdotjs/svg.js';
-window.onload = function() {
+export function branchesSectionScript() {
 
     var texts=[`Topology is a branch of mathematics that studies the properties of 
         space that are preserved under continuous deformations, 
@@ -19,6 +19,7 @@ window.onload = function() {
     let container = document.getElementById('svgContainer');
 
     let svg = SVG().addTo(container).size(container.offsetWidth, container.offsetHeight);
+
 
     let topoSprits=[createPathConnectAnimation(svg),createGraphAnimation(svg),createTorusAnimation(svg)]
     topoSprits.forEach(sprit=>sprit.In())
@@ -43,7 +44,17 @@ window.onload = function() {
     let mask=document.getElementById('svgContainerMask')
     gsap.to(mask,{duration:0.5,delay:0.7,opacity:0})
     })
-    
+
+    let children=svg.children()
+    let group=svg.group()
+    children.forEach((child)=>group.node.appendChild(child.node))
+    const x=container.offsetWidth/2
+    group.transform({translate:[x,0]})
+
+
+
+
+
     lessonsButton()
     hamburgerMenu()
     

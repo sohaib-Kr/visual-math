@@ -2,6 +2,14 @@ import {SVG} from '@svgdotjs/svg.js'
 import gsap from 'gsap'
 import Vivus from 'vivus'
 
+function showNewtonDemo(frame1,frame2){
+    gsap.to(frame1,{duration:1,y:50,x:-50,ease:'power2.out'})
+    gsap.to(frame2,{duration:1,y:-50,x:50,ease:'power2.out',onComplete:function(){
+        gsap.to([frame1,frame2],{duration:1,opacity:0,ease:'power2.out',onComplete:function(){
+            gsap.set([frame1,frame2],{display:'none'})
+        }})
+    }})
+}
 function sineWaveDemo(frame) {
     const scale = 40;
     let mathFunc = (x) => Math.sin(x * 1.2);
@@ -118,40 +126,56 @@ let progressCircle = progBar.circle(15)
     })
 }
 
-function moveFrames(){
-    const frame1=document.getElementById('heroFrame1')
-    const frame2=document.getElementById('heroFrame2')
-    const container=frame1.parentNode
-    let floatingTweens=[gsap.to(frame1,{duration:4,y:20,x:10,yoyo:true,repeat:-1,ease:'power1.inOut'}),
-    gsap.to(frame2,{duration:6,y:20,x:-5,yoyo:true,repeat:-1,ease:'power1.inOut'})]
-    container.addEventListener('mouseover',()=>{
-        floatingTweens.forEach(tween=>tween.pause())
-    })
-    container.addEventListener('mouseout',()=>{
-        gsap.to(frame1,{duration:1,x:0,y:0})
-        gsap.to(frame2,{duration:2,x:0,y:0})
-        floatingTweens.forEach(tween=>{tween.progress(0)
-            tween.play()
-        })
-    })
+function moveFrames() {
+    const frame1 = document.getElementById('heroFrame1');
+    const frame2 = document.getElementById('heroFrame2');
+    const container = frame1.parentNode;
+    
+    let floatingTweens = [
+        gsap.to(frame1, {duration: 4, y: 20, x: 10, yoyo: true, repeat: -1, ease: 'power1.inOut'}),
+        gsap.to(frame2, {duration: 6, y: 20, x: -5, yoyo: true, repeat: -1, ease: 'power1.inOut'})
+    ];
 
-    container.addEventListener('mousemove', (event) => {
+    function handleMouseOver() {
+        floatingTweens.forEach(tween => tween.pause());
+    }
+
+    function handleMouseOut() {
+        gsap.to(frame1, {duration: 1, x: 0, y: 0});
+        gsap.to(frame2, {duration: 2, x: 0, y: 0});
+        floatingTweens.forEach(tween => {
+            tween.progress(0);
+            tween.play();
+        });
+    }
+
+    function handleMouseMove(event) {
         const rect = container.getBoundingClientRect();
         const elementCenterX = rect.left + rect.width / 2;
         const elementCenterY = rect.top + rect.height / 2;
-
         const mouseX = event.clientX;
         const mouseY = event.clientY;
-
         const deltaX = mouseX - elementCenterX;
         const deltaY = mouseY - elementCenterY;
+        
+        gsap.to(frame1, {duration: 0.5, x: -deltaX/20, y: deltaY/20});
+        gsap.to(frame2, {duration: 0.5, x: deltaX/20, y: -deltaY/20});
+    }
 
-        let distance = Math.sqrt(deltaX*deltaX+deltaY*deltaY)
+    container.addEventListener('mouseover', handleMouseOver);
+    container.addEventListener('mouseout', handleMouseOut);
+    container.addEventListener('mousemove', handleMouseMove);
 
-        gsap.to(frame1,{duration:0.5,x:-deltaX/20,y:deltaY/20})
-        gsap.to(frame2,{duration:0.5,x:deltaX/20,y:-deltaY/20})
-    });
+    return {
+        pauseTween: () => floatingTweens.forEach(tween => tween.pause()),
+        disableListener: () => {
+            container.removeEventListener('mouseover', handleMouseOver);
+            container.removeEventListener('mouseout', handleMouseOut);
+            container.removeEventListener('mousemove', handleMouseMove);
+        }
+    };
 }
+
 
 function graphDemo(frame){
     let shape=frame.group()
@@ -224,10 +248,16 @@ function graphDemo(frame){
     })
 
 }
-export function heroFrame(){
+export function heroFrame(newtonDemo){
     let frame1=SVG().addTo('#heroFrame1').size('100%','100%');
     let frame2=SVG().addTo('#heroFrame2').size('100%','100%');
-    moveFrames()
+    let movingTween=moveFrames()
     sineWaveDemo(frame2)
     graphDemo(frame1)
+    document.getElementById('playDemoButton').addEventListener('click',()=>{
+        movingTween.pauseTween()
+        movingTween.disableListener()
+        showNewtonDemo(frame1.node.parentNode,frame2.node.parentNode)
+        newtonDemo()
+    })
 }
