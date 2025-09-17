@@ -2,11 +2,12 @@ import {SVG} from '@svgdotjs/svg.js'
 import gsap from 'gsap'
 import Vivus from 'vivus'
 
-function showNewtonDemo(frame1,frame2){
+function showNewtonDemo(frame1,frame2,callback){
     gsap.to(frame1,{duration:1,y:50,x:-50,ease:'power2.out'})
     gsap.to(frame2,{duration:1,y:-50,x:50,ease:'power2.out',onComplete:function(){
         gsap.to([frame1,frame2],{duration:1,opacity:0,ease:'power2.out',onComplete:function(){
             gsap.set([frame1,frame2],{display:'none'})
+            callback()
         }})
     }})
 }
@@ -254,10 +255,15 @@ export function heroFrame(newtonDemo){
     let movingTween=moveFrames()
     sineWaveDemo(frame2)
     graphDemo(frame1)
-    document.getElementById('playDemoButton').addEventListener('click',()=>{
+
+    let demoButton=document.getElementById('playDemoButton')
+    function clickEvent(){
         movingTween.pauseTween()
         movingTween.disableListener()
-        showNewtonDemo(frame1.node.parentNode,frame2.node.parentNode)
-        newtonDemo()
-    })
+        showNewtonDemo(frame1.node.parentNode,frame2.node.parentNode,newtonDemo)
+        demoButton.removeEventListener('click',clickEvent)
+        gsap.to(demoButton,{duration:1,y:10,opacity:0,ease:'power1.in',onComplete:function(){demoButton.style.display='none'}})
+
+    }
+    demoButton.addEventListener('click',clickEvent)
 }

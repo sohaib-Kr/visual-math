@@ -4,7 +4,7 @@ import BranchesNav from './BranchesNav.astro';
 <div class="w-full h-fit grid grid-rows-1 bg-[#310f70] relative z-[1]">
             
     <div class="grid overlap">
-        <div id="svgContainer" class="overlap pt-[200px]">
+        <div id="svgContainer" class="overlap pt-[150px]">
         </div>
         <div class="overlap bg-[#310f70]" id="svgContainerMask"></div>
         <div class="bg-[#1e0943] overlap opacity-[0.4] grid">
@@ -21,25 +21,27 @@ import BranchesNav from './BranchesNav.astro';
         </div>
     </div>
 
-    <div class="w-[50%] grid overlap grid-cols-[70%_30%] grid-rows-1 pt-[200px] relative">
-        <div class="grid">
-            <div class="m-[50px] overlap font-[poppins] text-[white]">
-                 <h2 id="title" class='text-[44px] mb-[50px]'>Topology</h2>
-                 <p id="description" class='text-[22px] leading-[35px]'>
+    <div class="w-[50%] grid overlap grid-rows-1 pt-[350px] relative">
+        <div class="grid overlap">
+            <div class="ml-[100px] overlap font-[poppins] text-[white]">
+                 <h2 id="title" class='text-[54px]  mb-[50px]'>Topology</h2>
+                 <p id="description" class='text-[25px] leading-[50px]'>
                     Topology is a branch of mathematics that studies the properties of 
                      space that are preserved under continuous deformations, 
-                     such as stretching or bending, but not tearing or gluing. 
-                     It focuses on concepts like continuity, compactness, and connectedness, 
-                     and plays a key role in fields like geometry, analysis, and physics
+                     such as stretching or bending, but not tearing or gluing.
                     </p>
             </div>
             <BranchesNav/>
 
         </div>
-        <div>
-            <div class="h-[70px] w-[70px] bg-blue-500 justify-self-center relative top-[50px]">
-                <svg id="hamburgerLogo" width="100%" height="100%"></svg>
-            </div>
+        <div class="justify-self-start relative bottom-[100px] left-[100px] h-fit overlap">
+            <button class="flex items-center h-fit space-x-2 px-4 py-2 bg-white text-[23px] text-[#1c446b] rounded-full hover:bg-[#e6e6ff] transition " id="categoriesButton">
+                <!-- SVG Icon for Categories -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-[30px] w-[auto]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+                <span>Categories</span>
+              </button>
         </div>
     </div>
     

@@ -6,4 +6,5 @@ import {heroFrame} from './herFrame.js'
 export function HeroScript(){
     background()
 heroFrame(newtonsDemo)
+// newtonsDemo()
 }

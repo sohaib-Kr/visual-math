@@ -5,6 +5,7 @@ export function newtonsDemo(){
     const scale=100;
     let playButton=document.createElement('button');
     playButton.id='play';
+    playButton.textContent='Start Solution';
     document.getElementById('newtonDemoControl').appendChild(playButton);
     function drawMathFunction({ mathFunc, start, step, end, fill = 'none' }) {
         let pathData = `M ${start * scale} ${-mathFunc(start) * scale}`;
@@ -83,14 +84,14 @@ export function newtonsDemo(){
     }
 
     const frame=SVG().addTo('#newtonDemoFrame').size('100%','100%');
-    let shape=frame.group().transform({translate:[200,250]})
+    let shape=frame.group().transform({translate:[120,250]})
 
     shape.line(-100,0,400,0).stroke({color:'gray',width:1})
     let illegalLine=shape.line(50,0,200,0).stroke({color:'red',width:1})
 
     let diffIndicator=frame.path('M 0 0 L 40 0 L 40 -138 L 0 -138').fill('red').transform({translate:[600,200]})
     let diffText=frame.text('1.38').transform({translate:[600,220]})
-    let mathFunc=(x)=>Math.pow(Math.E,x/2)-2;
+    let mathFunc=(x)=>Math.pow(Math.E,x/3)-2;
 
     let mainCurve=shape.path(
         drawMathFunction(
@@ -132,50 +133,54 @@ export function newtonsDemo(){
     })
 
     let initialClick=false;
+    let step=0
     let indicationLine=shape.path('').stroke({color:'red',width:1}).attr({opacity:0})
-    document.getElementById('play').addEventListener('click',()=>{
-        if(!initialClick){
-            illegalLine.animate(400).attr({opacity:0}).after(()=>illegalLine.remove());
-        }
-        dragger.disable();  
-    
-        initialClick=true;
-        let x=dynamicPointX;
-        let tl=gsap.timeline();
-        gsap.set(shape.node,{transformOrigin:'338 550'});
-        tl.to(indicationLine.node,{
-            onStart:function(){
-                indicationLine.plot(`M ${x} 0 L ${x} ${-mathFunc(x/scale)*scale}`)
-            },
-            opacity:1,
-            duration:1
-        }).to(tengent.node,{
-            onStart:function(){
-                tengent.plot(drawTangentLine({mathFunc,t:x/scale,start:-1,end:4,scale}))
-            },
-            opacity:1,
-            duration:1
-        }).to(dynamicPoint.node, {
-            duration: 1,
-            y: -mathFunc(x/scale)*scale,
-            ease: "power1.inOut",
-            onComplete: function() {
-                // Calculate where tangent hits x-axis
-                const h = 0.0001;
-                const derivative = (mathFunc(x/scale + h) - mathFunc(x/scale - h)) / (2 * h);
-                const rootX = x/scale - mathFunc(x/scale)/derivative;
-                
-                // Animate to x-axis along tangent line
-                gsap.to(dynamicPoint.node, {
-                    duration: 1,
-                    x: rootX * scale,
-                    y: 0,
-                    ease: "power1.inOut",
-                });
-                dynamicPointX=rootX * scale;
-                updateDiffIndicator();
+    function newtonStep(){
+        playButton.disabled=true;
+            if(!initialClick){
+                illegalLine.animate(400).attr({opacity:0}).after(()=>illegalLine.remove());
             }
-        }).to(indicationLine.node,{opacity:0,duration:1}).to(tengent.node,{opacity:0,duration:1})
-        // .to(shape.node,{scale:200/Math.abs(dynamicPointX-138),duration:1})
-    })
+            dragger.disable();  
+        
+            initialClick=true;
+            let x=dynamicPointX;
+            let tl=gsap.timeline();
+            gsap.set(shape.node,{transformOrigin:'338 550'});
+            tl.to(indicationLine.node,{
+                onStart:function(){
+                    indicationLine.plot(`M ${x} 0 L ${x} ${-mathFunc(x/scale)*scale}`)
+                },
+                opacity:1,
+                duration:1
+            }).to(tengent.node,{
+                onStart:function(){
+                    tengent.plot(drawTangentLine({mathFunc,t:x/scale,start:-1,end:4,scale}))
+                },
+                opacity:1,
+                duration:1
+            }).to(dynamicPoint.node, {
+                duration: 1,
+                y: -mathFunc(x/scale)*scale,
+                ease: "power1.inOut",
+                onComplete: function() {
+                    // Calculate where tangent hits x-axis
+                    const h = 0.0001;
+                    const derivative = (mathFunc(x/scale + h) - mathFunc(x/scale - h)) / (2 * h);
+                    const rootX = x/scale - mathFunc(x/scale)/derivative;
+                    
+                    // Animate to x-axis along tangent line
+                    gsap.to(dynamicPoint.node, {
+                        duration: 1,
+                        x: rootX * scale,
+                        y: 0,
+                        ease: "power1.inOut",
+                    });
+                    dynamicPointX=rootX * scale;
+                    updateDiffIndicator();
+                    playButton.disabled=false;
+                }
+            }).to(indicationLine.node,{opacity:0,duration:1}).to(tengent.node,{opacity:0,duration:1})
+            // .to(shape.node,{scale:200/Math.abs(dynamicPointX-138),duration:1})
+    }
+    playButton.addEventListener('click',newtonStep())
 }

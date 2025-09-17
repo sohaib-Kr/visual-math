@@ -1,5 +1,5 @@
 import {createPathConnectAnimation,createGraphAnimation,createTorusAnimation,createCurveApproaximation,createUnderCurveSpaceAnimation,createSymboles} from './indexTestLib.js'
-import {lessonsButton,hamburgerMenu} from './buttons.js'
+import {lessonsButton,categoriesButton} from './buttons.js'
 import gsap from 'gsap'
 import { SVG } from '@svgdotjs/svg.js';
 export function branchesSectionScript() {
@@ -56,7 +56,7 @@ export function branchesSectionScript() {
 
 
     lessonsButton()
-    hamburgerMenu()
+    categoriesButton()
     
 
     

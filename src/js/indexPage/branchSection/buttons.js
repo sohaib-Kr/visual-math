@@ -11,7 +11,7 @@ export function lessonsButton(){
     but.addEventListener('mouseover',()=>{
         arrowPath.animate(300).attr({opacity:1})
         gsap.to(but,{duration:0.5,opacity:0})
-        gsap.to(but.parentNode,{duration:0.5,backgroundColor:'#ccccff'})
+        gsap.to(but.parentNode,{duration:0.5,backgroundColor:'#e6e6ff'})
     })
     but.addEventListener('mouseout',()=>{
     arrowPath.animate(300).attr({opacity:0})
@@ -29,28 +29,37 @@ export function lessonsButton(){
 })
 }
 
-export function hamburgerMenu(){
-    const draw = SVG().addTo('#hamburgerLogo').size(100, 100);
-let line1=draw.line(10,10,60,10).stroke({ color: '#f4d10b', width: 5 });
-let line2=draw.line(10,25,60,25).stroke({ color: '#f4d10b', width: 5 });
-let line3=draw.line(10,40,60,40).stroke({ color: '#f4d10b', width: 5 });
+export function categoriesButton(){
 let closedState=true
-let arrowhead=draw.path('M 20 35 L 10 25 L 20 15').stroke({ color: '#f4d10b', width: 3 }).fill('none').attr({opacity:0})
-document.getElementById('hamburgerLogo').addEventListener('click',()=>{
-    if(closedState){
-        line1.animate(300).transform({translate:[0,-10]}).attr({opacity:0})
-        line2.animate(300).transform({translate:[0,-10]}).attr({opacity:0})
-        line3.animate(300).transform({translate:[0,-15]}).after(() => {
-            arrowhead.animate(300).attr({opacity:1})
-        })
-        gsap.to('#branches', { opacity: 1, duration: 0.5 });
-    }else{
-        line1.animate(300).transform({translate:[0,0]}).attr({opacity:1})
-        line2.animate(300).transform({translate:[0,0]}).attr({opacity:1})
-        line3.animate(300).transform({translate:[0,0]})
-        arrowhead.animate(300).attr({opacity:0})
-        gsap.to('#branches', { opacity: 0, duration: 0.5 });
+let coolingTime = false; // Flag to track if the event is in cooldown
+
+let isAnimating = false; // Flag to track if animation is in progress
+
+document.getElementById('categoriesButton').addEventListener('click', () => {
+    if (isAnimating) return; // If animation is ongoing, do nothing
+
+    isAnimating = true; // Set the flag to indicate the animation is starting
+
+    if (closedState) {
+        gsap.to('#branches', {
+            opacity: 1, 
+            display: 'block', 
+            duration: 0.5, 
+            onComplete: () => {
+                isAnimating = false; // Reset flag when animation completes
+            }
+        });
+    } else {
+        gsap.to('#branches', {
+            opacity: 0, 
+            display: 'none', 
+            duration: 0.5, 
+            onComplete: () => {
+                isAnimating = false; // Reset flag when animation completes
+            }
+        });
     }
-    closedState=!closedState
-})
+
+    closedState = !closedState; // Toggle the state
+});
 }
