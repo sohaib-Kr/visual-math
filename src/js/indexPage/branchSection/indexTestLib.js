@@ -86,8 +86,8 @@ export function createPathConnectAnimation(svg){
                 point1.center(currentObj.a[0],currentObj.a[1])
                 point2.center(currentObj.d[0],currentObj.d[1])
                 path.plot(`M ${currentObj.a.join(' ')}
-                    C ${currentObj.b.join(' ')} 40 130 70 150
-                    S 200 150 200 100
+                    C ${currentObj.b.join(' ')} 29 120 70 150
+                    S 196 163 200 100
                     S ${currentObj.c.join(' ')} ${currentObj.d.join(' ')}`);
             }
         }).to([point1.node,point2.node],{
@@ -126,7 +126,7 @@ export function createPathConnectAnimation(svg){
 export function createTorusAnimation(svg){
     let shape=svg.group()
     let torus=shape.path(' M122 0C98-30 22-26 0 0M-72 0C-72-72 190-84 196 0S-66 72-72 0M0 0C24 14 82 18 122 0').fill('#ffbf00')
-    shape.transform({translate:[20,400]})
+    shape.transform({translate:[120,500]})
     gsap.set(torus.node,{transformOrigin:'center'})
     
     // Initially paused tweens
@@ -171,9 +171,9 @@ export function createGraphAnimation(svg){
     let shape=shapeHolder.group()
     let pathParent=shape.group().attr('id','pathParent')
     
-    let firstTriangle=shape.polygon('0 -50 0 0 80 -30').attr({opacity:0}).fill('#44335e')
-    let secondTriangle=shape.polygon('80 -30 150 -50 100 50').attr({opacity:0}).fill('#44335e')
-    let missingTriangle=shape.polygon('0 0 100 50 0 90').attr({opacity:0}).fill('#44335e')
+    let firstTriangle=shape.polygon('0 -50 0 0 80 -30').attr({opacity:0}).fill('#7859a6')
+    let secondTriangle=shape.polygon('80 -30 150 -50 100 50').attr({opacity:0}).fill('#7859a6')
+    let missingTriangle=shape.polygon('0 0 100 50 0 90').attr({opacity:0}).fill('#7859a6')
     
     let path=pathParent
         .path('M 0 0 V -50 L 80 -30 L 0 0 L 100 50 L 80 -30 L 150 -50 L 100 50')
@@ -335,7 +335,6 @@ function createFilledPath(mathFunc, start, step, end, scale) {
 }
 
 export function createCurveApproaximation(svg){
-    let scale=50
     
     let shape=svg.group()
     let mainCurve=shape.path(drawMathFunction({
@@ -410,7 +409,7 @@ export function createUnderCurveSpaceAnimation(svg){
             return Math.min(x/2*Math.sin(x*1.3),0)
         }
     }
-    let mainCurve=shape.path(drawMathFunction({
+    shape.path(drawMathFunction({
         mathFunc,
         start: 0,
         step: 0.05,
@@ -428,8 +427,7 @@ export function createUnderCurveSpaceAnimation(svg){
 
     let shader=shape.path('M 0 -100 L 270 -100 L 270 100 L 0 100 Z').fill('#310f70')
     
-    shape.path('M 0 -80 L 0 80').stroke({color:'#cccccc',width:1})
-    shape.path('M -20 0 L 270 0').stroke({color:'#cccccc',width:1})
+    shape.path('M 0 0 L 270 0').stroke({color:'#cccccc',width:1})
     
     // Initially paused animation
     let shaderAnimation=gsap.to({},
@@ -449,12 +447,12 @@ export function createUnderCurveSpaceAnimation(svg){
     gsap.set(shape.node,{transformOrigin:'center'})
     
     // Initially paused animation
-    let shapeAnimation=gsap.fromTo(shape.node,{rotate:5},{
-        duration:3,
-        rotate:8,
-        y:-20,
-        x:10,
-        ease:'power3.inOut',
+    let shapeAnimation=gsap.fromTo(shape.node,{rotate:-1},{
+        duration:4,
+        rotate:4,
+        y:-10,
+        x:30,
+        ease:'power1.inOut',
         repeat:-1,
         yoyo:true,
         paused:true // Initially paused
@@ -484,23 +482,49 @@ export function createUnderCurveSpaceAnimation(svg){
 }
 
 export function createSymboles(svg){
-    let shape=svg.group()
-    let lambda=shape.path('M26.20 52.69Q24.37 54.08 23.18 54.87Q22.00 55.66 21.17 55.66Q20.19 55.66 19.46 54.92Q18.73 54.17 17.94 52.16Q17.16 50.15 16.11 46.44Q15.06 42.72 13.48 36.79Q12.13 31.84 11.15 28.87Q10.16 25.90 9.40 24.41Q8.64 22.92 8.00 22.45Q7.35 21.97 6.69 21.97Q5.83 21.97 4.94 22.38Q4.05 22.78 2.86 23.71L2.27 22.46Q4.74 19.97 6.27 19.02Q7.81 18.07 8.81 18.07Q9.50 18.07 10.07 18.37Q10.64 18.68 11.25 19.64Q11.87 20.61 12.60 22.57Q13.33 24.54 14.32 27.84Q15.31 31.15 16.65 36.18Q17.97 40.99 19.10 44.68Q20.24 48.36 21.24 50.43Q22.24 52.49 23.14 52.49Q23.73 52.49 24.24 52.31Q24.76 52.12 25.95 51.59L26.20 52.69M13.45 32.10Q12.11 35.77 10.82 39.26Q9.52 42.75 8.23 46.41Q6.93 50.07 5.59 54.30Q4.64 54.54 3.11 54.97Q1.59 55.40 0.73 55.66L0 54.88Q1.56 52.91 3.05 50.20Q4.54 47.49 5.91 44.45Q7.28 41.41 8.44 38.34Q9.59 35.28 10.50 32.54Q11.40 29.81 11.96 27.76Q12.30 28.05 12.62 29.02Q12.94 29.98 13.17 30.92Q13.40 31.86 13.45 32.10Z')
+    let lambdaShape=svg.group()
+    let epsilonDeltaShape=svg.group()
+    let lambda=lambdaShape.path('M26.20 52.69Q24.37 54.08 23.18 54.87Q22.00 55.66 21.17 55.66Q20.19 55.66 19.46 54.92Q18.73 54.17 17.94 52.16Q17.16 50.15 16.11 46.44Q15.06 42.72 13.48 36.79Q12.13 31.84 11.15 28.87Q10.16 25.90 9.40 24.41Q8.64 22.92 8.00 22.45Q7.35 21.97 6.69 21.97Q5.83 21.97 4.94 22.38Q4.05 22.78 2.86 23.71L2.27 22.46Q4.74 19.97 6.27 19.02Q7.81 18.07 8.81 18.07Q9.50 18.07 10.07 18.37Q10.64 18.68 11.25 19.64Q11.87 20.61 12.60 22.57Q13.33 24.54 14.32 27.84Q15.31 31.15 16.65 36.18Q17.97 40.99 19.10 44.68Q20.24 48.36 21.24 50.43Q22.24 52.49 23.14 52.49Q23.73 52.49 24.24 52.31Q24.76 52.12 25.95 51.59L26.20 52.69M13.45 32.10Q12.11 35.77 10.82 39.26Q9.52 42.75 8.23 46.41Q6.93 50.07 5.59 54.30Q4.64 54.54 3.11 54.97Q1.59 55.40 0.73 55.66L0 54.88Q1.56 52.91 3.05 50.20Q4.54 47.49 5.91 44.45Q7.28 41.41 8.44 38.34Q9.59 35.28 10.50 32.54Q11.40 29.81 11.96 27.76Q12.30 28.05 12.62 29.02Q12.94 29.98 13.17 30.92Q13.40 31.86 13.45 32.10Z')
     .fill('white')
-    lambda.transform({translate:[100,100],scale:1.6})
-    let epsilon=shape.path('M10.86 31.49Q12.77 31.49 14.47 32.12Q16.16 32.74 17.55 33.67Q17.46 33.96 17.29 34.39Q17.11 34.81 17.02 35.03Q15.23 34.38 14.01 34.08Q12.79 33.79 11.40 33.79Q8.08 33.79 5.87 36.27Q3.66 38.75 3.66 43.33Q3.66 46.09 4.66 48.14Q5.66 50.20 7.31 51.32Q8.96 52.44 10.91 52.44Q12.28 52.44 13.84 52.09Q15.41 51.73 17.97 50.46L18.55 51.78Q16.53 53.44 14.98 54.28Q13.43 55.13 12.06 55.40Q10.69 55.66 9.16 55.66Q6.79 55.66 4.69 54.28Q2.59 52.91 1.29 50.31Q0 47.71 0 44.09Q0 40.58 1.48 37.72Q2.95 34.86 5.43 33.18Q7.91 31.49 10.86 31.49M3.03 40.63Q4.35 40.84 5.47 40.98Q6.59 41.11 7.87 41.16Q9.16 41.21 10.94 41.21Q12.16 41.21 13.44 41.11Q14.72 41.02 15.45 40.84L15.94 41.36L14.53 43.95Q13.84 43.75 12.66 43.66Q11.47 43.58 10.69 43.58Q7.93 43.58 6.20 43.71Q4.47 43.85 3.10 44.19L3.03 40.63Z')
+    lambdaShape.transform({translate:[100,100]})
+    let epsilon=epsilonDeltaShape.path('M10.86 31.49Q12.77 31.49 14.47 32.12Q16.16 32.74 17.55 33.67Q17.46 33.96 17.29 34.39Q17.11 34.81 17.02 35.03Q15.23 34.38 14.01 34.08Q12.79 33.79 11.40 33.79Q8.08 33.79 5.87 36.27Q3.66 38.75 3.66 43.33Q3.66 46.09 4.66 48.14Q5.66 50.20 7.31 51.32Q8.96 52.44 10.91 52.44Q12.28 52.44 13.84 52.09Q15.41 51.73 17.97 50.46L18.55 51.78Q16.53 53.44 14.98 54.28Q13.43 55.13 12.06 55.40Q10.69 55.66 9.16 55.66Q6.79 55.66 4.69 54.28Q2.59 52.91 1.29 50.31Q0 47.71 0 44.09Q0 40.58 1.48 37.72Q2.95 34.86 5.43 33.18Q7.91 31.49 10.86 31.49M3.03 40.63Q4.35 40.84 5.47 40.98Q6.59 41.11 7.87 41.16Q9.16 41.21 10.94 41.21Q12.16 41.21 13.44 41.11Q14.72 41.02 15.45 40.84L15.94 41.36L14.53 43.95Q13.84 43.75 12.66 43.66Q11.47 43.58 10.69 43.58Q7.93 43.58 6.20 43.71Q4.47 43.85 3.10 44.19L3.03 40.63Z')
     .fill('yellow')
     epsilon.transform({translate:[100,300],scale:1.5})
 
-    let delta=shape.path('M19.58 18.63Q17.80 20.34 16.85 21.25Q15.89 22.17 15.41 22.17Q14.97 22.17 13.96 21.73Q12.96 21.29 11.67 20.72Q10.38 20.14 9.06 19.70Q7.74 19.26 6.64 19.26Q6.10 19.26 5.77 19.58Q5.44 19.90 5.44 20.70Q5.44 22.17 6.46 23.65Q7.47 25.12 9.08 26.72Q10.69 28.32 12.49 30.10Q14.28 31.88 15.89 33.98Q17.50 36.08 18.52 38.57Q19.53 41.06 19.53 44.04Q19.53 46.19 18.68 48.27Q17.82 50.34 16.38 52.01Q14.94 53.69 13.18 54.68Q11.43 55.66 9.62 55.66Q6.57 55.66 4.41 54.06Q2.25 52.47 1.12 49.94Q0 47.41 0 44.63Q0 39.84 2.66 36.38Q5.32 32.91 9.72 31.35Q9.91 31.67 10.02 32.14Q10.13 32.62 10.13 32.96Q10.13 33.15 10.08 33.35Q6.74 34.72 5.26 37.37Q3.78 40.01 3.78 43.29Q3.78 45.61 4.77 47.74Q5.76 49.88 7.40 51.25Q9.03 52.61 10.94 52.61Q12.13 52.61 13.20 51.72Q14.26 50.83 14.94 49.27Q15.63 47.71 15.63 45.73Q15.63 42.77 14.67 40.37Q13.72 37.96 12.23 35.95Q10.74 33.94 9.07 32.17Q7.40 30.40 5.91 28.72Q4.42 27.05 3.47 25.32Q2.51 23.58 2.51 21.63Q2.51 19.75 3.89 18.41Q5.27 17.07 7.28 17.07Q10.60 17.07 13.05 17.54Q15.50 18.02 17.63 18.02Q18.38 18.02 18.95 17.75Q19.12 17.85 19.23 18.07Q19.34 18.29 19.58 18.63')
+    let delta=epsilonDeltaShape.path('M19.58 18.63Q17.80 20.34 16.85 21.25Q15.89 22.17 15.41 22.17Q14.97 22.17 13.96 21.73Q12.96 21.29 11.67 20.72Q10.38 20.14 9.06 19.70Q7.74 19.26 6.64 19.26Q6.10 19.26 5.77 19.58Q5.44 19.90 5.44 20.70Q5.44 22.17 6.46 23.65Q7.47 25.12 9.08 26.72Q10.69 28.32 12.49 30.10Q14.28 31.88 15.89 33.98Q17.50 36.08 18.52 38.57Q19.53 41.06 19.53 44.04Q19.53 46.19 18.68 48.27Q17.82 50.34 16.38 52.01Q14.94 53.69 13.18 54.68Q11.43 55.66 9.62 55.66Q6.57 55.66 4.41 54.06Q2.25 52.47 1.12 49.94Q0 47.41 0 44.63Q0 39.84 2.66 36.38Q5.32 32.91 9.72 31.35Q9.91 31.67 10.02 32.14Q10.13 32.62 10.13 32.96Q10.13 33.15 10.08 33.35Q6.74 34.72 5.26 37.37Q3.78 40.01 3.78 43.29Q3.78 45.61 4.77 47.74Q5.76 49.88 7.40 51.25Q9.03 52.61 10.94 52.61Q12.13 52.61 13.20 51.72Q14.26 50.83 14.94 49.27Q15.63 47.71 15.63 45.73Q15.63 42.77 14.67 40.37Q13.72 37.96 12.23 35.95Q10.74 33.94 9.07 32.17Q7.40 30.40 5.91 28.72Q4.42 27.05 3.47 25.32Q2.51 23.58 2.51 21.63Q2.51 19.75 3.89 18.41Q5.27 17.07 7.28 17.07Q10.60 17.07 13.05 17.54Q15.50 18.02 17.63 18.02Q18.38 18.02 18.95 17.75Q19.12 17.85 19.23 18.07Q19.34 18.29 19.58 18.63')
     .fill('yellow')
     delta.transform({translate:[140,300],scale:1.7})
+
+    gsap.set(lambda.node,{scale:2})
+    let lambdaAnimation=gsap.fromTo(lambda.node,{rotate:2},{
+        duration:5,
+        rotate:-4,
+        y:-40,
+        x:10,
+        ease:'power1.inOut',
+        repeat:-1,
+        yoyo:true,
+        paused:true // Initially paused
+    })
+
+    let epsilonDeltaAnimation=gsap.fromTo(epsilonDeltaShape.node,{rotate:-1},{
+        duration:4,
+        rotate:5,
+        y:'+=10',
+        x:'-=30',
+        ease:'power1.inOut',
+        repeat:-1,
+        yoyo:true,
+        paused:true // Initially paused
+    })
     return {
         open:false,
         In: function() {
             if(this.open==false){
-                // No animations in this function, just show immediately
-                gsap.fromTo(shape.node, {scale: 0}, {scale: 1, duration: 0.5});
+                gsap.fromTo(lambdaShape.node, {scale: 0}, {scale: 1, duration: 0.5});
+                gsap.fromTo(epsilonDeltaShape.node, {scale: 0}, {scale: 1, duration: 0.5});
+                lambdaAnimation.play()
+                epsilonDeltaAnimation.play()
             }
             this.open=true
         },

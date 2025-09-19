@@ -30,8 +30,24 @@ export function lessonsButton(){
 }
 
 export function categoriesButton(){
+
+    let frame=SVG(document.getElementById('categoriesButton').children[0])
+    let line1=frame.path('M3 6L21 6')
+    let line2=frame.path('M3 12L21 12')
+    let line3=frame.path('M3 18L21 18')
+    let lines=[line1,line2,line3]
+    lines.forEach(line=>line.stroke({color:'#232326',width:2,strokeLinecap:'round',strokeLinejoin:'round'}))
+    function switchToCross(){
+        line1.animate(500).plot('M3 6L21 24')
+        line3.animate(500).plot('M3 24L21 6')
+        line2.animate(500).attr({opacity:0})
+    }
+    function switchHamburger(){
+        line1.animate(500).plot('M3 6L21 6')
+        line3.animate(500).plot('M3 18L21 18')
+        line2.animate(500).attr({opacity:1})
+    }
 let closedState=true
-let coolingTime = false; // Flag to track if the event is in cooldown
 
 let isAnimating = false; // Flag to track if animation is in progress
 
@@ -42,6 +58,7 @@ document.getElementById('categoriesButton').addEventListener('click', () => {
 
     if (closedState) {
         gsap.to('#branches', {
+            onStart:function(){switchToCross()},
             opacity: 1, 
             display: 'block', 
             duration: 0.5, 
@@ -51,6 +68,7 @@ document.getElementById('categoriesButton').addEventListener('click', () => {
         });
     } else {
         gsap.to('#branches', {
+            onStart:function(){switchHamburger()},
             opacity: 0, 
             display: 'none', 
             duration: 0.5, 

@@ -22,23 +22,24 @@ export function branchesSectionScript() {
 
 
     let topoSprits=[createPathConnectAnimation(svg),createGraphAnimation(svg),createTorusAnimation(svg)]
-    topoSprits.forEach(sprit=>sprit.In())
     let functionalAnalysisSprits=[createCurveApproaximation(svg),createUnderCurveSpaceAnimation(svg),createSymboles(svg)]
-    functionalAnalysisSprits.forEach(sprit=>{
+    functionalAnalysisSprits.forEach(sprit=>sprit.In())
+    topoSprits.forEach(sprit=>{
         sprit.In()
         setTimeout(()=>sprit.Out(),500)
     })
     Array.from(document.getElementsByClassName('branch')).forEach((branch)=>{
-        branch.addEventListener('click', (event) => {
         const id = branch.getAttribute('data-id');
+        branch.addEventListener('click', (event) => {
         document.getElementById('title').textContent = branch.textContent;
         document.getElementById('description').textContent = texts[id];
         if(id==0){
-            topoSprits.forEach((sprite)=>sprite.In())
             functionalAnalysisSprits.forEach((sprite)=>sprite.Out())
+            gsap.delayedCall(0.3,function(){topoSprits.forEach((sprite)=>sprite.In())})
+
         }else{
-            functionalAnalysisSprits.forEach((sprite)=>sprite.In())
             topoSprits.forEach((sprite)=>sprite.Out())
+            gsap.delayedCall(0.3,function(){functionalAnalysisSprits.forEach((sprite)=>sprite.In())})
         }
     });
     let mask=document.getElementById('svgContainerMask')
