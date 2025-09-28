@@ -2,7 +2,6 @@ import {SVG} from '@svgdotjs/svg.js'
 import gsap from 'gsap'
 export function background(){
     const frame=SVG().addTo('#heroBackground').size('1550','900');
-    const mainBackground=frame.path('M 1555 712 V 1 H 0 V 814 C 50 847 264 890 414 867 S 873 783 978 773 S 1213 737 1553 714').fill('white')
     let circle1=frame.circle(200).center(100,100).attr({opacity:0})
     let circle2=frame.circle(100).center(462,57).attr({opacity:0})
     let circle3=frame.circle(100).center(83,89).attr({opacity:0})
