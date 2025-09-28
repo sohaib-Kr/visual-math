@@ -69,7 +69,6 @@ anim.setInit(function(){
     
     
     
-    
 
     updateResultantVector()
 
