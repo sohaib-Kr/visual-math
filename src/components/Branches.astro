@@ -1,5 +1,10 @@
 ---
-import BranchesNav from './BranchesNav.astro';
+const menuItems = [
+  { id: 0, title: "Topology"},
+  { id: 1, title: "Functional Analysis" },
+  { id: 1, title: "Probability Theory" },
+  { id: 1, title: "Algebra" },
+];
 ---
 <div class="w-full h-fit grid grid-rows-1 bg-[#310f70] relative z-[1]">
             
@@ -21,7 +26,7 @@ import BranchesNav from './BranchesNav.astro';
         </div>
     </div>
 
-    <div class="w-[46%] grid overlap grid-rows-1 pt-[350px] relative">
+    <div class="w-[56%] grid overlap grid-rows-1 pt-[350px] relative">
         <div class="grid overlap">
             <div class="ml-[100px] overlap font-[poppins] text-[white]">
                  <h2 id="title" class='text-[54px]  mb-[50px]'>Topology</h2>
@@ -31,16 +36,12 @@ import BranchesNav from './BranchesNav.astro';
                      such as stretching or bending, but not tearing or gluing.
                     </p>
             </div>
-            <BranchesNav/>
 
         </div>
-        <div class="justify-self-start relative bottom-[100px] left-[100px] h-fit overlap">
-            <button class="cursor-pointer flex items-center h-fit space-x-2 px-4 py-2 bg-white text-[23px] text-[#1c446b] rounded-full hover:bg-[#e6e6ff] transition " id="categoriesButton">
-                <!-- SVG Icon for Categories -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-[30px] w-[auto]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                </svg>
-                <span>Categories</span>
-              </button>
+        <div class="justify-self-start relative bottom-[200px] left-[100px] h-fit overlap">
+            {menuItems.map((item) => (
+            <a href="#" data-id={item.id} class="text-[21px] rounded-[50px] m-[10px] bg-white px-[20px] py-[10px]">{item.title}</a>
+              ))}
         </div>
     </div>
     

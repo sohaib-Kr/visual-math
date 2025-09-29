@@ -4,6 +4,7 @@ export function plotMethodAnim(){
 // GLOBAL VARIABLES
 // ========================
 let draw;
+let curveTengents
 
 // ========================
 // UTILITY FUNCTIONS
@@ -22,13 +23,65 @@ let draw;
  */
 let cutPoint=false
 let lastValidY=0
+function drawTangentLine({ mathFunc, t, start, end, scale = 1 }) {
+    const y_t = mathFunc(t);
+    
+    const h = 0.0001;
+    const derivative = (mathFunc(t + h) - mathFunc(t - h)) / (2 * h);
+    console.log(mathFunc)
+    
+    const tangentFunc = (x) => derivative * (x - t) + y_t;
+    
+    const y_start = tangentFunc(start);
+    const y_end = tangentFunc(end);
+    
+    const pathData = `M ${start * scale} ${-y_start * scale} L ${end * scale} ${-y_end * scale}`;
+    
+    return pathData;
+}
+
+function drawTangentFieldAlongCurve({ mathFunc, xStart, xEnd, xStep, segmentLength = 20, scale = 1 }) {
+    let pathData = '';
+    const h = 0.0001;
+    
+    // Iterate through x values at regular intervals
+    for (let x = xStart; x <= xEnd; x += xStep) {
+        // Calculate derivative at this point
+        const derivative = (mathFunc(x + h) - mathFunc(x - h)) / (2 * h);
+        
+        // The slope of the tangent line means:
+        // For every dx change in x, there's derivative*dx change in y
+        // Euclidean distance: sqrt(dx^2 + (derivative*dx)^2) = sqrt(dx^2 * (1 + derivative^2))
+        // We want this distance to be segmentLength/(2*scale) for half the segment
+        
+        const halfLength = segmentLength / (2 * scale);
+        
+        // Solve for dx: halfLength = |dx| * sqrt(1 + derivative^2)
+        const dx = halfLength / Math.sqrt(1 + derivative * derivative);
+        
+        const segmentStart = x - dx;
+        const segmentEnd = x + dx;
+        
+        // Use the existing drawTangentLine function for each segment
+        let seg = drawTangentLine({
+            mathFunc: mathFunc,
+            t: x,
+            start: segmentStart,
+            end: segmentEnd,
+            scale: scale
+        }) + ' ';
+        pathData += seg;
+    }
+    return pathData;
+}
+
 function drawMathFunction({ mathFunc, start, step, end, scale, fill = 'none' }) {
     let pathData = `M ${start * scale} ${-mathFunc(start) * scale}`;
     lastValidY=mathFunc(start)
     
     for (let x = start; x <= end; x += step) {
         const y = mathFunc(x);
-        if (!isFinite(y) || Math.abs(y-lastValidY)>10) {
+        if (!isFinite(y)) {
             cutPoint=true
             continue;
         }
@@ -157,7 +210,6 @@ function applyTransform(mathFunc, field, height, width, step, scale) {
             pathData += `M ${startX} ${startY} L ${endX} ${endY} `;
         }
     }
-    
     return pathData;
 }
 
@@ -179,7 +231,7 @@ const mathFuncs = [
     (c) => (x) => c * Math.exp(x),
     (c) => (x) => x* (Math.log(x*x)+c),
     (c) => (x) => 1/(x+c),
-    (c) => (x) => Math.pow(x+c,2)/15
+    (c) => (x) => 1+c*Math.exp(-x)
 ];
 
 /**
@@ -189,7 +241,7 @@ const fieldFuncs = [
     (x, y) => y,
     (x, y) => y /x+2,
     (x, y) => -y*y,
-    (x, y) => 2*(Math.sqrt(Math.abs(y)))
+    (x, y) => 1-y
 ];
 
 // ========================
@@ -238,7 +290,7 @@ const fieldFuncs = [
     const initialCurvePath = drawMathFunction({
         mathFunc: mathFuncs[0](1), // exp(x) with c = 1
         start: -10,
-        step: 0.2,
+        step: 0.05,
         end: 10,
         scale: 40
     });
@@ -254,7 +306,7 @@ const fieldFuncs = [
     const controlPoint = group.circle(10)
         .fill('blue')
         .center(0, -40);
-    
+    let currentC=1
     // Keep track of current mode for drag interaction
     let currentMode = 0;
     
@@ -263,21 +315,26 @@ const fieldFuncs = [
         element: controlPoint.node,
         onMove: (event) => {
             let c
-            
+            let cMapper={
+                0:(y)=>-y/40,
+                1:(y)=>-y/40,
+                2:(y)=>(40/y+1),
+                3:(y)=>y/40-1
+            }
             if(currentMode==0 || currentMode==1){
                 const y = event.clientY - draw.node.getBoundingClientRect().top - 200;
                 let circleCenterX = currentMode==0 ? 0 : 40;
-                console.log(circleCenterX)
                 controlPoint.center(circleCenterX, y);
-                c = -y / 40;
+                c = cMapper[currentMode](y);
             }else if (currentMode==2){
-                const x = event.clientX - draw.node.getBoundingClientRect().left - 200;
-                controlPoint.center(x, 0);
-                 c = -x / 40;
+                const y = event.clientY - draw.node.getBoundingClientRect().top - 200;
+                controlPoint.center(-40, y);
+                 c = cMapper[currentMode](-y);
+
             }else if (currentMode==3){
-                const x = event.clientX - draw.node.getBoundingClientRect().left - 200;
-                controlPoint.center(x, 0);
-                 c = -Math.sqrt(Math.abs(x / 40));
+                const y = event.clientY - draw.node.getBoundingClientRect().top - 200;
+                controlPoint.center(0, y);
+                 c = cMapper[currentMode](-y);
             }
             const newCurvePath = drawMathFunction({
                 mathFunc: mathFuncs[currentMode](c), // Use current mode with new c value
@@ -286,6 +343,14 @@ const fieldFuncs = [
                 end: 10,
                 scale: 40
             });
+            curveTengents.plot(drawTangentFieldAlongCurve({
+                mathFunc: mathFuncs[currentMode](c),
+                xStart: -10,
+                xEnd: 10,
+                xStep: 1,
+                segmentLength: 20,
+                scale: 40
+            }))
             
             curve.plot(newCurvePath);
         }
@@ -301,11 +366,26 @@ const fieldFuncs = [
             const mode = document.querySelector('input[name="mode"]:checked').value;
             const modeIndex = parseInt(mode);
             currentMode = modeIndex; // Update current mode
+            let currentC
+            switch(modeIndex){
+                case 0:
+                    controlPoint.animate(400).center(0, -40);
+                    currentC=1;
+                    break;
+                case 1:
+                    controlPoint.animate(400).center(40, -40);
+                    currentC=1;
+                    break;
+                case 2:
+                    controlPoint.animate(400).center(0, 0);
+                    currentC=0;
+                    break;
+                case 3:
+                    controlPoint.animate(400).center(0, 0);
+                    currentC=-1;
+                    break;
+            }
             
-            console.log('Selected function:', mathFuncs[modeIndex]);
-            
-            // Get current c value from control point position
-            const currentC = -controlPoint.cy() / 40;
             
             // Animate curve change with current c value
             const newCurvePath = drawMathFunction({
@@ -315,14 +395,21 @@ const fieldFuncs = [
                 end: 10,
                 scale: 40
             });
-            curve.plot(newCurvePath);
+            curve.animate(300).attr({opacity:0}).after(()=>curve.plot(newCurvePath).animate(300).attr({opacity:1}))
             
             // Update vector field
             const newFieldPath = applyTransform(fieldFuncs[modeIndex], field, 10, 10, 0.8, 40);
-            field.plot(newFieldPath);
+            field.animate(400).plot(newFieldPath);
         });
     });
-    
+    curveTengents=group.path(drawTangentFieldAlongCurve({
+        mathFunc: mathFuncs[currentMode](currentC),
+        xStart: -10,
+        xEnd: 10,
+        xStep: 1,
+        segmentLength: 20,
+        scale: 40
+    })).stroke({color:'blue',width:3}).fill('none');
     // Apply final transformation to center everything
     group.transform({ translate: [200, 200] });
 }
