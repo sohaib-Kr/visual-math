@@ -1,4 +1,4 @@
-import {createPathConnectAnimation,createGraphAnimation,createTorusAnimation,createCurveApproaximation,createUnderCurveSpaceAnimation,createSymboles} from './indexTestLib.js'
+import {createPathConnectAnimation,createGraphAnimation,createTorusAnimation,createUnderCurveSpaceAnimation,createSymboles,createNormalDistributionAnimation} from './indexTestLib.js'
 import {lessonsButton} from './buttons.js'
 import gsap from 'gsap'
 import { SVG } from '@svgdotjs/svg.js';
@@ -21,13 +21,17 @@ export function branchesSectionScript() {
     let svg = SVG().addTo(container).size(container.offsetWidth, container.offsetHeight);
 
 
-    let topoSprits=[createPathConnectAnimation(svg),createGraphAnimation(svg),createTorusAnimation(svg)]
-    let functionalAnalysisSprits=[createCurveApproaximation(svg),createUnderCurveSpaceAnimation(svg),createSymboles(svg)]
-    functionalAnalysisSprits.forEach(sprit=>sprit.In())
-    topoSprits.forEach(sprit=>{
-        sprit.In()
-        setTimeout(()=>sprit.Out(),500)
-    })
+    // let topoSprits=[createPathConnectAnimation(svg),createGraphAnimation(svg),createTorusAnimation(svg)]
+    // let functionalAnalysisSprits=[createUnderCurveSpaceAnimation(svg),createSymboles(svg)]
+    // functionalAnalysisSprits.forEach(sprit=>sprit.In())
+    // topoSprits.forEach(sprit=>{
+    //     sprit.In()
+    //     setTimeout(()=>sprit.Out(),500)
+    // })
+
+    let normalDistributionAnimation=createNormalDistributionAnimation(svg)
+    normalDistributionAnimation.In()
+
     Array.from(document.getElementsByClassName('branch')).forEach((branch)=>{
         const id = branch.getAttribute('data-id');
         branch.addEventListener('click', (event) => {

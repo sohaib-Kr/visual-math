@@ -28,6 +28,45 @@ export function plotMethodAnim() {
         animation: { duration: 300, fieldDuration: 400 }
     };
 
+    // Color configuration
+    const colorConfig = {
+        background: '#f5f5f5', // Light background color
+        axis: '#000', // Black for axes
+        field: '#333', // Dark gray for field lines
+
+        curve: {
+            color: '#ff0000', // Red for the curve
+            strokeWidth: 2,   // Width of the curve's stroke
+        },
+        tangents: {
+            color: '#0000ff', // Blue for tangent lines
+            strokeWidth: 2,   // Width of the tangent lines
+        },
+
+        controlPoint: {
+            color: '#0000ff', // Blue for control point
+            radius: 10,       // Radius of the control point
+        },
+
+        fieldLines: {
+            color: '#666',    // Gray for field lines
+            strokeWidth: 1,   // Width of the field lines
+        },
+
+        transition: {
+            fadeDuration: 300,  // Duration of fade in/out
+            curveFadeColor: '#ffcccc', // Light red for curve fade effect
+            tangentFadeColor: '#ccccff', // Light blue for tangent fade effect
+        },
+
+        modeColors: [
+            { mode: 0, curveColor: '#ff0000', tangentColor: '#0000ff', fieldColor: '#444' },
+            { mode: 1, curveColor: '#008000', tangentColor: '#ffa500', fieldColor: '#555' },
+            { mode: 2, curveColor: '#8a2be2', tangentColor: '#ff1493', fieldColor: '#666' },
+            { mode: 3, curveColor: '#ff6347', tangentColor: '#40e0d0', fieldColor: '#777' },
+        ]
+    };
+
     // Mathematical functions
     const mathFuncs = [
         c => x => c * Math.exp(x),
@@ -39,7 +78,7 @@ export function plotMethodAnim() {
     const fieldFuncs = [
         (x, y) => y,
         (x, y) => y / x + 2,
-        (x, y) => Math.exp(x) * (Math.sin(x) + 1),
+        (x, y) => Math.exp(x) * Math.cos(x)+y,
         (x, y) => 1 - y
     ];
 
@@ -59,22 +98,10 @@ export function plotMethodAnim() {
 
     // LaTeX formulas for each mode
     const latexFormulas = [
-        {
-            solution: "y(x) =ce^{x} ",
-            differential: "\\frac{dy}{dx} - y = 0 "
-        },
-        {
-            solution: "y(x) = x(\\ln(x^2) + c) ",
-            differential: "\\frac{dy}{dx} - \\frac{y}{x} = 2 "
-        },
-        {
-            solution: "y(x) = e^{x}(\\sin(x) + c) ",
-            differential: "\\frac{dy}{dx} = e^{x}(\\sin(x) + 1) "
-        },
-        {
-            solution: "y(x) = 1 + ce^{-x} ",
-            differential: "\\frac{dy}{dx} + y= 1 "
-        }
+        { solution: "y(x) =ce^{x} ", differential: "\\frac{dy}{dx} - y = 0 " },
+        { solution: "y(x) = x(\\ln(x^2) + c) ", differential: "\\frac{dy}{dx} - \\frac{y}{x} = 2 " },
+        { solution: "y(x) = e^{x}(\\sin(x) + c) ", differential: "\\frac{dy}{dx} = e^{x}(\\sin(x) + 1) " },
+        { solution: "y(x) = 1 + ce^{-x} ", differential: "\\frac{dy}{dx} + y= 1 " }
     ];
 
     // Utility functions
@@ -130,7 +157,7 @@ export function plotMethodAnim() {
                 pathData += `M ${scaledX - config.field.segmentLength} ${-scaledY} L ${scaledX + config.field.segmentLength} ${-scaledY} `;
             }
         }
-        return state.draw.path(pathData).stroke({ color: '#333', width: 1 }).fill('none');
+        return state.draw.path(pathData).stroke({ color: colorConfig.fieldLines.color, width: colorConfig.fieldLines.strokeWidth }).fill('none');
     }
 
     function applyTransform(mathFunc, height, width, step, scale) {
@@ -157,12 +184,12 @@ export function plotMethodAnim() {
         solutionSpan.innerHTML = `${formulas.solution}`;
         const differentialSpan = document.createElement('span');
         differentialSpan.innerHTML = `${formulas.differential}`;
-        const cSpan=document.createElement('span');
-        cSpan.innerText='c='
+        const cSpan = document.createElement('span');
+        cSpan.innerText = 'c=';
         katex.render(solutionSpan.innerHTML, solutionSpan);
         katex.render(differentialSpan.innerHTML, differentialSpan);
         katex.render(cSpan.innerHTML, cSpan);
-        console.log(state.currentC)
+
         textContainer.innerHTML = `
             <div style="margin-top: 20px; font-size: 18px;">
                 <div>
@@ -227,11 +254,12 @@ export function plotMethodAnim() {
     // Control point
     state.elements.controlPoint = group.circle(10).fill('blue').center(0, -config.scale);
 
+
+    state.elements.controlPointTragectory=group.path('M 0 -400 L 0 400').stroke({color:'blue',width:2}).fill('none')
     setupDrag(state.elements.controlPoint.node, event => {
         const y = event.clientY - state.draw.node.getBoundingClientRect().top - config.canvas.center;
         const pos = initialPositions[state.currentMode];
         const circleCenterX = state.currentMode === 1 ? config.scale : 0;
-        
         state.elements.controlPoint.center(circleCenterX, y);
         const c = cMappers[state.currentMode](y);
         state.currentC=c;
@@ -243,10 +271,10 @@ export function plotMethodAnim() {
     });
 
     // Mode switching
-    Array.from(document.getElementsByClassName('mode')).forEach(element => {
+    Array.from(document.getElementsByClassName('plotMethodMode')).forEach(element => {
         element.addEventListener('click', () => {
-            const mode = parseInt(document.querySelector('input[name="mode"]:checked').value);
-            state.currentMode = mode;
+            const mode = element.getAttribute('data-value');
+            state.currentMode = parseInt(mode);
             const pos = initialPositions[mode];
             
             state.elements.controlPoint.animate(config.animation.fieldDuration).center(pos.x, pos.y);
@@ -254,6 +282,11 @@ export function plotMethodAnim() {
             const newFieldPath = applyTransform(fieldFuncs[mode], config.field.height, config.field.width, config.field.step, config.scale);
             state.elements.field.animate(config.animation.fieldDuration).plot(newFieldPath);
             updateLatexText();
+            if(state.currentMode==1){
+                state.elements.controlPointTragectory.plot('M 40 -400 L 40 400')
+            }else{
+                state.elements.controlPointTragectory.plot('M 0 -400 L 0 400')
+            }
         });
     });
 

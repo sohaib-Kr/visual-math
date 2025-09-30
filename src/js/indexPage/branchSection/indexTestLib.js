@@ -334,71 +334,6 @@ function createFilledPath(mathFunc, start, step, end, scale) {
     return pathData;
 }
 
-export function createCurveApproaximation(svg){
-    
-    let shape=svg.group()
-    let mainCurve=shape.path(drawMathFunction({
-        mathFunc: x => Math.sin(x*1.3),
-        start: 0,
-        step: 0.1,
-        end: 5,
-    })).fill('none').stroke({color:'#00c9a7',width:3})
-    mainCurve.transform({translate:[100,400]})
-
-    let secondCurve=shape.path().fill('none').stroke({color:'#00c9a7',width:3}).transform({translate:[100,400]})
-    let startObj = {
-        a: [22, 10],
-        b: [58,-75],
-        c: [68, -63],
-        d: [99,10] 
-    };
-    
-    let endObj = {
-        a: [4, 6],
-        b: [61,-73],
-        c: [66, -55],
-        d: [118, 6]
-    };
-    let currentObj={...startObj}
-     
-    // Initially paused animation
-    let animation=gsap.to({},{
-        duration:1,
-        repeatDelay:3,
-        repeat:-1,
-        yoyo:true,
-        paused:true, // Initially paused
-        onUpdate:function(){
-                for (let key in startObj) {
-                currentObj[key] = [
-                    startObj[key][0] + (endObj[key][0] - startObj[key][0]) * this.progress(),
-                    startObj[key][1] + (endObj[key][1] - startObj[key][1]) * this.progress()
-                ];
-            }
-            secondCurve.plot(`M ${currentObj.a.join(' ')}
-                C ${currentObj.b.join(' ')} ${currentObj.c.join(' ')} ${currentObj.d.join(' ')}`)
-        }
-    })
-    
-    return {
-        open:false,
-        In: function() {
-            if(this.open==false){
-                animation.play();
-                gsap.to(shape.node, {scale: 1, duration: 0.5});
-            }
-            this.open=true
-        },
-        Out: function() {
-            if(this.open==true){
-                animation.pause();
-                gsap.to(shape.node, {scale: 0, duration: 0.4});
-            }
-            this.open=false
-        }
-    };    
-}
-
 export function createUnderCurveSpaceAnimation(svg){
     let shapeContainer=svg.group()
     let shape=shapeContainer.group()
@@ -482,8 +417,9 @@ export function createUnderCurveSpaceAnimation(svg){
 }
 
 export function createSymboles(svg){
-    let lambdaShape=svg.group()
-    let epsilonDeltaShape=svg.group()
+    let shape=svg.group()
+    let lambdaShape=shape.group()
+    let epsilonDeltaShape=shape.group()
     let lambda=lambdaShape.path('M26.20 52.69Q24.37 54.08 23.18 54.87Q22.00 55.66 21.17 55.66Q20.19 55.66 19.46 54.92Q18.73 54.17 17.94 52.16Q17.16 50.15 16.11 46.44Q15.06 42.72 13.48 36.79Q12.13 31.84 11.15 28.87Q10.16 25.90 9.40 24.41Q8.64 22.92 8.00 22.45Q7.35 21.97 6.69 21.97Q5.83 21.97 4.94 22.38Q4.05 22.78 2.86 23.71L2.27 22.46Q4.74 19.97 6.27 19.02Q7.81 18.07 8.81 18.07Q9.50 18.07 10.07 18.37Q10.64 18.68 11.25 19.64Q11.87 20.61 12.60 22.57Q13.33 24.54 14.32 27.84Q15.31 31.15 16.65 36.18Q17.97 40.99 19.10 44.68Q20.24 48.36 21.24 50.43Q22.24 52.49 23.14 52.49Q23.73 52.49 24.24 52.31Q24.76 52.12 25.95 51.59L26.20 52.69M13.45 32.10Q12.11 35.77 10.82 39.26Q9.52 42.75 8.23 46.41Q6.93 50.07 5.59 54.30Q4.64 54.54 3.11 54.97Q1.59 55.40 0.73 55.66L0 54.88Q1.56 52.91 3.05 50.20Q4.54 47.49 5.91 44.45Q7.28 41.41 8.44 38.34Q9.59 35.28 10.50 32.54Q11.40 29.81 11.96 27.76Q12.30 28.05 12.62 29.02Q12.94 29.98 13.17 30.92Q13.40 31.86 13.45 32.10Z')
     .fill('white')
     lambdaShape.transform({translate:[100,100]})
@@ -537,3 +473,100 @@ export function createSymboles(svg){
     };
 }
     
+
+export function createNormalDistributionAnimation(svg) {
+        let shapeContainer = svg.group();
+        let shape = shapeContainer.group();
+    
+        // Normal Distribution Function (with mean = 0 and standard deviation = 1)
+        let normalDistFunc = (x) => {
+            let mean = 0;
+            let stdDev = 1;
+            return 10 * (1 / (stdDev * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mean) / stdDev, 2));
+        };
+    
+        // Draw Bars (Tall Rectangles) Approximating the Normal Distribution Curve
+        let drawBars = () => {
+            let step = 0.4;
+            let barWidth = step * 50; // Width of the bars, adjust for spacing
+            let bars = [];
+            let randomInitialHeights = []; // To store random initial heights
+    
+            // Create bars with random initial heights and store them
+            for (let x = -3; x <= 3; x += step) {
+                let barHeight = normalDistFunc(x) * 50; // Final height based on the normal distribution function (scaled)
+                let randomHeight = Math.random() * 200; // Random initial height between 0 and 50
+                randomInitialHeights.push(randomHeight); // Store the random height
+    
+                let bar = shape.rect(barWidth, randomHeight)  // Start with random height
+                    .move(x * 50 - step * 25, 0)  // Move bars along the x-axis
+                    .fill('#00ff00');
+                bar.transform({ rotate: 180, origin: ['center', 0] });
+                bars.push(bar);
+            }
+    
+            // Animate bars from random height to their final height based on normal distribution
+            bars.forEach((bar, index) => {
+                let targetHeight = normalDistFunc(-3 + index * 0.4) * 50; // Target height based on normal distribution
+                gsap.fromTo(bar.node, {
+                    height: randomInitialHeights[index], // From the random initial height
+                }, {
+                    duration: 2, // Duration of the animation
+                    height: targetHeight, // To the target height based on normal distribution
+                    ease: "power2.inOut", // Smooth easing function
+                    delay: Math.random() * 0.5, // Add some delay for a staggered effect
+                    repeat:-1,
+                    yoyo:true,
+                    repeatDelay:2
+                });
+            });
+    
+            return bars;
+        };
+    
+        let bars = drawBars();
+    
+        // Drawing the Normal Distribution Curve
+        shape.path(drawMathFunction({
+            mathFunc: normalDistFunc,
+            start: -3,    // Start of the range (for the standard normal, -3 to 3 is enough)
+            step: 0.05,
+            end: 3,       // End of the range
+        })).fill('none').stroke({ color: '#00c9a7', width: 3 });
+    
+        shape.path('M 0 0 L 270 0').stroke({ color: '#cccccc', width: 1 });
+    
+        // Shape Animation (Bouncing effect for the bars)
+        let shapeAnimation = gsap.fromTo(shape.node, { rotate: -1 }, {
+            duration: 4,
+            rotate: 4,
+            y: -10,
+            x: 30,
+            ease: 'power1.inOut',
+            repeat: -1,
+            yoyo: true,
+            paused: true // Initially paused
+        });
+    
+        shapeContainer.transform({ translate: [100, 300], scale: 0.8 });
+    
+        let shrinkTween = gsap.to(shapeContainer.node, { scale: 0, duration: 0.4 });
+    
+        return {
+            open: false,
+            In: function () {
+                if (this.open === false) {
+                    shapeAnimation.play();
+                    shrinkTween.reverse();
+                }
+                this.open = true;
+            },
+            Out: function () {
+                if (this.open === true) {
+                    shapeAnimation.pause();
+                    shrinkTween.play();
+                }
+                this.open = false;
+            }
+        };
+    }

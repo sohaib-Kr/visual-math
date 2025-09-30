@@ -1,17 +1,12 @@
 <div class="w-full grid h-[150vh]">
     <div class="overlap w-full" id="section1Background"></div>
     <div class="grid grid-cols-1 md:grid-cols-2  h-[650px] gap-8 md:gap-12 items-center overlap pt-[250px]">
-        <div  class=" w-fit relative right-[10%] justify-self-center self-start  p-[40px] rounded-[10px] shadow-[0_0_10px_0_rgba(0,0,0,0.1)] bg-white">
+        <div  class=" w-fit relative right-[10%] justify-self-center self-start ">
             <div>
-                <input class="mode" type="radio" id="mode1" name="mode" value="0">
-                <label for="mode1">Mode 1</label>
-                <input class="mode" type="radio" id="mode2" name="mode" value="1">
-                <label for="mode2">Mode 2</label>
-                <input class="mode" type="radio" id="mode3" name="mode" value="2">
-                <label for="mode3">Mode 3</label>
-                <input class="mode" type="radio" id="mode4" name="mode" value="3">
-                <label for="mode4">Mode 4</label>
-            </div>
+                <button class="plotMethodMode" data-value="0">Mode 1</button>
+                <button class="plotMethodMode" data-value="1">Mode 2</button>
+                <button class="plotMethodMode" data-value="2">Mode 3</button>
+                <button class="plotMethodMode" data-value="3">Mode 4</button>            </div>
             <div id="plotMethodContainer"></div>
             <div id="plotMethodAnimationText"></div>
         </div>
