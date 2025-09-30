@@ -1,429 +1,264 @@
 import { SVG } from "@svgdotjs/svg.js";
-export function plotMethodAnim(){
-    // ========================
-// GLOBAL VARIABLES
-// ========================
-let draw;
-let curveTengents
-let controlPoint
-// ========================
-// UTILITY FUNCTIONS
-// ========================
+import katex from 'katex';
 
-/**
- * Creates SVG path data for a mathematical function
- * @param {Object} options - Configuration object
- * @param {Function} options.mathFunc - The mathematical function to plot
- * @param {number} options.start - Start x value
- * @param {number} options.step - Step size for x values
- * @param {number} options.end - End x value
- * @param {number} options.scale - Scaling factor
- * @param {string} options.fill - Fill option ('none' or other)
- * @returns {string} SVG path data
- */
-let cutPoint=false
-let lastValidY=0
-function drawTangentLine({ mathFunc, t, start, end, scale = 1 }) {
-    const y_t = mathFunc(t);
-    
-    const h = 0.0001;
-    const derivative = (mathFunc(t + h) - mathFunc(t - h)) / (2 * h);
-    
-    const tangentFunc = (x) => derivative * (x - t) + y_t;
-    
-    const y_start = tangentFunc(start);
-    const y_end = tangentFunc(end);
-    if(isFinite(y_start)&&isFinite(y_end)){
-        const pathData = `M ${start * scale} ${-y_start * scale} L ${end * scale} ${-y_end * scale}`;
+export function plotMethodAnim() {
+    // State management
+    const state = {
+        draw: null,
+        elements: {
+            curveTangents: null,
+            controlPoint: null,
+            curve: null,
+            field: null,
+            controlPointTragectory: null,
+        },
+        currentMode: 0,
+        currentC: 1,
+        cutPoint: false,
+        lastValidY: 0
+    };
+
+    // Configuration
+    const config = {
+        canvas: { width: 400, height: 400, center: 200 },
+        scale: 40,
+        tangent: { h: 0.0001, segmentLength: 15 },
+        field: { height: 10, width: 10, step: 0.8, segmentLength: 15 },
+        curve: { start: -10, end: 10, step: 0.05, xStep: 0.8 },
+        animation: { duration: 300, fieldDuration: 400 }
+    };
+
+    // Mathematical functions
+    const mathFuncs = [
+        c => x => c * Math.exp(x),
+        c => x => x * (Math.log(x * x) + c),
+        c => x => Math.exp(x) * (Math.sin(x) + c),
+        c => x => 1 + c * Math.exp(-x)
+    ];
+
+    const fieldFuncs = [
+        (x, y) => y,
+        (x, y) => y / x + 2,
+        (x, y) => Math.exp(x) * (Math.sin(x) + 1),
+        (x, y) => 1 - y
+    ];
+
+    const initialPositions = [
+        { x: 0, y: -40, c: 1 },
+        { x: 40, y: -40, c: 1 },
+        { x: 0, y: 0, c: 0 },
+        { x: 0, y: 0, c: -1 }
+    ];
+
+    const cMappers = [
+        y => -y / config.scale,
+        y => -y / config.scale,
+        y => -y / config.scale,
+        y => -(y / config.scale + 1)
+    ];
+
+    // LaTeX formulas for each mode
+    const latexFormulas = [
+        {
+            solution: "y(x) =ce^{x} ",
+            differential: "\\frac{dy}{dx} - y = 0 "
+        },
+        {
+            solution: "y(x) = x(\\ln(x^2) + c) ",
+            differential: "\\frac{dy}{dx} - \\frac{y}{x} = 2 "
+        },
+        {
+            solution: "y(x) = e^{x}(\\sin(x) + c) ",
+            differential: "\\frac{dy}{dx} = e^{x}(\\sin(x) + 1) "
+        },
+        {
+            solution: "y(x) = 1 + ce^{-x} ",
+            differential: "\\frac{dy}{dx} + y= 1 "
+        }
+    ];
+
+    // Utility functions
+    function drawMathFunction(mathFunc, start, step, end, scale) {
+        let pathData = `M ${start * scale} ${-mathFunc(start) * scale}`;
+        state.lastValidY = mathFunc(start);
+
+        for (let x = start; x <= end; x += step) {
+            const y = mathFunc(x);
+            if (!isFinite(y)) {
+                state.cutPoint = true;
+                continue;
+            }
+            pathData += state.cutPoint 
+                ? ` M ${x * scale} ${-y * scale}` 
+                : ` L ${x * scale} ${-y * scale}`;
+            state.cutPoint = false;
+            state.lastValidY = y;
+        }
         return pathData;
     }
-    return ''
-}
 
-function drawTangentFieldAlongCurve({ mathFunc, xStart, xEnd, xStep, segmentLength = 20, scale = 1 }) {
-    let pathData = '';
-    const h = 0.0001;
-    
-    // Iterate through x values at regular intervals
-    for (let x = xStart; x <= xEnd; x += xStep) {
-        // Calculate derivative at this point
-        const derivative = (mathFunc(x + h) - mathFunc(x - h)) / (2 * h);
-        
-        // The slope of the tangent line means:
-        // For every dx change in x, there's derivative*dx change in y
-        // Euclidean distance: sqrt(dx^2 + (derivative*dx)^2) = sqrt(dx^2 * (1 + derivative^2))
-        // We want this distance to be segmentLength/(2*scale) for half the segment
-        
-        const halfLength = segmentLength / (2 * scale);
-        
-        // Solve for dx: halfLength = |dx| * sqrt(1 + derivative^2)
-        const dx = halfLength / Math.sqrt(1 + derivative * derivative);
-        
-        const segmentStart = x - dx;
-        const segmentEnd = x + dx;
-        
-        // Use the existing drawTangentLine function for each segment
-        let seg = drawTangentLine({
-            mathFunc: mathFunc,
-            t: x,
-            start: segmentStart,
-            end: segmentEnd,
-            scale: scale
-        }) + ' ';
-        pathData += seg;
+    function drawTangentLine(mathFunc, t, start, end, scale) {
+        const y_t = mathFunc(t);
+        const derivative = (mathFunc(t + config.tangent.h) - mathFunc(t - config.tangent.h)) / (2 * config.tangent.h);
+        const tangentFunc = x => derivative * (x - t) + y_t;
+        const y_start = tangentFunc(start);
+        const y_end = tangentFunc(end);
+
+        return isFinite(y_start) && isFinite(y_end)
+            ? `M ${start * scale} ${-y_start * scale} L ${end * scale} ${-y_end * scale}`
+            : '';
     }
-    return pathData;
-}
 
-function drawMathFunction({ mathFunc, start, step, end, scale, fill = 'none' }) {
-    let pathData = `M ${start * scale} ${-mathFunc(start) * scale}`;
-    lastValidY=mathFunc(start)
-    
-    for (let x = start; x <= end; x += step) {
-        const y = mathFunc(x);
-        if (!isFinite(y)) {
-            cutPoint=true
-            continue;
+    function drawTangentField(mathFunc, xStart, xEnd, xStep, segmentLength, scale) {
+        let pathData = '';
+        const halfLength = segmentLength / (scale);
+
+        for (let x = xStart; x <= xEnd; x += xStep) {
+            const derivative = (mathFunc(x + config.tangent.h) - mathFunc(x - config.tangent.h)) / (2 * config.tangent.h);
+            const dx = halfLength / Math.sqrt(1 + derivative * derivative);
+            pathData += drawTangentLine(mathFunc, x, x - dx, x + dx, scale) + ' ';
         }
-        if(cutPoint){
-            pathData += ` M ${x * scale} ${-y * scale}`
-            cutPoint=false
-        }else{
-            pathData += ` L ${x * scale} ${-y * scale}`
-            lastValidY=y
-        }
+        return pathData;
     }
-    
-    if (fill !== 'none') {
-        pathData += ` L ${end * scale} 0 L ${start * scale} 0 Z`;
-    }
-    return pathData;
-}
 
-/**
- * Sets up drag functionality for an SVG element
- * @param {Object} options - Configuration object
- * @param {HTMLElement} options.element - The element to make draggable
- * @param {Function} options.onMove - Callback for mouse move events
- * @param {Function} options.onRelease - Callback for mouse release events
- * @returns {Object} Object with disable method
- */
-function setupDrag({ element, onMove, onRelease = () => {} }) {
-    let dragging = false;
-    let startX, startY;
-
-    const mouseDownHandler = (e) => {
-        dragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        e.preventDefault();
-    };
-
-    const mouseMoveHandler = (e) => {
-        if (!dragging) return;
-        onMove(e);
-    };
-
-    const mouseUpHandler = (e) => {
-        if (!dragging) return;
-        
-        dragging = false;
-        const deltaX = e.clientX - startX;
-        const deltaY = e.clientY - startY;
-        
-        onRelease(deltaX, deltaY);
-    };
-
-    element.addEventListener('mousedown', mouseDownHandler);
-    document.addEventListener('mousemove', mouseMoveHandler);
-    document.addEventListener('mouseup', mouseUpHandler);
-
-    return {
-        disable: () => {
-            element.removeEventListener('mousedown', mouseDownHandler);
-            document.removeEventListener('mousemove', mouseMoveHandler);
-            document.removeEventListener('mouseup', mouseUpHandler);
-        }
-    };
-}
-
-// ========================
-// VECTOR FIELD FUNCTIONS
-// ========================
-
-/**
- * Creates a vector field as a single SVG path
- * @param {number} height - Half-height of the field
- * @param {number} width - Half-width of the field
- * @param {number} step - Step size between field points
- * @param {number} scale - Scaling factor for positioning
- * @returns {SVGPathElement} SVG path element containing all field segments
- */
-function createSegmentField(height, width, step, scale) {
-    let pathData = '';
-    
-    // Generate horizontal line segments at each grid point
-    for (let x = -width; x <= width; x += step) {
-        for (let y = -height; y <= height; y += step) {
-            const scaledX = x * scale * step;
-            const scaledY = y * scale * step;
-            
-            pathData += `M ${scaledX - 10} ${-scaledY} L ${scaledX + 10} ${-scaledY} `;
-        }
-    }
-    
-    return draw.path(pathData).stroke({ 
-        color: '#333', 
-        width: 1 
-    }).fill('none');
-}
-
-/**
- * Applies mathematical transformation to rotate field segments
- * @param {Function} mathFunc - Function that determines rotation angle
- * @param {SVGPathElement} field - The field path to transform
- * @param {number} height - Half-height of the field
- * @param {number} width - Half-width of the field
- * @param {number} step - Step size between field points
- * @param {number} scale - Scaling factor for positioning
- * @returns {string} New path data with transformed segments
- */
-function applyTransform(mathFunc, field, height, width, step, scale) {
-    let pathData = '';
-    
-    // Recalculate each segment with rotation based on mathFunc
-    for (let x = -width; x <= width; x += step) {
-        for (let y = -height; y <= height; y += step) {
-            const scaledX = x * scale * step;
-            const scaledY = y * scale * step;
-            
-            // Calculate rotation angle from the math function
-            const angle = -Math.atan(mathFunc(x, y));
-            
-            // Calculate rotated segment endpoints
-            const segmentLength = 10;
-            const startX = scaledX + Math.cos(angle + Math.PI) * segmentLength;
-            const startY = -scaledY + Math.sin(angle + Math.PI) * segmentLength;
-            const endX = scaledX + Math.cos(angle) * segmentLength;
-            const endY = -scaledY + Math.sin(angle) * segmentLength;
-            
-            pathData += `M ${startX} ${startY} L ${endX} ${endY} `;
-        }
-    }
-    return pathData;
-}
-
-// ========================
-// CONFIGURATION DATA
-// ========================
-
-/**
- * Default mathematical function for field transformation
- */
-function mathFunc(x, y) {
-    return y;
-}
-
-/**
- * Higher-order functions that take a constant c and return mathematical functions for curve plotting
- */
-const mathFuncs = [
-    (c) => (x) => c * Math.exp(x),
-    (c) => (x) => x* (Math.log(x*x)+c),
-    (c) => (x) => Math.exp(x)*(Math.sin(x)+c),
-    (c) => (x) => 1+c*Math.exp(-x)
-];
-
-/**
- * Corresponding field transformation functions (derivatives of the above functions)
- */
-const fieldFuncs = [
-    (x, y) => y,
-    (x, y) => y /x+2,
-    (x, y) => Math.exp(x)*(Math.sin(x)+1),
-    (x, y) => 1-y
-];
-
-// ========================
-// MAIN VISUALIZATION SETUP
-// ========================
-
-/**
- * Main function to set up the mathematical visualization
- */
-    // Initialize SVG canvas
-    draw = SVG().addTo('#plotMethodContainer').size('400', '400');
-    
-    // Create main container group
-    const group = draw.group();
-    
-    // ========================
-    // COORDINATE AXES SETUP
-    // ========================
-    
-    // X-axis
-    group.line(-200, 0, 200, 0)
-        .stroke({ width: 2, color: '#000' });
-    
-    // Y-axis  
-    group.line(0, -200, 0, 200)
-        .stroke({ width: 2, color: '#000' });
-    
-    // ========================
-    // VECTOR FIELD SETUP
-    // ========================
-    
-    const field = createSegmentField(10, 10, 0.8, 40);
-    field.transform({ translate: [200, 200] });
-    
-    // Apply initial transformation with animation delay
-    const initialPath = applyTransform(mathFunc, field, 10, 10, 0.8, 40);
-    setTimeout(() => {
-        field.animate(800).plot(initialPath);
-    }, 2000);
-    
-    // ========================
-    // FUNCTION CURVE SETUP
-    // ========================
-    
-    // Initial curve with c = 1
-    const initialCurvePath = drawMathFunction({
-        mathFunc: mathFuncs[0](1), // exp(x) with c = 1
-        start: -10,
-        step: 0.05,
-        end: 10,
-        scale: 40
-    });
-    
-    const curve = group.path(initialCurvePath)
-        .stroke({ color: 'red', width: 2 })
-        .fill('none');
-    
-    // ========================
-    // INTERACTIVE CONTROL POINT
-    // ========================
-    
-    
-    let currentC=1
-    // Keep track of current mode for drag interaction
-    let currentMode = 0;
-    
-    // Setup dragging for real-time curve modification
-    
-    
-    // ========================
-    // MODE SWITCHING SETUP
-    // ========================
-    
-    // Setup event listeners for function mode switching
-    Array.from(document.getElementsByClassName('mode')).forEach((element) => {
-        element.addEventListener('click', () => {
-            const mode = document.querySelector('input[name="mode"]:checked').value;
-            const modeIndex = parseInt(mode);
-            currentMode = modeIndex; // Update current mode
-            let currentC
-            switch(modeIndex){
-                case 0:
-                    controlPoint.animate(400).center(0, -40);
-                    currentC=1;
-                    break;
-                case 1:
-                    controlPoint.animate(400).center(40, -40);
-                    currentC=1;
-                    break;
-                case 2:
-                    controlPoint.animate(400).center(0, 0);
-                    currentC=0;
-                    break;
-                case 3:
-                    controlPoint.animate(400).center(0, 0);
-                    currentC=-1;
-                    break;
+    function createSegmentField(height, width, step, scale) {
+        let pathData = '';
+        for (let x = -width; x <= width; x += step) {
+            for (let y = -height; y <= height; y += step) {
+                const scaledX = x * scale ;
+                const scaledY = y * scale;
+                pathData += `M ${scaledX - config.field.segmentLength} ${-scaledY} L ${scaledX + config.field.segmentLength} ${-scaledY} `;
             }
-            
-            
-            // Animate curve change with current c value
-            const newCurvePath = drawMathFunction({
-                mathFunc: mathFuncs[modeIndex](currentC),
-                start: -10,
-                step: 0.05,
-                end: 10,
-                scale: 40
+        }
+        return state.draw.path(pathData).stroke({ color: '#333', width: 1 }).fill('none');
+    }
+
+    function applyTransform(mathFunc, height, width, step, scale) {
+        let pathData = '';
+        for (let x = -width; x <= width; x += step) {
+            for (let y = -height; y <= height; y += step) {
+                const scaledX = x * scale ;
+                const scaledY = y * scale ;
+                const angle = -Math.atan(mathFunc(x, y));
+                const startX = scaledX + Math.cos(angle + Math.PI) * config.field.segmentLength;
+                const startY = -scaledY + Math.sin(angle + Math.PI) * config.field.segmentLength;
+                const endX = scaledX + Math.cos(angle) * config.field.segmentLength;
+                const endY = -scaledY + Math.sin(angle) * config.field.segmentLength;
+                pathData += `M ${startX} ${startY} L ${endX} ${endY} `;
+            }
+        }
+        return pathData;
+    }
+
+    function updateLatexText() {
+        const textContainer = document.getElementById('plotMethodAnimationText');
+        const formulas = latexFormulas[state.currentMode];
+        const solutionSpan = document.createElement('span');
+        solutionSpan.innerHTML = `${formulas.solution}`;
+        const differentialSpan = document.createElement('span');
+        differentialSpan.innerHTML = `${formulas.differential}`;
+        const cSpan=document.createElement('span');
+        cSpan.innerText='c='
+        katex.render(solutionSpan.innerHTML, solutionSpan);
+        katex.render(differentialSpan.innerHTML, differentialSpan);
+        katex.render(cSpan.innerHTML, cSpan);
+        console.log(state.currentC)
+        textContainer.innerHTML = `
+            <div style="margin-top: 20px; font-size: 18px;">
+                <div>
+                    <strong>Differential Equation:</strong> ${differentialSpan.innerHTML}
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <strong>Solution:</strong> <span style="width: 250px; display: inline-block;">${solutionSpan.innerHTML}</span> ${cSpan.innerHTML} <span id="controlValue">${state.currentC.toFixed(2)}</span>
+                </div>
+            </div>
+        `;
+        
+    }
+
+    function updateVisualization(c) {
+        const curvePath = drawMathFunction(mathFuncs[state.currentMode](c), config.curve.start, config.curve.step, config.curve.end, config.scale);
+        const tangentsPath = drawTangentField(mathFuncs[state.currentMode](c), config.curve.start, config.curve.end, config.curve.xStep, config.tangent.segmentLength, config.scale);
+        
+        state.elements.curve.animate(config.animation.duration).attr({ opacity: 0 })
+            .after(() => state.elements.curve.plot(curvePath).animate(config.animation.duration).attr({ opacity: 1 }));
+        state.elements.curveTangents.animate(config.animation.duration).attr({ opacity: 0 })
+            .after(() => {
+                state.elements.curveTangents.plot(tangentsPath).animate(config.animation.duration).attr({ opacity: 1 })
             });
-            let curveTengantsPath=drawTangentFieldAlongCurve({
-                mathFunc: mathFuncs[currentMode](currentC),
-                xStart: -10,
-                xEnd: 10,
-                xStep: 1,
-                segmentLength: 20,
-                scale: 40
-            })
+        
+        updateLatexText();
+    }
 
-            curve.animate(300).attr({opacity:0}).after(()=>curve.plot(newCurvePath).animate(300).attr({opacity:1}))
-            curveTengents.animate(300).attr({opacity:0}).after(()=>curveTengents.plot(curveTengantsPath).animate(300).attr({opacity:1}))
+    function setupDrag(element, onMove) {
+        let dragging = false;
+        const mouseDown = e => { dragging = true; e.preventDefault(); };
+        const mouseMove = e => dragging && onMove(e);
+        const mouseUp = () => dragging = false;
+
+        element.addEventListener('mousedown', mouseDown);
+        document.addEventListener('mousemove', mouseMove);
+        document.addEventListener('mouseup', mouseUp);
+    }
+
+    // Initialization
+    state.draw = SVG().addTo('#plotMethodContainer').size(config.canvas.width, config.canvas.height);
+    const group = state.draw.group();
+
+    // Axes
+    group.line(-config.canvas.center, 0, config.canvas.center, 0).stroke({ width: 2, color: '#000' });
+    group.line(0, -config.canvas.center, 0, config.canvas.center).stroke({ width: 2, color: '#000' });
+
+    // Field
+    state.elements.field = createSegmentField(config.field.height, config.field.width, config.field.step, config.scale);
+    state.elements.field.transform({ translate: [config.canvas.center, config.canvas.center] });
+    setTimeout(() => {
+        const initialPath = applyTransform(fieldFuncs[0], config.field.height, config.field.width, config.field.step, config.scale);
+        state.elements.field.animate(800).plot(initialPath);
+    }, 2000);
+
+    // Curve and tangents
+    const initialCurvePath = drawMathFunction(mathFuncs[0](1), config.curve.start, config.curve.step, config.curve.end, config.scale);
+    state.elements.curve = group.path(initialCurvePath).stroke({ color: 'red', width: 2 }).fill('none');
+    
+    const initialTangentsPath = drawTangentField(mathFuncs[0](1), config.curve.start, config.curve.end, config.curve.xStep, config.tangent.segmentLength, config.scale);
+    state.elements.curveTangents = group.path(initialTangentsPath).stroke({ color: 'blue', width: 3 }).fill('none');
+
+    // Control point
+    state.elements.controlPoint = group.circle(10).fill('blue').center(0, -config.scale);
+
+    setupDrag(state.elements.controlPoint.node, event => {
+        const y = event.clientY - state.draw.node.getBoundingClientRect().top - config.canvas.center;
+        const pos = initialPositions[state.currentMode];
+        const circleCenterX = state.currentMode === 1 ? config.scale : 0;
+        
+        state.elements.controlPoint.center(circleCenterX, y);
+        const c = cMappers[state.currentMode](y);
+        state.currentC=c;
+        const curvePath = drawMathFunction(mathFuncs[state.currentMode](c), config.curve.start, config.curve.step, config.curve.end, config.scale);
+        const tangentsPath = drawTangentField(mathFuncs[state.currentMode](c), config.curve.start, config.curve.end, config.curve.xStep, config.tangent.segmentLength, config.scale);
+        document.getElementById('controlValue').textContent=`${state.currentC.toFixed(2)}`;
+        state.elements.curve.plot(curvePath);
+        state.elements.curveTangents.plot(tangentsPath);
+    });
+
+    // Mode switching
+    Array.from(document.getElementsByClassName('mode')).forEach(element => {
+        element.addEventListener('click', () => {
+            const mode = parseInt(document.querySelector('input[name="mode"]:checked').value);
+            state.currentMode = mode;
+            const pos = initialPositions[mode];
             
-            // Update vector field
-            const newFieldPath = applyTransform(fieldFuncs[modeIndex], field, 10, 10, 0.8, 40);
-            field.animate(400).plot(newFieldPath);
+            state.elements.controlPoint.animate(config.animation.fieldDuration).center(pos.x, pos.y);
+            updateVisualization(pos.c);
+            const newFieldPath = applyTransform(fieldFuncs[mode], config.field.height, config.field.width, config.field.step, config.scale);
+            state.elements.field.animate(config.animation.fieldDuration).plot(newFieldPath);
+            updateLatexText();
         });
     });
-    curveTengents=group.path(drawTangentFieldAlongCurve({
-        mathFunc: mathFuncs[currentMode](currentC),
-        xStart: -10,
-        xEnd: 10,
-        xStep: 1,
-        segmentLength: 20,
-        scale: 40
-    })).stroke({color:'blue',width:3}).fill('none');
-    // Apply final transformation to center everything
 
-    controlPoint = group.circle(10)
-        .fill('blue')
-        .center(0, -40);
-
-        setupDrag({
-            element: controlPoint.node,
-            onMove: (event) => {
-                let c
-                let cMapper={
-                    0:(y)=>-y/40,
-                    1:(y)=>-y/40,
-                    2:(y)=>-y/40,
-                    3:(y)=>-(y/40+1)
-                }
-                if(currentMode==0 || currentMode==1){
-                    const y = event.clientY - draw.node.getBoundingClientRect().top - 200;
-                    let circleCenterX = currentMode==0 ? 0 : 40;
-                    controlPoint.center(circleCenterX, y);
-                    c = cMapper[currentMode](y);
-                }else if (currentMode==2){
-                    const y = event.clientY - draw.node.getBoundingClientRect().top - 200;
-                    controlPoint.center(0, y);
-                     c = cMapper[currentMode](y);
+    group.transform({ translate: [config.canvas.center, config.canvas.center] });
     
-                }else if (currentMode==3){
-                    const y = event.clientY - draw.node.getBoundingClientRect().top - 200;
-                    controlPoint.center(0, y);
-                     c = cMapper[currentMode](y);
-                }
-                const newCurvePath = drawMathFunction({
-                    mathFunc: mathFuncs[currentMode](c), // Use current mode with new c value
-                    start: -10,
-                    step: 0.05,
-                    end: 10,
-                    scale: 40
-                });
-                curveTengents.plot(drawTangentFieldAlongCurve({
-                    mathFunc: mathFuncs[currentMode](c),
-                    xStart: -10,
-                    xEnd: 10,
-                    xStep: 1,
-                    segmentLength: 20,
-                    scale: 40
-                }))
-                
-                curve.plot(newCurvePath);
-            }
-        });
-    group.transform({ translate: [200, 200] });
+    // Initialize the text display
+    updateLatexText();
 }
