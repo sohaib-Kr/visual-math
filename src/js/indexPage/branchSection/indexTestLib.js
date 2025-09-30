@@ -570,3 +570,137 @@ export function createNormalDistributionAnimation(svg) {
             }
         };
     }
+
+    export function createTreeAnimation(svg) {
+        let shapeContainer = svg.group();
+        let shape = shapeContainer.group();
+    
+        // Define the nodes and their positions
+        const nodes = {
+            a: [50, 200],
+            b: [150, 100],
+            c: [150, 300],
+            d: [200, 250],
+            e: [200, 350],
+            f: [200, 150],
+            g: [200, 50],
+            h: [225, 125],
+            i: [225, 175]
+        };
+    
+        // Define the branches connecting nodes (pair of node identifiers)
+        const branches = ['ab', 'ac', 'cd', 'ce', 'bf', 'bg', 'fh', 'fi'];
+    
+        // Create a function to draw quadratic Bezier curves
+        const drawBezierCurve = (startNode, endNode, controlPoint) => {
+            return shape.path(`M ${startNode[0]} ${startNode[1]} Q ${controlPoint[0]} ${controlPoint[1]} ${endNode[0]} ${endNode[1]}`)
+                .stroke({ color: '#00c9a7', width: 2 })
+                .fill('none');
+        };
+    
+        // Create a map to store the paths for each branch
+        let branchPaths = {};
+    
+        // Draw the Bezier curves for each branch in the branches array and store the paths
+        for (let i = 0; i < branches.length; i++) {
+            let startNodeId = branches[i][0];  // First letter (e.g., 'a')
+            let endNodeId = branches[i][1];    // Second letter (e.g., 'b')
+    
+            // Get the positions for the start and end nodes
+            let startNode = nodes[startNodeId];
+            let endNode = nodes[endNodeId];
+    
+            // Calculate the convex control point (right-angled triangle with the nodes)
+            let controlPoint = [startNode[0], endNode[1]];
+    
+            // Draw the Bezier curve and store it in the branchPaths map
+            let curve = drawBezierCurve(startNode, endNode, controlPoint);
+            branchPaths[branches[i]] = curve;  // Map the branch to its path
+        }
+    
+        // Create crossed paths
+        let firstCrossedPath = shape.group().attr({id:'treePathCross1'})
+        firstCrossedPath.path(branchPaths['ab'].attr().d).stroke({ color: 'pink', width: 2 }).fill('none')
+        firstCrossedPath.path(branchPaths['bf'].attr().d).stroke({ color: 'pink', width: 2 }).fill('none')
+        firstCrossedPath.path(branchPaths['fh'].attr().d).stroke({ color: 'pink', width: 2 }).fill('none')
+
+    
+        let secondCrossedPath = shape.group().attr({id:'treePathCross2'})
+        secondCrossedPath.path(branchPaths['ac'].attr().d).stroke({ color: 'blue', width: 2 }).fill('none')
+        secondCrossedPath.path(branchPaths['cd'].attr().d).stroke({ color: 'blue', width: 2 }).fill('none')
+    
+        // Draw circles for each node
+        for (let key in nodes) {
+            shape.circle(12).fill('red').center(nodes[key][0], nodes[key][1]);
+        }
+    
+        // Create Vivus instances for both paths (this is where Vivus comes in)
+        const firstCrossedPathVivus = new Vivus('treePathCross1', {
+            type: 'oneByOne',
+            duration: 200,
+            animTimingFunction: Vivus.EASE_OUT,
+            start:'manual',
+            animTimingFunction:Vivus.LINEAR
+        });
+    
+        const secondCrossedPathVivus = new Vivus('treePathCross2', {
+            type: 'oneByOne',
+            duration: 200,
+            animTimingFunction: Vivus.EASE_OUT,
+            start:'manual',
+            animTimingFunction:Vivus.LINEAR
+        });
+    
+        // GSAP timeline to control Vivus animations
+        const timeline = gsap.timeline({
+            repeat: -1,
+            repeatDelay: 3
+        }).to({},{
+            duration:5,
+            onStart:()=>firstCrossedPathVivus.play(2),
+            onComplete:()=>firstCrossedPathVivus.play(-1)
+        }).to({},{
+            delay:3,
+            duration:3,
+            onStart:()=>secondCrossedPathVivus.play(2),
+            onComplete:()=>secondCrossedPathVivus.play(-1)
+        })
+    
+        // Shape Animation (Bouncing effect for the tree structure)
+        let shapeAnimation = gsap.fromTo(shape.node, { rotate: -1 }, {
+            duration: 4,
+            rotate: 4,
+            y: -10,
+            x: 30,
+            ease: 'power1.inOut',
+            repeat: -1,
+            yoyo: true,
+            paused: true // Initially paused
+        });
+    
+        shapeContainer.transform({ translate: [100, 300], scale: 0.8 });
+    
+        let shrinkTween = gsap.to(shapeContainer.node, { scale: 0, duration: 0.4 });
+    
+        // Return the animation control object and the map of paths
+        return {
+            open: false,
+            In: function () {
+                if (this.open === false) {
+                    shapeAnimation.play();
+                    shrinkTween.reverse();
+                    timeline.play();  // Play the Vivus animation timeline
+                }
+                this.open = true;
+            },
+            Out: function () {
+                if (this.open === true) {
+                    shapeAnimation.pause();
+                    shrinkTween.play();
+                    timeline.pause();  // Pause the Vivus animation timeline
+                }
+                this.open = false;
+            },
+            branchPaths: branchPaths  // Return the map of paths
+        };
+    }
