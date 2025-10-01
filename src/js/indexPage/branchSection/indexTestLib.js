@@ -1,5 +1,6 @@
 import gsap from 'gsap';
 import Vivus from 'vivus';
+import katex from 'katex';
 
 export function createPathConnectAnimation(svg){
     let shape = svg.group();
@@ -934,5 +935,183 @@ export function createNormalDistributionAnimation(svg) {
             },
             connectionPaths: connectionPaths,
             nodes: nodes
+        };
+    }
+
+    export function createCommutativeDiagram(svg, config = {}) {
+        // Simplified configuration
+        const defaults = {
+            nodeRadius: 25,
+            arrowOffset: 8,
+            arrowWidth: 4,
+            arrowheadSize: 12,
+            nodeStrokeWidth: 2,
+            fontSize: 16,
+            floatingAnimationDuration: 3,
+            floatingAnimationDistance: -15,
+            shrinkDuration: 0.4,
+            containerTranslate: [50, 50],
+            containerScale: [0.9, 0.9]
+        };
+    
+        const cfg = { ...defaults, ...config };
+    
+        let diagramContainer = svg.group();
+        let diagram = diagramContainer.group();
+    
+        // LaTeX structures and morphisms
+        const structures = {
+            'A': [100, 100, '\\mathbb{Z}'],
+            'B': [300, 100, '\\mathbb{Q}'], 
+            'C': [200, 250, '\\mathbb{R}'],
+            'D': [400, 250, '\\mathbb{C}']
+        };
+    
+        // Basic morphisms with LaTeX labels
+        const morphisms = [
+            { from: 'A', to: 'B', label: '\\varphi', color: '#ff6b6b' },
+            { from: 'B', to: 'D', label: '\\psi', color: '#4ecdc4' },
+            { from: 'A', to: 'C', label: '\\iota', color: '#45b7d1' },
+            { from: 'C', to: 'D', label: '\\epsilon', color: '#feca57' },
+            { from: 'A', to: 'A', label: '\\text{id}', color: '#8395a7' }
+        ];
+    
+        // Helper function to create foreignObject with KaTeX
+        function createKatexElement(latex, x, y, fontSize = cfg.fontSize) {
+            const foreignObject = diagram.foreignObject(100, 50) // width, height
+                .attr('x', x - 50) // center the foreignObject
+                .attr('y', y - 25);
+            
+            const span = document.createElement('span');
+            span.style.fontSize = fontSize + 'px';
+            span.style.color = '#ecf0f1';
+            span.style.textAlign = 'center';
+            span.style.display = 'block';
+            span.style.lineHeight = '1';
+            
+            // Render KaTeX
+            katex.render(latex, span, {
+                throwOnError: false,
+                displayMode: false,
+                output: 'html',
+                trust: true
+            });
+            
+            foreignObject.node.appendChild(span);
+            return foreignObject;
+        }
+    
+        // Helper function for morphism labels
+        function createMorphismLabel(latex, x, y, color) {
+            const foreignObject = diagram.foreignObject(60, 30)
+                .attr('x', x - 30)
+                .attr('y', y - 15);
+            
+            const span = document.createElement('span');
+            span.style.fontSize = (cfg.fontSize - 2) + 'px';
+            span.style.color = color;
+            span.style.textAlign = 'center';
+            span.style.display = 'block';
+            span.style.lineHeight = '1';
+            span.style.fontWeight = 'bold';
+            
+            katex.render(latex, span, {
+                throwOnError: false,
+                displayMode: false,
+                output: 'html',
+                trust: true
+            });
+            
+            foreignObject.node.appendChild(span);
+            return foreignObject;
+        }
+    
+        // Draw morphism arrows (straight lines)
+        morphisms.forEach(morphism => {
+            const start = structures[morphism.from];
+            const end = structures[morphism.to];
+            
+            // Calculate points on node borders
+            const angle = Math.atan2(end[1] - start[1], end[0] - start[0]);
+            const startPoint = [
+                start[0] + Math.cos(angle) * cfg.nodeRadius,
+                start[1] + Math.sin(angle) * cfg.nodeRadius
+            ];
+            const endPoint = [
+                end[0] - Math.cos(angle) * cfg.nodeRadius,
+                end[1] - Math.sin(angle) * cfg.nodeRadius
+            ];
+    
+            // Draw straight arrow path
+            let arrowGroup = diagram.group();
+            let path = arrowGroup.path(`M ${startPoint[0]} ${startPoint[1]} L ${endPoint[0]} ${endPoint[1]}`)
+                .fill('none')
+                .stroke({ color: morphism.color, width: cfg.arrowWidth });
+    
+            // Arrowhead
+            const arrowAngle = Math.atan2(endPoint[1] - startPoint[1], endPoint[0] - startPoint[0]) * (180 / Math.PI);
+            
+            arrowGroup.polyline([
+                [endPoint[0] - cfg.arrowheadSize, endPoint[1] - cfg.arrowheadSize],
+                [endPoint[0], endPoint[1]],
+                [endPoint[0] - cfg.arrowheadSize, endPoint[1] + cfg.arrowheadSize]
+            ]).fill('none').stroke({ color: morphism.color, width: cfg.arrowWidth })
+              .transform({ rotate: arrowAngle, origin: [endPoint[0], endPoint[1]] });
+    
+            // Morphism label with KaTeX
+            const labelX = (startPoint[0] + endPoint[0]) / 2;
+            const labelY = (startPoint[1] + endPoint[1]) / 2;
+            
+            createMorphismLabel(morphism.label, labelX, labelY - 15, morphism.color);
+        });
+    
+        // Draw structure nodes with LaTeX labels
+        for (let [key, [x, y, latex]] of Object.entries(structures)) {
+            // Draw node circle
+            diagram.circle(cfg.nodeRadius * 2)
+                .fill('#2c3e50')
+                .stroke({ color: '#ecf0f1', width: cfg.nodeStrokeWidth })
+                .center(x, y);
+    
+            // Create KaTeX label
+            createKatexElement(latex, x, y);
+        }
+    
+        // Shape floating animation
+        let shapeAnimation = gsap.fromTo(diagram.node, 
+            { y: 0 }, 
+            {
+                duration: cfg.floatingAnimationDuration,
+                y: cfg.floatingAnimationDistance,
+                ease: 'sine.inOut',
+                repeat: -1,
+                yoyo: true,
+                paused: true
+            }
+        );
+    
+        diagramContainer.transform({ translate: cfg.containerTranslate, scale: cfg.containerScale });
+    
+        let shrinkTween = gsap.to(diagramContainer.node, { scale: 0, duration: cfg.shrinkDuration });
+    
+        // Return the animation control object
+        return {
+            open: false,
+            In: function () {
+                if (this.open === false) {
+                    shapeAnimation.play();
+                    shrinkTween.reverse();
+                }
+                this.open = true;
+            },
+            Out: function () {
+                if (this.open === true) {
+                    shapeAnimation.pause();
+                    shrinkTween.play();
+                }
+                this.open = false;
+            },
+            structures: structures,
+            morphisms: morphisms
         };
     }
