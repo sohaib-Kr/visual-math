@@ -1278,3 +1278,218 @@ export function createNormalDistributionAnimation(svg) {
             }
         };
     }
+
+    export function createSurjectionAnimation(svg, config = {}) {
+        // Configuration
+        const defaults = {
+            ovalWidth: 150,
+            ovalHeight: 250,
+            horizontalSpacing: 300,
+            circleRadius: 18,
+            verticalSpacing: 50,
+            arrowWidth: 3,
+            arrowheadSize: 10,
+            fadeDuration: 1,
+            delayBetweenFades: 0.8,
+            floatingAnimationDuration: 3,
+            floatingAnimationDistance: -10,
+            shrinkDuration: 0.4,
+            containerTranslate: [100, 150],
+            containerScale: [0.9, 0.9]
+        };
+    
+        const cfg = { ...defaults, ...config };
+    
+        let container = svg.group();
+        let shape = container.group();
+    
+        // Oval positions
+        const leftOvalPos = [0, 0];
+        const rightOvalPos = [cfg.horizontalSpacing, 0];
+    
+        // Draw ovals (ellipses) with solid strokes
+        const leftOval = shape.ellipse(cfg.ovalWidth, cfg.ovalHeight)
+            .fill('none')
+            .stroke({ color: '#3498db', width: 3 })
+            .center(leftOvalPos[0], leftOvalPos[1]);
+    
+        const rightOval = shape.ellipse(cfg.ovalWidth, cfg.ovalHeight)
+            .fill('none')
+            .stroke({ color: '#e74c3c', width: 3 })
+            .center(rightOvalPos[0], rightOvalPos[1]);
+    
+        // Left set: 4 circles with good spacing
+        const leftCircles = [];
+        const leftCirclePositions = [
+            [leftOvalPos[0], leftOvalPos[1] - cfg.ovalHeight/2 + 30],
+            [leftOvalPos[0], leftOvalPos[1] - cfg.ovalHeight/4 + 20],
+            [leftOvalPos[0], leftOvalPos[1] + cfg.ovalHeight/4 - 20],
+            [leftOvalPos[0], leftOvalPos[1] + cfg.ovalHeight/2 - 40]
+        ];
+    
+        leftCirclePositions.forEach((pos, index) => {
+            const circle = shape.circle(cfg.circleRadius * 2)
+                .fill('#3498db')
+                .stroke({ color: '#2980b9', width: 2 })
+                .center(pos[0], pos[1]);
+            
+            leftCircles.push(circle);
+        });
+    
+        // Right set: 4 visible circles + 1 transparent
+        const rightCircles = [];
+        const rightCirclePositions = [
+            [rightOvalPos[0], rightOvalPos[1] - cfg.ovalHeight/2 + 30],
+            [rightOvalPos[0], rightOvalPos[1] - cfg.ovalHeight/4 + 10],
+            [rightOvalPos[0], rightOvalPos[1] + cfg.ovalHeight/4 +10],
+            [rightOvalPos[0], rightOvalPos[1] + cfg.ovalHeight/2 -20],
+            [rightOvalPos[0], rightOvalPos[1]] // Center position for transparent circle
+        ];
+    
+        // Create 4 visible circles on right
+        rightCirclePositions.slice(0, 4).forEach((pos, index) => {
+            const circle = shape.circle(cfg.circleRadius * 2)
+                .fill('#e74c3c')
+                .stroke({ color: '#c0392b', width: 2 })
+                .center(pos[0], pos[1]);
+            
+            rightCircles.push(circle);
+        });
+    
+        // Create transparent circle (initially hidden)
+        const transparentCircle = shape.circle(cfg.circleRadius * 2)
+            .fill('#e74c3c')
+            .stroke({ color: '#c0392b', width: 2 })
+            .center(rightCirclePositions[4][0], rightCirclePositions[4][1])
+            .attr({opacity:0});
+    
+        rightCircles.push(transparentCircle);
+    
+        // Draw two-headed arrows between circles
+        const arrows = [];
+        
+        // Map each left circle to a right circle
+        const mappings = [
+            { leftIndex: 0, rightIndex: 0 }, // First pair
+            { leftIndex: 1, rightIndex: 1 }, // Second pair  
+            { leftIndex: 2, rightIndex: 2 }, // Third pair
+            { leftIndex: 3, rightIndex: 3 }, // Fourth pair
+            { leftIndex: 2, rightIndex: 4 }  // Multiple preimages: third left to transparent right
+        ];
+    
+        mappings.forEach((mapping, index) => {
+            const leftPos = leftCirclePositions[mapping.leftIndex];
+            const rightPos = rightCirclePositions[mapping.rightIndex];
+            
+            const arrowGroup = shape.group();
+            
+            if (mapping.rightIndex !== 4) {
+                // Two-headed arrows for regular mappings
+                const line = arrowGroup.line(leftPos[0] + cfg.circleRadius, leftPos[1], rightPos[0] - cfg.circleRadius, rightPos[1])
+                    .stroke({ color: '#2ecc71', width: cfg.arrowWidth });
+                
+                // Left arrowhead
+                const leftAngle = Math.atan2(rightPos[1] - leftPos[1], rightPos[0] - leftPos[0]);
+                arrowGroup.polyline([
+                    [leftPos[0] + cfg.circleRadius + cfg.arrowheadSize, leftPos[1] - cfg.arrowheadSize],
+                    [leftPos[0] + cfg.circleRadius, leftPos[1]],
+                    [leftPos[0] + cfg.circleRadius + cfg.arrowheadSize, leftPos[1] + cfg.arrowheadSize]
+                ]).fill('none').stroke({ color: '#2ecc71', width: cfg.arrowWidth })
+                  .transform({ rotate: leftAngle * (180 / Math.PI), origin: [leftPos[0] + cfg.circleRadius, leftPos[1]] });
+                
+                // Right arrowhead
+                const rightAngle = Math.atan2(leftPos[1] - rightPos[1], leftPos[0] - rightPos[0]);
+                arrowGroup.polyline([
+                    [rightPos[0] - cfg.circleRadius - cfg.arrowheadSize, rightPos[1] - cfg.arrowheadSize],
+                    [rightPos[0] - cfg.circleRadius, rightPos[1]],
+                    [rightPos[0] - cfg.circleRadius - cfg.arrowheadSize, rightPos[1] + cfg.arrowheadSize]
+                ]).fill('none').stroke({ color: '#2ecc71', width: cfg.arrowWidth })
+            } else {
+                // Single arrow for transparent circle mapping - pointing LEFT with same color
+                const line = arrowGroup.line(leftPos[0] + cfg.circleRadius, leftPos[1], rightPos[0] - cfg.circleRadius, rightPos[1])
+                    .stroke({ color: '#2ecc71', width: cfg.arrowWidth }); // Same color as regular arrows
+                
+                // Single arrowhead pointing LEFT (towards the left circle)
+                const angle = Math.atan2(-leftPos[1] + rightPos[1], -leftPos[0] + rightPos[0]);
+                arrowGroup.polyline([
+                    [leftPos[0] + cfg.circleRadius + cfg.arrowheadSize, leftPos[1] - cfg.arrowheadSize],
+                    [leftPos[0] + cfg.circleRadius, leftPos[1]],
+                    [leftPos[0] + cfg.circleRadius + cfg.arrowheadSize, leftPos[1] + cfg.arrowheadSize]
+                ]).fill('none').stroke({ color: '#2ecc71', width: cfg.arrowWidth })
+                  .transform({ rotate: angle * (180 / Math.PI), origin: [leftPos[0] + cfg.circleRadius, leftPos[1]] });
+            }
+            
+            arrows.push(arrowGroup);
+        });
+    
+        // Get the transparent arrow (last one)
+        const transparentArrow = arrows[4];
+        
+        // Initially hide the transparent arrow
+        transparentArrow.attr({opacity:0});
+    
+        // Fade animation timeline
+        let fadeTimeline = gsap.timeline({ 
+            paused: true,
+            repeat: -1,
+            delay:2,
+            repeatDelay:2
+        });
+        
+        // Correct fade sequence: circle fades in, then delay, then arrow fades in
+        fadeTimeline
+            .to(transparentCircle.node, {
+                duration: cfg.fadeDuration,
+                opacity: 1,
+                ease: 'power2.out'
+            })
+            .to(transparentArrow.node, {
+                duration: cfg.fadeDuration,
+                opacity: 1,
+                ease: 'power2.out'
+            })
+            .to([transparentArrow.node,transparentCircle.node], {
+                delay:3,
+                duration: cfg.fadeDuration,
+                opacity: 0,
+                ease: 'power2.in'
+            })
+    
+        // Shape floating animation
+        let shapeAnimation = gsap.fromTo(shape.node, 
+            { y: 0 }, 
+            {
+                duration: cfg.floatingAnimationDuration,
+                y: cfg.floatingAnimationDistance,
+                ease: 'sine.inOut',
+                repeat: -1,
+                yoyo: true,
+                paused: true
+            }
+        );
+    
+        container.transform({ translate: cfg.containerTranslate, scale: cfg.containerScale });
+    
+        let shrinkTween = gsap.to(container.node, { scale: 0, duration: cfg.shrinkDuration });
+    
+        // Return only In and Out methods
+        return {
+            open: false,
+            In: function () {
+                if (this.open === false) {
+                    shapeAnimation.play();
+                    shrinkTween.reverse();
+                    fadeTimeline.play();
+                }
+                this.open = true;
+            },
+            Out: function () {
+                if (this.open === true) {
+                    shapeAnimation.pause();
+                    shrinkTween.play();
+                    fadeTimeline.pause();
+                }
+                this.open = false;
+            }
+        };
+    }
