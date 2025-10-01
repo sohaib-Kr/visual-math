@@ -1115,3 +1115,166 @@ export function createNormalDistributionAnimation(svg) {
             morphisms: morphisms
         };
     }
+
+    export function createSymmetricPolygon(svg, config = {}) {
+        // Configuration
+        const defaults = {
+            polygonRadius: 80,
+            circleRadius: 12,
+            circleDistance: 120,
+            rotationDuration: 1.5,
+            pauseDuration: 2,
+            repeatDelay: 3,
+            floatingAnimationDuration: 3,
+            floatingAnimationDistance: -10,
+            shrinkDuration: 0.4,
+            containerTranslate: [150, 150],
+            containerScale: [0.9, 0.9]
+        };
+    
+        const cfg = { ...defaults, ...config };
+    
+        let container = svg.group();
+        let shape = container.group();
+    
+        // Create hexagon
+        function createHexagon(radius) {
+            const points = [];
+            for (let i = 0; i < 6; i++) {
+                const angle = (i * 2 * Math.PI) / 6 - Math.PI / 2;
+                const x = radius * Math.cos(angle);
+                const y = radius * Math.sin(angle);
+                points.push([x, y]);
+            }
+            return points;
+        }
+    
+        const hexagonPoints = createHexagon(cfg.polygonRadius);
+        const hexagon = shape.polygon(hexagonPoints.flat())
+            .fill('#3498db')
+            .stroke({ color: '#2980b9', width: 3 });
+    
+        // Create operation circles
+        const emphasizeColor = '#e74c3c'; // Same emphasize color for all
+        const operationCircles = [];
+        
+        for (let i = 0; i < 6; i++) {
+            const angle = (i * 2 * Math.PI) / 6;
+            const x = Math.cos(angle) * cfg.circleDistance;
+            const y = Math.sin(angle) * cfg.circleDistance;
+            
+            const circle = shape.circle(cfg.circleRadius * 2)
+                .fill('#95a5a6') // Default gray color
+                .stroke({ color: '#7f8c8d', width: 2 })
+                .center(x, y);
+            
+            shape.text(`${i === 0 ? '0' : i}${i > 0 ? '0' : ''}°`)
+                .font({ size: 10, fill: '#2c3e50', family: 'Arial' })
+                .center(x, y + 25);
+    
+            operationCircles.push(circle);
+        }
+    
+        // Add center point
+        shape.circle(8)
+            .fill('#e74c3c')
+            .stroke({ color: '#c0392b', width: 2 })
+            .center(0, 0);
+    
+        // Animation timeline with alternating directions
+        let rotationTimeline = gsap.timeline({ 
+            paused: true,
+            repeat: -1,
+            repeatDelay: cfg.repeatDelay
+        });
+        
+        // Sequence of 3 rotations with alternating directions
+        rotationTimeline
+            // First rotation: 120° CLOCKWISE - emphasize circle at 120° position (index 2)
+            .to(operationCircles[2].node, {
+                duration: 0.3,
+                fill: emphasizeColor,
+                ease: 'power2.out'
+            })
+            .to(hexagon.node, {
+                duration: cfg.rotationDuration,
+                rotation: 120,
+                transformOrigin: 'center center',
+                ease: 'power2.inOut'
+            }, '-=0.2')
+            .to(operationCircles[2].node, {
+                duration: 0.3,
+                fill: '#95a5a6',
+                ease: 'power2.out'
+            })
+            .to(operationCircles[4].node, {
+                duration: 0.3,
+                fill: emphasizeColor,
+                ease: 'power2.out'
+            })
+            .to(hexagon.node, {
+                duration: cfg.rotationDuration,
+                rotation: 0,
+                transformOrigin: 'center center',
+                ease: 'power2.inOut'
+            }, '-=0.2')
+            .to(operationCircles[4].node, {
+                duration: 0.3,
+                fill: '#95a5a6',
+                ease: 'power2.out'
+            })
+            .to(operationCircles[0].node, {
+                duration: 0.3,
+                fill: emphasizeColor,
+                ease: 'power2.out'
+            })
+            .to(hexagon.node, {
+                duration: cfg.rotationDuration,
+                rotation: 240,
+                transformOrigin: 'center center',
+                ease: 'power2.inOut'
+            }, '-=0.2')
+            .to(operationCircles[0].node, {
+                duration: 0.3,
+                fill: '#95a5a6',
+                ease: 'power2.out'
+            });
+    
+        // Shape floating animation
+        let shapeAnimation = gsap.fromTo(shape.node, 
+            { y: 0 }, 
+            {
+                duration: cfg.floatingAnimationDuration,
+                y: cfg.floatingAnimationDistance,
+                ease: 'sine.inOut',
+                repeat: -1,
+                yoyo: true,
+                paused: true
+            }
+        );
+    
+        container.transform({ translate: cfg.containerTranslate, scale: cfg.containerScale });
+    
+        let shrinkTween = gsap.to(container.node, { scale: 0, duration: cfg.shrinkDuration });
+    
+        // Return only In and Out methods
+        return {
+            open: false,
+            In: function () {
+                if (this.open === false) {
+                    shapeAnimation.play();
+                    shrinkTween.reverse();
+                    rotationTimeline.play();
+                }
+                this.open = true;
+            },
+            Out: function () {
+                if (this.open === true) {
+                    shapeAnimation.pause();
+                    shrinkTween.play();
+                    rotationTimeline.pause();
+                }
+                this.open = false;
+            }
+        };
+    }
