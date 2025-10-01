@@ -77,7 +77,6 @@ export function createElementsInstance(frame) {
             
 
             let [startX, startY, endX, endY, controlX, controlY] = decodedPath.map((elem) => parseInt(elem));
-            // Draw the curved path
             let draw=this.frame;
             // Draw the curved path
             let arrow = draw.group().attr({ id: 'arrow' });

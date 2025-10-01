@@ -1,4 +1,4 @@
-import {createPathConnectAnimation,createGraphAnimation,createTorusAnimation,createUnderCurveSpaceAnimation,createSymboles,createNormalDistributionAnimation,createTreeAnimation} from './indexTestLib.js'
+import {createPathConnectAnimation,createGraphAnimation,createTorusAnimation,createUnderCurveSpaceAnimation,createSymboles,createNormalDistributionAnimation,createTreeAnimation,createMarkovChainAnimation} from './indexTestLib.js'
 import {lessonsButton} from './buttons.js'
 import gsap from 'gsap'
 import { SVG } from '@svgdotjs/svg.js';
@@ -29,8 +29,11 @@ export function branchesSectionScript() {
     //     setTimeout(()=>sprit.Out(),500)
     // })
 
-    let treeAnimation=createTreeAnimation(svg)
-    treeAnimation.In()
+    // let treeAnimation=createTreeAnimation(svg)
+    // treeAnimation.In()
+
+    let markovAnimation=createMarkovChainAnimation(svg)
+    markovAnimation.In()
 
     Array.from(document.getElementsByClassName('branch')).forEach((branch)=>{
         const id = branch.getAttribute('data-id');

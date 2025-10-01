@@ -637,30 +637,29 @@ export function createNormalDistributionAnimation(svg) {
         // Create Vivus instances for both paths (this is where Vivus comes in)
         const firstCrossedPathVivus = new Vivus('treePathCross1', {
             type: 'oneByOne',
-            duration: 200,
-            animTimingFunction: Vivus.EASE_OUT,
+            duration: 300,
+            animTimingFunction: Vivus.EASE,
             start:'manual',
-            animTimingFunction:Vivus.LINEAR
         });
     
         const secondCrossedPathVivus = new Vivus('treePathCross2', {
             type: 'oneByOne',
             duration: 200,
-            animTimingFunction: Vivus.EASE_OUT,
+            animTimingFunction: Vivus.EASE,
             start:'manual',
-            animTimingFunction:Vivus.LINEAR
         });
     
         // GSAP timeline to control Vivus animations
         const timeline = gsap.timeline({
             repeat: -1,
-            repeatDelay: 3
+            repeatDelay: 3,
+            delay:1
         }).to({},{
-            duration:5,
+            duration:4,
             onStart:()=>firstCrossedPathVivus.play(2),
             onComplete:()=>firstCrossedPathVivus.play(-1)
         }).to({},{
-            delay:3,
+            delay:5,
             duration:3,
             onStart:()=>secondCrossedPathVivus.play(2),
             onComplete:()=>secondCrossedPathVivus.play(-1)
@@ -678,7 +677,7 @@ export function createNormalDistributionAnimation(svg) {
             paused: true // Initially paused
         });
     
-        shapeContainer.transform({ translate: [100, 300], scale: 0.8 });
+        shapeContainer.transform({ translate: [100, 300], scale: [0.8,0.7] });
     
         let shrinkTween = gsap.to(shapeContainer.node, { scale: 0, duration: 0.4 });
     
@@ -702,5 +701,220 @@ export function createNormalDistributionAnimation(svg) {
                 this.open = false;
             },
             branchPaths: branchPaths  // Return the map of paths
+        };
+    }
+
+    export function createMarkovChainAnimation(svg) {
+        function arrowDraw({path, color, parent}) {
+            let decodedPath=path.split(' ')
+            console.log(decodedPath)
+            if (process.env.NODE_ENV !== 'production' && decodedPath.length !== 6) {
+                throw new Error(`can't parse path: ${path} \n uncorrect number of parameters`)
+            }
+            
+
+            let [startX, startY, endX, endY, controlX, controlY] = decodedPath.map((elem) => parseInt(elem));
+            let draw=parent;
+            // Draw the curved path
+            let arrow = draw.group().attr({ id: 'arrow' });
+            let curve = arrow.path(`M ${startX} ${startY} Q ${controlX} ${controlY}, ${endX} ${endY}`)
+                .fill('none')
+                .stroke({ color, width: 5, linejoin: 'round', linecap: 'round' });
+            // Calculate the slope of the curve at the end point
+            let dx = endX - controlX; // Change in x
+            let dy = endY - controlY; // Change in y
+            let angle = Math.atan2(dy, dx) * (180 / Math.PI); // Angle in degrees
+            // Draw the arrowhead (a three-point polyline)
+            let arrowheadSize = 10;
+            let arrowhead = arrow.polyline([
+                [endX - arrowheadSize, endY - arrowheadSize],
+                [endX, endY],
+                [endX - arrowheadSize, endY + arrowheadSize]
+            ]).fill('none').stroke({ color, width: 5, linecap: 'round' })
+                .transform({ rotate: angle, origin: [endX, endY] }); // Rotate the arrowhead
+            return arrow;
+        }
+
+        let shapeContainer = svg.group();
+        let shape = shapeContainer.group();
+    
+        // Define the nodes (states) and their positions
+        const nodes = {
+            A: [150, 100],
+            B: [300, 100],
+            C: [225, 250]
+        };
+
+        const nodeRadius = 20; // Circle radius
+    
+        // Define the connections between nodes (directed edges)
+        // Format: 'fromTo' where from and to are node identifiers
+        const connections = ['AB', 'BA', 'BC', 'CB', 'CA', 'AC', 'AA', 'BB', 'CC'];
+    
+        // Helper function to calculate point on circle border
+        const getPointOnCircle = (center, angle, radius) => {
+            return [
+                center[0] + Math.cos(angle) * radius,
+                center[1] + Math.sin(angle) * radius
+            ];
+        };
+
+        // Create a function to draw curved paths with arrows
+        const drawConnection = (startNode, endNode, controlPoint, color, connectionId) => {
+            let pathGroup = shape.group();
+            
+            let startNodeId = connectionId[0];
+            let endNodeId = connectionId[1];
+
+            let actualStart, actualEnd;
+
+            // Handle self-loops differently
+            if (startNodeId === endNodeId) {
+                // For self-loops, start and end at different points on the circle
+                if (startNodeId === 'A') {
+                    // Start at top-left, end at bottom-left
+                    actualStart = getPointOnCircle(startNode, Math.PI * 1.25, nodeRadius);
+                    actualEnd = getPointOnCircle(startNode, Math.PI * 0.75, nodeRadius);
+                } else if (startNodeId === 'B') {
+                    // Start at top-right, end at bottom-right
+                    actualStart = getPointOnCircle(startNode, Math.PI * 1.75, nodeRadius);
+                    actualEnd = getPointOnCircle(startNode, Math.PI * 0.25, nodeRadius);
+                } else if (startNodeId === 'C') {
+                    // Start at bottom-left, end at bottom-right
+                    actualStart = getPointOnCircle(startNode, Math.PI * 0.6, nodeRadius);
+                    actualEnd = getPointOnCircle(startNode, Math.PI * 0.4, nodeRadius);
+                }
+            } else {
+                // Calculate angle from start to control point (for start edge)
+                let angleStart = Math.atan2(controlPoint[1] - startNode[1], controlPoint[0] - startNode[0]);
+                actualStart = getPointOnCircle(startNode, angleStart, nodeRadius);
+
+                // Calculate angle from control point to end (for end edge)
+                let angleEnd = Math.atan2(endNode[1] - controlPoint[1], endNode[0] - controlPoint[0]);
+                actualEnd = getPointOnCircle(endNode, angleEnd, nodeRadius);
+            }
+
+            arrowDraw({
+                path:`${actualStart[0]} ${actualStart[1]} ${actualEnd[0]} ${actualEnd[1]} ${controlPoint[0]} ${controlPoint[1]}`, 
+                color,
+                parent:pathGroup
+            });
+    
+            return pathGroup;
+        };
+    
+        // Create a function to calculate control points for different connection types
+        const getControlPoint = (startNode, endNode, connectionId) => {
+            let startNodeId = connectionId[0];
+            let endNodeId = connectionId[1];
+    
+            // Self-loops
+            if (startNodeId === endNodeId) {
+                if (startNodeId === 'A') {
+                    return [startNode[0] - 50, startNode[1] - 50];
+                } else if (startNodeId === 'B') {
+                    return [startNode[0] + 50, startNode[1] - 50];
+                } else if (startNodeId === 'C') {
+                    return [startNode[0], startNode[1] + 60];
+                }
+            }
+    
+            // Bidirectional edges - offset to avoid overlap
+            let midX = (startNode[0] + endNode[0]) / 2;
+            let midY = (startNode[1] + endNode[1]) / 2;
+            
+            // Calculate perpendicular offset
+            let dx = endNode[0] - startNode[0];
+            let dy = endNode[1] - startNode[1];
+            let dist = Math.sqrt(dx*dx + dy*dy);
+            let offsetX = -dy / dist * 30;
+            let offsetY = dx / dist * 30;
+    
+            return [midX + offsetX, midY + offsetY];
+        };
+    
+        // Store connection paths
+        let connectionPaths = {};
+        let connectionColors = {
+            'AB': '#ff6b6b',
+            'BA': '#4ecdc4',
+            'BC': '#45b7d1',
+            'CB': '#f7b731',
+            'CA': '#5f27cd',
+            'AC': '#00d2d3',
+            'AA': '#ff9ff3',
+            'BB': '#feca57',
+            'CC': '#48dbfb'
+        };
+    
+        // Draw all connections
+        for (let i = 0; i < connections.length; i++) {
+            let connectionId = connections[i];
+            let startNodeId = connectionId[0];
+            let endNodeId = connectionId[1];
+    
+            let startNode = nodes[startNodeId];
+            let endNode = nodes[endNodeId];
+    
+            let controlPoint = getControlPoint(startNode, endNode, connectionId);
+            let color = connectionColors[connectionId];
+    
+            let connectionPath = drawConnection(startNode, endNode, controlPoint, color, connectionId);
+            connectionPaths[connectionId] = connectionPath;
+            
+            // Set ID for Vivus animation
+            connectionPath.attr({id: `markovPath${connectionId}`});
+        }
+    
+    
+        // Draw circles for each node (states)
+        let nodeCircles = {};
+        let nodeLabels = {};
+        for (let key in nodes) {
+            let circle = shape.circle(nodeRadius * 2).fill('#2c3e50').stroke({color: '#ecf0f1', width: 3}).center(nodes[key][0], nodes[key][1]);
+            let label = shape.text(key).font({size: 20, fill: '#ecf0f1', family: 'Arial', weight: 'bold'})
+                .center(nodes[key][0], nodes[key][1]);
+            nodeCircles[key] = circle;
+            nodeLabels[key] = label;
+        }
+    
+        // Shape floating animation
+        let shapeAnimation = gsap.fromTo(shape.node, 
+            { y: 0 }, 
+            {
+                duration: 3,
+                y: -15,
+                ease: 'sine.inOut',
+                repeat: -1,
+                yoyo: true,
+                paused: true
+            }
+        );
+    
+        shapeContainer.transform({ translate: [50, 100], scale: [0.9, 0.9] });
+    
+        let shrinkTween = gsap.to(shapeContainer.node, { scale: 0, duration: 0.4 });
+    
+        // Return the animation control object
+        return {
+            open: false,
+            In: function () {
+                if (this.open === false) {
+                    shapeAnimation.play();
+                    shrinkTween.reverse();
+                    // timeline.play();
+                }
+                this.open = true;
+            },
+            Out: function () {
+                if (this.open === true) {
+                    shapeAnimation.pause();
+                    shrinkTween.play();
+                    // timeline.pause();
+                }
+                this.open = false;
+            },
+            connectionPaths: connectionPaths,
+            nodes: nodes
         };
     }
