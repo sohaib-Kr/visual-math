@@ -704,7 +704,27 @@ export function createNormalDistributionAnimation(svg) {
         };
     }
 
-    export function createMarkovChainAnimation(svg) {
+    export function createMarkovChainAnimation(svg, config = {}) {
+        // Configuration object with defaults
+        const defaults = {
+            nodeRadius: 20,
+            arrowOffset: 5, // Distance from circle border
+            arrowWidth: 5,
+            arrowheadSize: 10,
+            nodeStrokeWidth: 3,
+            fontSize: 20,
+            bidirectionalOffset: 30, // Offset for bidirectional edges
+            selfLoopDistance: 50, // Control point distance for self-loops
+            selfLoopBottomDistance: 60, // Control point distance for bottom self-loop (node C)
+            floatingAnimationDuration: 3,
+            floatingAnimationDistance: -15,
+            shrinkDuration: 0.4,
+            containerTranslate: [50, 100],
+            containerScale: [0.9, 0.9]
+        };
+
+        const cfg = { ...defaults, ...config };
+
         function arrowDraw({path, color, parent}) {
             let decodedPath=path.split(' ')
             console.log(decodedPath)
@@ -719,18 +739,17 @@ export function createNormalDistributionAnimation(svg) {
             let arrow = draw.group().attr({ id: 'arrow' });
             let curve = arrow.path(`M ${startX} ${startY} Q ${controlX} ${controlY}, ${endX} ${endY}`)
                 .fill('none')
-                .stroke({ color, width: 5, linejoin: 'round', linecap: 'round' });
+                .stroke({ color, width: cfg.arrowWidth, linejoin: 'round', linecap: 'round' });
             // Calculate the slope of the curve at the end point
             let dx = endX - controlX; // Change in x
             let dy = endY - controlY; // Change in y
             let angle = Math.atan2(dy, dx) * (180 / Math.PI); // Angle in degrees
             // Draw the arrowhead (a three-point polyline)
-            let arrowheadSize = 10;
             let arrowhead = arrow.polyline([
-                [endX - arrowheadSize, endY - arrowheadSize],
+                [endX - cfg.arrowheadSize, endY - cfg.arrowheadSize],
                 [endX, endY],
-                [endX - arrowheadSize, endY + arrowheadSize]
-            ]).fill('none').stroke({ color, width: 5, linecap: 'round' })
+                [endX - cfg.arrowheadSize, endY + cfg.arrowheadSize]
+            ]).fill('none').stroke({ color, width: cfg.arrowWidth, linecap: 'round' })
                 .transform({ rotate: angle, origin: [endX, endY] }); // Rotate the arrowhead
             return arrow;
         }
@@ -744,18 +763,17 @@ export function createNormalDistributionAnimation(svg) {
             B: [300, 100],
             C: [225, 250]
         };
-
-        const nodeRadius = 20; // Circle radius
     
         // Define the connections between nodes (directed edges)
         // Format: 'fromTo' where from and to are node identifiers
         const connections = ['AB', 'BA', 'BC', 'CB', 'CA', 'AC', 'AA', 'BB', 'CC'];
     
-        // Helper function to calculate point on circle border
+        // Helper function to calculate point on circle border (with offset)
         const getPointOnCircle = (center, angle, radius) => {
+            const totalDistance = radius + cfg.arrowOffset;
             return [
-                center[0] + Math.cos(angle) * radius,
-                center[1] + Math.sin(angle) * radius
+                center[0] + Math.cos(angle) * totalDistance,
+                center[1] + Math.sin(angle) * totalDistance
             ];
         };
 
@@ -770,28 +788,28 @@ export function createNormalDistributionAnimation(svg) {
 
             // Handle self-loops differently
             if (startNodeId === endNodeId) {
-                // For self-loops, start and end at different points on the circle
+                // For self-loops, start and end at opposite sides of the circle
                 if (startNodeId === 'A') {
-                    // Start at top-left, end at bottom-left
-                    actualStart = getPointOnCircle(startNode, Math.PI * 1.25, nodeRadius);
-                    actualEnd = getPointOnCircle(startNode, Math.PI * 0.75, nodeRadius);
+                    // Start at left side, end at top
+                    actualStart = getPointOnCircle(startNode, Math.PI, cfg.nodeRadius);
+                    actualEnd = getPointOnCircle(startNode, Math.PI * 1.5, cfg.nodeRadius);
                 } else if (startNodeId === 'B') {
-                    // Start at top-right, end at bottom-right
-                    actualStart = getPointOnCircle(startNode, Math.PI * 1.75, nodeRadius);
-                    actualEnd = getPointOnCircle(startNode, Math.PI * 0.25, nodeRadius);
+                    // Start at top, end at right side
+                    actualStart = getPointOnCircle(startNode, Math.PI * 1.5, cfg.nodeRadius);
+                    actualEnd = getPointOnCircle(startNode, 0, cfg.nodeRadius);
                 } else if (startNodeId === 'C') {
-                    // Start at bottom-left, end at bottom-right
-                    actualStart = getPointOnCircle(startNode, Math.PI * 0.6, nodeRadius);
-                    actualEnd = getPointOnCircle(startNode, Math.PI * 0.4, nodeRadius);
+                    // Start at left side, end at right side
+                    actualStart = getPointOnCircle(startNode, Math.PI, cfg.nodeRadius);
+                    actualEnd = getPointOnCircle(startNode, 0, cfg.nodeRadius);
                 }
             } else {
-                // Calculate angle from start to control point (for start edge)
-                let angleStart = Math.atan2(controlPoint[1] - startNode[1], controlPoint[0] - startNode[0]);
-                actualStart = getPointOnCircle(startNode, angleStart, nodeRadius);
+                // Calculate angle from start node center toward end node center
+                let angleStart = Math.atan2(endNode[1] - startNode[1], endNode[0] - startNode[0]);
+                actualStart = getPointOnCircle(startNode, angleStart, cfg.nodeRadius);
 
-                // Calculate angle from control point to end (for end edge)
-                let angleEnd = Math.atan2(endNode[1] - controlPoint[1], endNode[0] - controlPoint[0]);
-                actualEnd = getPointOnCircle(endNode, angleEnd, nodeRadius);
+                // Calculate angle from end node center toward start node center (opposite direction)
+                let angleEnd = Math.atan2(startNode[1] - endNode[1], startNode[0] - endNode[0]);
+                actualEnd = getPointOnCircle(endNode, angleEnd, cfg.nodeRadius);
             }
 
             arrowDraw({
@@ -811,11 +829,11 @@ export function createNormalDistributionAnimation(svg) {
             // Self-loops
             if (startNodeId === endNodeId) {
                 if (startNodeId === 'A') {
-                    return [startNode[0] - 50, startNode[1] - 50];
+                    return [startNode[0] - cfg.selfLoopDistance, startNode[1] - cfg.selfLoopDistance];
                 } else if (startNodeId === 'B') {
-                    return [startNode[0] + 50, startNode[1] - 50];
+                    return [startNode[0] + cfg.selfLoopDistance, startNode[1] - cfg.selfLoopDistance];
                 } else if (startNodeId === 'C') {
-                    return [startNode[0], startNode[1] + 60];
+                    return [startNode[0], startNode[1] + cfg.selfLoopBottomDistance];
                 }
             }
     
@@ -827,8 +845,8 @@ export function createNormalDistributionAnimation(svg) {
             let dx = endNode[0] - startNode[0];
             let dy = endNode[1] - startNode[1];
             let dist = Math.sqrt(dx*dx + dy*dy);
-            let offsetX = -dy / dist * 30;
-            let offsetY = dx / dist * 30;
+            let offsetX = -dy / dist * cfg.bidirectionalOffset;
+            let offsetY = dx / dist * cfg.bidirectionalOffset;
     
             return [midX + offsetX, midY + offsetY];
         };
@@ -871,8 +889,8 @@ export function createNormalDistributionAnimation(svg) {
         let nodeCircles = {};
         let nodeLabels = {};
         for (let key in nodes) {
-            let circle = shape.circle(nodeRadius * 2).fill('#2c3e50').stroke({color: '#ecf0f1', width: 3}).center(nodes[key][0], nodes[key][1]);
-            let label = shape.text(key).font({size: 20, fill: '#ecf0f1', family: 'Arial', weight: 'bold'})
+            let circle = shape.circle(cfg.nodeRadius * 2).fill('#2c3e50').stroke({color: '#ecf0f1', width: cfg.nodeStrokeWidth}).center(nodes[key][0], nodes[key][1]);
+            let label = shape.text(key).font({size: cfg.fontSize, fill: '#ecf0f1', family: 'Arial', weight: 'bold'})
                 .center(nodes[key][0], nodes[key][1]);
             nodeCircles[key] = circle;
             nodeLabels[key] = label;
@@ -882,8 +900,8 @@ export function createNormalDistributionAnimation(svg) {
         let shapeAnimation = gsap.fromTo(shape.node, 
             { y: 0 }, 
             {
-                duration: 3,
-                y: -15,
+                duration: cfg.floatingAnimationDuration,
+                y: cfg.floatingAnimationDistance,
                 ease: 'sine.inOut',
                 repeat: -1,
                 yoyo: true,
@@ -891,9 +909,9 @@ export function createNormalDistributionAnimation(svg) {
             }
         );
     
-        shapeContainer.transform({ translate: [50, 100], scale: [0.9, 0.9] });
+        shapeContainer.transform({ translate: cfg.containerTranslate, scale: cfg.containerScale });
     
-        let shrinkTween = gsap.to(shapeContainer.node, { scale: 0, duration: 0.4 });
+        let shrinkTween = gsap.to(shapeContainer.node, { scale: 0, duration: cfg.shrinkDuration });
     
         // Return the animation control object
         return {
